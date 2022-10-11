@@ -10,5 +10,8 @@ export class UserRegisterDTO {
   email: string;
 
   @IsNotEmpty()
-  phoneNumber: string;
+  phone: string;
+
+  @IsNotEmpty()
+  fcmToken: string;
 }
