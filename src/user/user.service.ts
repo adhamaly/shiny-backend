@@ -8,7 +8,9 @@ import { Injectable } from '@nestjs/common';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectModel('User') private readonly userModel: Model<User>) {}
+  constructor(
+    @InjectModel(User.name) private readonly userModel: Model<User>,
+  ) {}
 
   async create(userRegsiterDTO: UserRegisterDTO) {
     // Check existance
