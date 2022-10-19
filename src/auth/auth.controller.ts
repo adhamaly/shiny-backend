@@ -1,6 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { UserLoginDTO, UserRegisterDTO } from 'src/user/dto';
 import { AuthService } from './auth.service';
+import { AdminLoginDTO } from '../admin/dto/admin.login.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -27,6 +28,14 @@ export class AuthController {
     return {
       success: true,
       isExist: await this.authService.checkUserPhoneExistance(phone),
+    };
+  }
+
+  @Post('admins/login')
+  async adminLoginController(@Body() adminLoginDTO: AdminLoginDTO) {
+    return {
+      success: true,
+      data: { ...(await this.authService.adminLogin(adminLoginDTO)) },
     };
   }
 }
