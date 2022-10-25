@@ -60,4 +60,19 @@ export class UserService {
 
     return userDocument.toObject();
   }
+  async getUserByIdOr404(id: string) {
+    const userDocument = await this.userModel.findById(id).exec();
+
+    if (!userDocument)
+      throw new NotFoundResponse({
+        ar: 'هذا المستخدم غير مسجل',
+        en: 'User Not Found',
+      });
+
+    return userDocument.toObject();
+  }
+  async getUserById(id: string) {
+    const userDocument = await this.userModel.findById(id).exec();
+    return userDocument;
+  }
 }

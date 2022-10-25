@@ -52,7 +52,6 @@ export class AdminService {
 
     return admin.toObject();
   }
-  async getAllSubAdmins() {}
 
   async userNameIsAlreadyExits(userName: string) {
     const isExist = await this.adminModel
@@ -84,5 +83,10 @@ export class AdminService {
       isSuperAdmin: true,
       password: hashedPassword,
     });
+  }
+
+  async getById(id: string) {
+    const admin = await this.adminModel.findById(id).exec();
+    return admin;
   }
 }
