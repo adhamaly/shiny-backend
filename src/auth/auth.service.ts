@@ -6,6 +6,7 @@ import { AdminLoginDTO } from '../admin/dto/admin.login.dto';
 import { AdminService } from 'src/admin/admin.service';
 import * as bcrypt from 'bcrypt';
 import { UnAuthorizedResponse } from 'src/common/errors/UnAuthorizedResponse';
+import { MethodNotAllowedResponse, NotFoundResponse } from 'src/common/errors';
 
 @Injectable()
 export class AuthService {
@@ -110,11 +111,27 @@ export class AuthService {
       },
     );
   }
+  generateNewTokens(refresh_token: string) {
+    if (!refresh_token)
+      throw new NotFoundResponse({ ar: 'لا يوجد', en: 'not found' });
 
-  decodeExpiredToken(accessToken: string) {
+    // decode refreshToken
+    const payload = this.decodeRefreshToken(refresh_token);
+
+    // Generate Tokens
+    const accessToken = this.generateAccessToken(payload.id, payload.role);
+    const refreshToken = this.generateRefreshToken(payload.id, payload.role);
+
+    return {
+      access_token: accessToken,
+      refresh_token: refreshToken,
+    };
+  }
+
+  decodeRefreshToken(refreshToken: string) {
     try {
-      return this.jwtService.verify(accessToken.trim(), {
-        secret: process.env.ACCESS_TOKEN_SECRET,
+      return this.jwtService.verify(refreshToken, {
+        secret: process.env.REFRESH_TOKEN_SECRET,
       });
     } catch {
       throw new ForbiddenException({

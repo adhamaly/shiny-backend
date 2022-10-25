@@ -1,7 +1,8 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Post, UseGuards } from '@nestjs/common';
 import { UserLoginDTO, UserRegisterDTO } from 'src/user/dto';
 import { AuthService } from './auth.service';
 import { AdminLoginDTO } from '../admin/dto/admin.login.dto';
+import { UserAuthGuard } from './guards';
 
 @Controller('auth')
 export class AuthController {
@@ -37,5 +38,11 @@ export class AuthController {
       success: true,
       data: { ...(await this.authService.adminLogin(adminLoginDTO)) },
     };
+  }
+  @Post('refresh-token')
+  refreshTokenHandler(@Body('refresh_token') refresh_token: string) {
+    const result = this.authService.generateNewTokens(refresh_token);
+
+    return { success: true, data: { ...result } };
   }
 }
