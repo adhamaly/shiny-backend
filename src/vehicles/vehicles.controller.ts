@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -16,7 +17,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Account } from 'src/common/decorators/user.decorator';
 import { UserAuthGuard } from 'src/auth/guards';
 import { UserAuthorizedGuard } from 'src/user/guard';
-import { IsVehicleOwner } from './guard';
+import { IsVehicleOwner, IsVehicleOwnerOrAdmin } from './guard';
+import { IsAdminGuard } from 'src/admin/guard';
 
 @Controller('vehicles')
 export class VehiclesController {
@@ -43,9 +45,93 @@ export class VehiclesController {
       },
     };
   }
+  @Get('')
+  @UseGuards(UserAuthGuard, IsAdminGuard)
+  async getAllController(@Query('userId') userId: string) {
+    const vehicles = await this.vehiclesService.getAll(userId);
+
+    return {
+      success: true,
+      data: vehicles,
+    };
+  }
+  @Get('cars-model')
+  @UseGuards(UserAuthGuard, UserAuthorizedGuard)
+  getCarModels() {
+    const cars = [
+      'Audi',
+      'Chevrolet',
+      'Cadillac',
+      'Acura',
+      'BMW',
+      'Chrysler',
+      'Ford',
+      'Buick',
+      'INFINITI',
+      'GMC',
+      'Honda',
+      'Hyundai',
+      'Jeep',
+      'Genesis',
+      'Dodge',
+      'Jaguar',
+      'Kia',
+      'Land Rover',
+      'Lexus',
+      'Mercedes-Benz',
+      'Mitsubishi',
+      'Lincoln',
+      'MAZDA',
+      'Nissan',
+      'MINI',
+      'Porsche',
+      'Ram',
+      'Subaru',
+      'Toyota',
+      'Volkswagen',
+      'Volvo',
+      'Alfa Romeo',
+      'FIAT',
+      'Freightliner',
+      'Maserati',
+      'Tesla',
+      'Aston Martin',
+      'Bentley',
+      'Ferrari',
+      'Lamborghini',
+      'Lotus',
+      'McLaren',
+      'Rolls-Royce',
+      'smart',
+      'Scion',
+      'SRT',
+      'Suzuki',
+      'Fisker',
+      'Maybach',
+      'Mercury',
+      'Saab',
+      'HUMMER',
+      'Pontiac',
+      'Saturn',
+      'Isuzu',
+      'Panoz',
+      'Oldsmobile',
+      'Daewoo',
+      'Plymouth',
+      'Eagle',
+      'Geo',
+      'Daihatsu',
+      'Speranza',
+    ];
+
+    return {
+      success: true,
+      data: cars,
+    };
+  }
 
   @Get(':vehicleId')
-  @UseGuards(UserAuthGuard)
+  @UseGuards(UserAuthGuard, IsVehicleOwnerOrAdmin)
   async getByIdController(@Param('vehicleId') vehicleId: string) {
     const vehicle = await this.vehiclesService.getByIdOr404(vehicleId);
 
