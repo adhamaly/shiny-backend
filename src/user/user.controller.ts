@@ -1,13 +1,19 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { UserRegisterDTO } from './dto';
-import { UserService } from './user.service';
+import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Account } from 'src/common/decorators/user.decorator';
+import { VehiclesService } from '../vehicles/vehicles.service';
+import { UserAuthGuard } from '../auth/guards/userAuthentication.guard';
+import { UserAuthorizedGuard } from './guard';
 
 @Controller('users')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(private vehiclesService: VehiclesService) {}
 
-  @Get()
-  async getAllController() {
-    return { data: await this.userService.getAll() };
+  @Get('vehicles')
+  @UseGuards(UserAuthGuard, UserAuthorizedGuard)
+  async getAllUserVehicles(@Account() account: any) {
+    return {
+      success: true,
+      data: await this.vehiclesService.getAll(account.id),
+    };
   }
 }
