@@ -7,7 +7,7 @@ import { Injectable } from '@nestjs/common';
 import { MethodNotAllowedResponse } from '../../errors/MethodNotAllowedResponse';
 
 @Injectable()
-export default class FirebaseService {
+export class FirebaseService {
   private storage: Bucket;
 
   constructor() {
