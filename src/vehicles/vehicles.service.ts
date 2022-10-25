@@ -14,7 +14,7 @@ export class VehiclesService {
   ) {}
 
   async createVehicle(
-    userId: number,
+    userId: string,
     createVehicleDTO: CreateVehicleDTO,
     image: Express.Multer.File,
   ) {
