@@ -7,13 +7,7 @@ import { AdminModule } from 'src/admin/admin.module';
 
 @Global()
 @Module({
-  imports: [
-    UserModule,
-    AdminModule,
-    JwtModule.register({
-      secret: process.env.ACCESS_TOKEN_SECRET,
-    }),
-  ],
+  imports: [UserModule, AdminModule, JwtModule.register({})],
   controllers: [AuthController],
   providers: [AuthService, JwtService],
   exports: [AuthService, JwtModule],

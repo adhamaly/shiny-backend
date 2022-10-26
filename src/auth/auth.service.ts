@@ -7,6 +7,7 @@ import { AdminService } from 'src/admin/admin.service';
 import * as bcrypt from 'bcrypt';
 import { UnAuthorizedResponse } from 'src/common/errors/UnAuthorizedResponse';
 import { MethodNotAllowedResponse, NotFoundResponse } from 'src/common/errors';
+import { UserLogoutDTO } from '../user/dto/userLogout.dto';
 
 @Injectable()
 export class AuthService {
@@ -46,6 +47,10 @@ export class AuthService {
       access_token: accessToken,
       refresh_token: refreshToken,
     };
+  }
+
+  async userLogout(userLogoutDTO: UserLogoutDTO) {
+    //TODO:REMOVE FCM FROM USERMOEL
   }
 
   async checkUserPhoneExistance(phone: string) {
