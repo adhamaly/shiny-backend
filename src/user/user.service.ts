@@ -63,14 +63,21 @@ export class UserService {
     return userProfile.toObject();
   }
 
+  async delete(userId: string) {
+    const userProfile = await this.getUserById(userId);
+    userProfile.isDeleted = true;
+    await userProfile.save();
+  }
+
   async getAll(): Promise<User[]> {
-    return await this.userModel.find().exec();
+    return await this.userModel.find({ isDeleted: false }).exec();
   }
 
   async isPhoneExist(phone: string) {
     const userDocument = await this.userModel
       .findOne({
         phone: phone,
+        isDeleted: false,
       })
       .exec();
 
@@ -81,6 +88,7 @@ export class UserService {
     const userDocument = await this.userModel
       .findOne({
         phone: phone,
+        isDeleted: false,
       })
       .exec();
 
@@ -93,7 +101,9 @@ export class UserService {
     return userDocument.toObject();
   }
   async getUserByIdOr404(id: string) {
-    const userDocument = await this.userModel.findById(id).exec();
+    const userDocument = await this.userModel
+      .findOne({ _id: id, isDeleted: false })
+      .exec();
 
     if (!userDocument)
       throw new NotFoundResponse({
@@ -104,7 +114,9 @@ export class UserService {
     return userDocument.toObject();
   }
   async getUserById(id: string) {
-    const userDocument = await this.userModel.findById(id).exec();
+    const userDocument = await this.userModel
+      .findOne({ _id: id, isDeleted: false })
+      .exec();
     return userDocument;
   }
 }

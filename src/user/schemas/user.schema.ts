@@ -31,6 +31,9 @@ export class User {
 
   @Prop({ type: [{ type: String }] })
   fcmTokens: string[];
+
+  @Prop({ default: false })
+  isDeleted: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

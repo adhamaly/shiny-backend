@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Put,
@@ -38,7 +39,7 @@ export class UserController {
   @Put('')
   @UseGuards(UserAuthGuard, ProfileOwnerGuard)
   @UseInterceptors(FileInterceptor('image', { dest: 'uploads/' }))
-  async updateProfile(
+  async updateProfileController(
     @Account() account: any,
     @Body() userUpdateProfileDTO: UserUpdateProfileDTO,
     @UploadedFile() image: Express.Multer.File,
@@ -54,6 +55,15 @@ export class UserController {
       data: {
         ...userProfile,
       },
+    };
+  }
+
+  @Delete('')
+  @UseGuards(UserAuthGuard, ProfileOwnerGuard)
+  async deleteProfileController(@Account() account: any) {
+    await this.userService.delete(account.id);
+    return {
+      success: true,
     };
   }
 
