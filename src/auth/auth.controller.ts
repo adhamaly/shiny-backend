@@ -40,8 +40,8 @@ export class AuthController {
     };
   }
   @Post('refresh-token')
-  refreshTokenHandler(@Body('refresh_token') refresh_token: string) {
-    const result = this.authService.generateNewTokens(refresh_token);
+  async refreshTokenHandler(@Body('refresh_token') refresh_token: string) {
+    const result = await this.authService.generateNewTokens(refresh_token);
 
     return { success: true, data: { ...result } };
   }

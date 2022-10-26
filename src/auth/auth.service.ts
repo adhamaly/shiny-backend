@@ -111,16 +111,27 @@ export class AuthService {
       },
     );
   }
-  generateNewTokens(refresh_token: string) {
+  async generateNewTokens(refresh_token: string) {
     if (!refresh_token)
       throw new NotFoundResponse({ ar: 'لا يوجد', en: 'not found' });
 
     // decode refreshToken
     const payload = this.decodeRefreshToken(refresh_token);
 
+    // Check CLientUser Existance
+    const clientProfile = await this.checkClientUserExistance(
+      payload.id,
+      payload.role,
+    );
     // Generate Tokens
-    const accessToken = this.generateAccessToken(payload.id, payload.role);
-    const refreshToken = this.generateRefreshToken(payload.id, payload.role);
+    const accessToken = this.generateAccessToken(
+      clientProfile._id.toString(),
+      payload.role,
+    );
+    const refreshToken = this.generateRefreshToken(
+      clientProfile._id.toString(),
+      payload.role,
+    );
 
     return {
       access_token: accessToken,
@@ -141,6 +152,18 @@ export class AuthService {
           ar: 'غير مصدق للدخول',
         },
       });
+    }
+  }
+
+  async checkClientUserExistance(clientId: string, role: string) {
+    if (role === 'superAdmin' || role === 'subAdmin') {
+      const adminProfile = await this.adminService.getByIdOr404(clientId);
+      return adminProfile;
+    }
+
+    if (role === 'user') {
+      const userProfile = await this.userService.getUserByIdOr404(clientId);
+      return userProfile;
     }
   }
 }

@@ -89,4 +89,14 @@ export class AdminService {
     const admin = await this.adminModel.findById(id).exec();
     return admin;
   }
+
+  async getByIdOr404(id: string) {
+    const admin = await this.adminModel.findById(id).exec();
+    if (!admin)
+      throw new NotFoundResponse({
+        ar: 'لا يوجد هذا المشرف',
+        en: 'Admin Account Not Found',
+      });
+    return admin.toObject();
+  }
 }
