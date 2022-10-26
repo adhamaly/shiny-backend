@@ -15,6 +15,15 @@ export class User {
   email: string;
 
   @Prop()
+  gender: string;
+
+  @Prop()
+  imagePath: string;
+
+  @Prop()
+  imageLink: string;
+
+  @Prop()
   createdAt: Date;
 
   @Prop()

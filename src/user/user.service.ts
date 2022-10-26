@@ -5,11 +5,14 @@ import { User } from './schemas/user.schema';
 import { UserRegisterDTO } from './dto/user.register.dto';
 import { MethodNotAllowedResponse, NotFoundResponse } from 'src/common/errors';
 import { Injectable } from '@nestjs/common';
+import { UserUpdateProfileDTO } from './dto/user.updateProfile.dto';
+import FirebaseService from '../common/services/firebase/firebase.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectModel(User.name) private readonly userModel: Model<User>,
+    private firebaseService: FirebaseService,
   ) {}
 
   async create(userRegsiterDTO: UserRegisterDTO) {
@@ -29,6 +32,35 @@ export class UserService {
 
     // TODO: Add FcmTokens service
     return createdUser.toObject();
+  }
+
+  async update(
+    userId: string,
+    userUpdateProfileDTO: UserUpdateProfileDTO,
+    image: Express.Multer.File,
+  ) {
+    const userProfile = await this.getUserById(userId);
+
+    userProfile.userName = userUpdateProfileDTO.userName;
+    userProfile.email = userUpdateProfileDTO.email;
+    userProfile.phone = userUpdateProfileDTO.phone;
+    userProfile.gender = userUpdateProfileDTO.gender;
+    await userProfile.save();
+
+    if (image) {
+      if (userProfile.imagePath)
+        await this.firebaseService.deleteFileFromStorage(userProfile.imagePath);
+
+      const { fileLink, filePath } = await this.firebaseService.uploadImage(
+        image,
+      );
+
+      userProfile.imageLink = fileLink;
+      userProfile.imagePath = filePath;
+      await userProfile.save();
+    }
+
+    return userProfile.toObject();
   }
 
   async getAll(): Promise<User[]> {
