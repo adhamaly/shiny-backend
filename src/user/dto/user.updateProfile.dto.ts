@@ -1,6 +1,6 @@
-import { IsNotEmpty, IsString, IsEmail, IsPhoneNumber } from 'class-validator';
+import { IsNotEmpty, IsString, IsEmail } from 'class-validator';
 
-export class UserRegisterDTO {
+export class UserUpdateProfileDTO {
   @IsNotEmpty()
   @IsString()
   userName: string;
@@ -10,9 +10,9 @@ export class UserRegisterDTO {
   email: string;
 
   @IsNotEmpty()
-  @IsPhoneNumber()
   phone: string;
 
   @IsNotEmpty()
-  fcmToken: string;
+  @IsString()
+  gender: string;
 }

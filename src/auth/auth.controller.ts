@@ -1,8 +1,9 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { UserLoginDTO, UserRegisterDTO } from 'src/user/dto';
+import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
+import { UserLoginDTO, UserLogoutDTO, UserRegisterDTO } from 'src/user/dto';
 import { AuthService } from './auth.service';
 import { AdminLoginDTO } from '../admin/dto/admin.login.dto';
 import { UserAuthGuard } from './guards';
+import { UserAuthorizedGuard } from '../user/guard/userAuthorized.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -24,6 +25,16 @@ export class AuthController {
       data: { ...(await this.authService.userLogin(userLoginDTO)) },
     };
   }
+
+  @Post('users/logout')
+  @UseGuards(UserAuthGuard, UserAuthorizedGuard)
+  async userLogoutController(@Body() userLogoutDTO: UserLogoutDTO) {
+    await this.authService.userLogout(userLogoutDTO);
+    return {
+      success: true,
+    };
+  }
+
   @Post('users/check-phone')
   async checkPhoneExistanceController(@Body('phone') phone: string) {
     return {
@@ -40,8 +51,8 @@ export class AuthController {
     };
   }
   @Post('refresh-token')
-  refreshTokenHandler(@Body('refresh_token') refresh_token: string) {
-    const result = this.authService.generateNewTokens(refresh_token);
+  async refreshTokenHandler(@Body('refresh_token') refresh_token: string) {
+    const result = await this.authService.generateNewTokens(refresh_token);
 
     return { success: true, data: { ...result } };
   }

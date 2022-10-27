@@ -15,6 +15,15 @@ export class User {
   email: string;
 
   @Prop()
+  gender: string;
+
+  @Prop()
+  imagePath: string;
+
+  @Prop()
+  imageLink: string;
+
+  @Prop()
   createdAt: Date;
 
   @Prop()
@@ -22,6 +31,9 @@ export class User {
 
   @Prop({ type: [{ type: String }] })
   fcmTokens: string[];
+
+  @Prop({ default: false })
+  isDeleted: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

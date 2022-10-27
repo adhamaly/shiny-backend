@@ -1,78 +1,56 @@
-import { Model } from 'mongoose';
-
-import { InjectModel } from '@nestjs/mongoose';
-import { User } from './schemas/user.schema';
 import { UserRegisterDTO } from './dto/user.register.dto';
-import { MethodNotAllowedResponse, NotFoundResponse } from 'src/common/errors';
 import { Injectable } from '@nestjs/common';
+import { UserUpdateProfileDTO } from './dto/user.updateProfile.dto';
+import { UserRepository } from './user.repository';
+import { User } from './schemas/user.schema';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectModel(User.name) private readonly userModel: Model<User>,
-  ) {}
+  constructor(private userRepository: UserRepository) {}
 
   async create(userRegsiterDTO: UserRegisterDTO) {
-    // Check existance
-    if (await this.isPhoneExist(userRegsiterDTO.phone))
-      throw new MethodNotAllowedResponse({
-        ar: 'الرقم مسجل من قبل',
-        en: 'phone is already exist',
-      });
-
     // Create User
-    const createdUser = await this.userModel.create({
-      userName: userRegsiterDTO.userName,
-      email: userRegsiterDTO.email,
-      phone: userRegsiterDTO.phone,
-    });
+    const createdUser = await this.userRepository.create(userRegsiterDTO);
 
     // TODO: Add FcmTokens service
-    return createdUser.toObject();
+    return createdUser;
+  }
+
+  async update(
+    userId: string,
+    userUpdateProfileDTO: UserUpdateProfileDTO,
+    image: Express.Multer.File,
+  ) {
+    const updatedProfile = await this.userRepository.update(
+      userId,
+      userUpdateProfileDTO,
+      image,
+    );
+
+    return updatedProfile;
+  }
+
+  async delete(userId: string) {
+    await this.userRepository.delete(userId);
   }
 
   async getAll(): Promise<User[]> {
-    return await this.userModel.find().exec();
+    return await this.userRepository.findAll();
   }
 
   async isPhoneExist(phone: string) {
-    const userDocument = await this.userModel
-      .findOne({
-        phone: phone,
-      })
-      .exec();
-
-    return userDocument ? true : false;
+    return await this.userRepository.checkPhoneExistance(phone);
   }
 
   async getUserByPhoneOr404(phone: string) {
-    const userDocument = await this.userModel
-      .findOne({
-        phone: phone,
-      })
-      .exec();
+    const userDocument = await this.userRepository.findUserByPhoneOr404(phone);
 
-    if (!userDocument)
-      throw new NotFoundResponse({
-        ar: 'هذا الرقم غير مسجل',
-        en: 'phone is not exist',
-      });
-
-    return userDocument.toObject();
+    return userDocument;
   }
   async getUserByIdOr404(id: string) {
-    const userDocument = await this.userModel.findById(id).exec();
-
-    if (!userDocument)
-      throw new NotFoundResponse({
-        ar: 'هذا المستخدم غير مسجل',
-        en: 'User Not Found',
-      });
-
-    return userDocument.toObject();
+    return await this.userRepository.findUserByIdOr404(id);
   }
   async getUserById(id: string) {
-    const userDocument = await this.userModel.findById(id).exec();
-    return userDocument;
+    return await this.userRepository.findUserById(id);
   }
 }

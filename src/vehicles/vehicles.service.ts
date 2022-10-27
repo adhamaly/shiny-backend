@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Vehicle } from './schemas/vehicles.schema';
+import { Vehicle, VehicleModel } from './schemas/vehicles.schema';
 import { CreateVehicleDTO } from './dto/createVehicle.dto';
 import { FirebaseService } from '../common/services/firebase/firebase.service';
 import { NotFoundResponse } from '../common/errors/NotFoundResponse';
@@ -9,7 +9,8 @@ import { NotFoundResponse } from '../common/errors/NotFoundResponse';
 @Injectable()
 export class VehiclesService {
   constructor(
-    @InjectModel(Vehicle.name) private readonly vehicleModel: Model<Vehicle>,
+    @InjectModel(Vehicle.name)
+    private readonly vehicleModel: Model<VehicleModel>,
     private firebaseService: FirebaseService,
   ) {}
 
