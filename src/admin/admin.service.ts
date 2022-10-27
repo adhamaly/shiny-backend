@@ -23,6 +23,6 @@ export class AdminService {
   }
 
   async getByIdOr404(id: string) {
-    return await this.adminRepository.findById(id);
+    return await this.adminRepository.findByIdOr404(id);
   }
 }
