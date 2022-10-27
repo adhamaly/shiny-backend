@@ -19,6 +19,7 @@ import { UserAuthGuard } from 'src/auth/guards';
 import { UserAuthorizedGuard } from 'src/user/guard';
 import { IsVehicleOwner, IsVehicleOwnerOrAdmin } from './guard';
 import { IsAdminGuard } from 'src/admin/guard';
+import * as fs from 'fs';
 
 @Controller('vehicles')
 export class VehiclesController {
@@ -58,76 +59,23 @@ export class VehiclesController {
   @Get('cars-model')
   @UseGuards(UserAuthGuard, UserAuthorizedGuard)
   getCarModels() {
-    const cars = [
-      'Audi',
-      'Chevrolet',
-      'Cadillac',
-      'Acura',
-      'BMW',
-      'Chrysler',
-      'Ford',
-      'Buick',
-      'INFINITI',
-      'GMC',
-      'Honda',
-      'Hyundai',
-      'Jeep',
-      'Genesis',
-      'Dodge',
-      'Jaguar',
-      'Kia',
-      'Land Rover',
-      'Lexus',
-      'Mercedes-Benz',
-      'Mitsubishi',
-      'Lincoln',
-      'MAZDA',
-      'Nissan',
-      'MINI',
-      'Porsche',
-      'Ram',
-      'Subaru',
-      'Toyota',
-      'Volkswagen',
-      'Volvo',
-      'Alfa Romeo',
-      'FIAT',
-      'Freightliner',
-      'Maserati',
-      'Tesla',
-      'Aston Martin',
-      'Bentley',
-      'Ferrari',
-      'Lamborghini',
-      'Lotus',
-      'McLaren',
-      'Rolls-Royce',
-      'smart',
-      'Scion',
-      'SRT',
-      'Suzuki',
-      'Fisker',
-      'Maybach',
-      'Mercury',
-      'Saab',
-      'HUMMER',
-      'Pontiac',
-      'Saturn',
-      'Isuzu',
-      'Panoz',
-      'Oldsmobile',
-      'Daewoo',
-      'Plymouth',
-      'Eagle',
-      'Geo',
-      'Daihatsu',
-      'Speranza',
-    ];
+    try {
+      const data = fs.readFileSync(
+        `${process.cwd()}/src/vehicles/vehiclesBrands.json`,
+        'utf8',
+      );
 
-    return {
-      success: true,
-      data: cars,
-    };
+      const jsonData = JSON.parse(data);
+
+      const parsedJsonData = jsonData;
+
+      return {
+        success: true,
+        data: parsedJsonData.brands,
+      };
+    } catch (error) {
+      console.log(`ERROR: ${error}`);
+    }
   }
 
   @Get(':vehicleId')
