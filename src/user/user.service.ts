@@ -1,37 +1,19 @@
-import { Model } from 'mongoose';
-
-import { InjectModel } from '@nestjs/mongoose';
-import { User, UserModel } from './schemas/user.schema';
 import { UserRegisterDTO } from './dto/user.register.dto';
-import { MethodNotAllowedResponse, NotFoundResponse } from 'src/common/errors';
 import { Injectable } from '@nestjs/common';
 import { UserUpdateProfileDTO } from './dto/user.updateProfile.dto';
-import FirebaseService from '../common/services/firebase/firebase.service';
+import { UserRepository } from './user.repository';
+import { User } from './schemas/user.schema';
 
 @Injectable()
 export class UserService {
-  constructor(
-    @InjectModel(User.name) private readonly userModel: Model<UserModel>,
-    private firebaseService: FirebaseService,
-  ) {}
+  constructor(private userRepository: UserRepository) {}
 
   async create(userRegsiterDTO: UserRegisterDTO) {
-    // Check existance
-    if (await this.isPhoneExist(userRegsiterDTO.phone))
-      throw new MethodNotAllowedResponse({
-        ar: 'الرقم مسجل من قبل',
-        en: 'Phone is already exist',
-      });
-
     // Create User
-    const createdUser = await this.userModel.create({
-      userName: userRegsiterDTO.userName,
-      email: userRegsiterDTO.email,
-      phone: userRegsiterDTO.phone,
-    });
+    const createdUser = await this.userRepository.create(userRegsiterDTO);
 
     // TODO: Add FcmTokens service
-    return createdUser.toObject();
+    return createdUser;
   }
 
   async update(
@@ -39,84 +21,36 @@ export class UserService {
     userUpdateProfileDTO: UserUpdateProfileDTO,
     image: Express.Multer.File,
   ) {
-    const userProfile = await this.getUserById(userId);
+    const updatedProfile = await this.userRepository.update(
+      userId,
+      userUpdateProfileDTO,
+      image,
+    );
 
-    userProfile.userName = userUpdateProfileDTO.userName;
-    userProfile.email = userUpdateProfileDTO.email;
-    userProfile.phone = userUpdateProfileDTO.phone;
-    userProfile.gender = userUpdateProfileDTO.gender;
-    await userProfile.save();
-
-    if (image) {
-      if (userProfile.imagePath)
-        await this.firebaseService.deleteFileFromStorage(userProfile.imagePath);
-
-      const { fileLink, filePath } = await this.firebaseService.uploadImage(
-        image,
-      );
-
-      userProfile.imageLink = fileLink;
-      userProfile.imagePath = filePath;
-      await userProfile.save();
-    }
-
-    return userProfile.toObject();
+    return updatedProfile;
   }
 
   async delete(userId: string) {
-    const userProfile = await this.getUserById(userId);
-    userProfile.isDeleted = true;
-    await userProfile.save();
+    await this.userRepository.delete(userId);
   }
 
   async getAll(): Promise<User[]> {
-    return await this.userModel.find({ isDeleted: false }).exec();
+    return await this.userRepository.findAll();
   }
 
   async isPhoneExist(phone: string) {
-    const userDocument = await this.userModel
-      .findOne({
-        phone: phone,
-        isDeleted: false,
-      })
-      .exec();
-
-    return userDocument ? true : false;
+    return await this.userRepository.checkPhoneExistance(phone);
   }
 
   async getUserByPhoneOr404(phone: string) {
-    const userDocument = await this.userModel
-      .findOne({
-        phone: phone,
-        isDeleted: false,
-      })
-      .exec();
+    const userDocument = await this.userRepository.findUserByPhoneOr404(phone);
 
-    if (!userDocument)
-      throw new NotFoundResponse({
-        ar: 'هذا الرقم غير مسجل',
-        en: 'phone is not exist',
-      });
-
-    return userDocument.toObject();
+    return userDocument;
   }
   async getUserByIdOr404(id: string) {
-    const userDocument = await this.userModel
-      .findOne({ _id: id, isDeleted: false })
-      .exec();
-
-    if (!userDocument)
-      throw new NotFoundResponse({
-        ar: 'هذا المستخدم غير مسجل',
-        en: 'User Not Found',
-      });
-
-    return userDocument.toObject();
+    return await this.userRepository.findUserByIdOr404(id);
   }
   async getUserById(id: string) {
-    const userDocument = await this.userModel
-      .findOne({ _id: id, isDeleted: false })
-      .exec();
-    return userDocument;
+    return await this.userRepository.findUserById(id);
   }
 }
