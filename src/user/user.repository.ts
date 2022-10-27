@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import FirebaseService from '../common/services/firebase/firebase.service';
+import { FirebaseService } from '../common/services/firebase/firebase.service';
 import { InjectModel } from '@nestjs/mongoose';
 import { User, UserModel } from './schemas/user.schema';
 import { Model } from 'mongoose';
