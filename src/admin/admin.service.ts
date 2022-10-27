@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Admin } from './schemas/admin.schema';
+import { Admin, AdminModel } from './schemas/admin.schema';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { CreateSubAdminDTO } from './dto/admin.createSubAdmin.dto';
@@ -10,7 +10,7 @@ import { NotFoundResponse } from '../common/errors/NotFoundResponse';
 @Injectable()
 export class AdminService {
   constructor(
-    @InjectModel(Admin.name) private readonly adminModel: Model<Admin>,
+    @InjectModel(Admin.name) private readonly adminModel: Model<AdminModel>,
   ) {}
 
   async createSubAdmin(createSubAdminDTO: CreateSubAdminDTO) {

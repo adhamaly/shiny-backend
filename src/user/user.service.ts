@@ -1,7 +1,7 @@
 import { Model } from 'mongoose';
 
 import { InjectModel } from '@nestjs/mongoose';
-import { User } from './schemas/user.schema';
+import { User, UserModel } from './schemas/user.schema';
 import { UserRegisterDTO } from './dto/user.register.dto';
 import { MethodNotAllowedResponse, NotFoundResponse } from 'src/common/errors';
 import { Injectable } from '@nestjs/common';
@@ -11,7 +11,7 @@ import FirebaseService from '../common/services/firebase/firebase.service';
 @Injectable()
 export class UserService {
   constructor(
-    @InjectModel(User.name) private readonly userModel: Model<User>,
+    @InjectModel(User.name) private readonly userModel: Model<UserModel>,
     private firebaseService: FirebaseService,
   ) {}
 
@@ -20,7 +20,7 @@ export class UserService {
     if (await this.isPhoneExist(userRegsiterDTO.phone))
       throw new MethodNotAllowedResponse({
         ar: 'الرقم مسجل من قبل',
-        en: 'phone is already exist',
+        en: 'Phone is already exist',
       });
 
     // Create User
