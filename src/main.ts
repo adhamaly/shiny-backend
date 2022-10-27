@@ -2,8 +2,8 @@ import 'dotenv/config';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
-import { AdminService } from './admin/admin.service';
 import { CitiesService } from './city/city.service';
+import { AdminRepository } from './admin/admin.repository';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
@@ -12,9 +12,9 @@ async function bootstrap() {
   app.setGlobalPrefix('api/');
 
   await app.listen(process.env.PORT || 3000);
-  const adminService = app.get(AdminService);
+  const adminRepository = app.get(AdminRepository);
   const cityService = app.get(CitiesService);
   await cityService.injectCities();
-  await adminService.injectSuperAdmin();
+  await adminRepository.injectSuperAdmin();
 }
 bootstrap();
