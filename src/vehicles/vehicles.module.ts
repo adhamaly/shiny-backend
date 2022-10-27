@@ -5,6 +5,7 @@ import { VehiclesService } from './vehicles.service';
 import { Vehicle, VehicleSchema } from './schemas/vehicles.schema';
 import { FirebaseModule } from '../common/services/firebase/firebase.module';
 import { UserModule } from '../user/user.module';
+import { VehiclesRepository } from './vehicles.repository';
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: Vehicle.name, schema: VehicleSchema }]),
@@ -12,7 +13,7 @@ import { UserModule } from '../user/user.module';
     forwardRef(() => UserModule),
   ],
   controllers: [VehiclesController],
-  providers: [VehiclesService],
+  providers: [VehiclesService, VehiclesRepository],
   exports: [VehiclesService],
 })
 export class VehiclesModule {}
