@@ -21,6 +21,13 @@ export class UserRepository {
         en: 'Phone is already exist',
       });
 
+    // Check EmailExistance
+    if (await this.checkEmailIsAlreadyExist(userRegsiterDTO.email))
+      throw new MethodNotAllowedResponse({
+        ar: 'البريد الإلكتروني مسجل من قبل',
+        en: 'Email is already exist',
+      });
+
     // Create User
     const createdUser = await this.userModel.create({
       userName: userRegsiterDTO.userName,
@@ -47,6 +54,17 @@ export class UserRepository {
       throw new MethodNotAllowedResponse({
         ar: 'هذا الرقم مسجل من قبل',
         en: 'Phone is already exist',
+      });
+
+    if (
+      await this.checkEmailExistanceForAnotherUser(
+        userId,
+        userUpdateProfileDTO.email,
+      )
+    )
+      throw new MethodNotAllowedResponse({
+        ar: 'هذا البريد الإلكتروني مسجل من قبل',
+        en: 'Email is already exist',
       });
 
     userProfile.userName = userUpdateProfileDTO.userName;
@@ -114,6 +132,29 @@ export class UserRepository {
     const userDocument = await this.userModel
       .findOne({
         phone: phone,
+        isDeleted: false,
+        _id: { $ne: userId },
+      })
+      .exec();
+
+    return userDocument ? true : false;
+  }
+
+  async checkEmailIsAlreadyExist(email: string) {
+    const userDocument = await this.userModel
+      .findOne({
+        email: email,
+        isDeleted: false,
+      })
+      .exec();
+
+    return userDocument ? true : false;
+  }
+
+  async checkEmailExistanceForAnotherUser(userId: string, email: string) {
+    const userDocument = await this.userModel
+      .findOne({
+        email: email,
         isDeleted: false,
         _id: { $ne: userId },
       })
