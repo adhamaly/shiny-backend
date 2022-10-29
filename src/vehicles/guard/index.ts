@@ -1,2 +1,2 @@
-export * from './vehicleOwner.guard';
 export * from './vehicleOwnerOrAdmin.guard';
+export * from './vehicleOwner.guard';
