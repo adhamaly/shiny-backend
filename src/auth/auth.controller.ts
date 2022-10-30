@@ -14,7 +14,7 @@ export class AuthController {
     return {
       success: true,
       data: {
-        ...(await this.authService.userRegisteration(userRegisterDTO)),
+        // ...(await this.authService.userRegisteration(userRegisterDTO)),
       },
     };
   }

@@ -20,6 +20,12 @@ export class AdminRepository {
         en: 'User Name is already exist',
       });
 
+    if (await this.phoneIsAlreadyExist(createSubAdminDTO.phone))
+      throw new MethodNotAllowedResponse({
+        ar: 'الرقم مسجل من قبل',
+        en: 'Phone is already exist',
+      });
+
     // hash password using bycrpt
     const hashedPassword = await bcrypt.hash(
       createSubAdminDTO.password,
@@ -30,7 +36,6 @@ export class AdminRepository {
       userName: createSubAdminDTO.userName,
       phone: createSubAdminDTO.phone,
       city: createSubAdminDTO.city,
-      isSuperAdmin: createSubAdminDTO.isSuperAdmin,
       password: hashedPassword,
     });
 
@@ -98,5 +103,15 @@ export class AdminRepository {
         en: 'Admin Account Not Found',
       });
     return admin.toObject();
+  }
+
+  async phoneIsAlreadyExist(phone: string) {
+    const adminWithPhoneNumber = await this.adminModel
+      .findOne({
+        phone: phone,
+      })
+      .exec();
+
+    return adminWithPhoneNumber ? true : false;
   }
 }

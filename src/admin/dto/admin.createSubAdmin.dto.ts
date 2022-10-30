@@ -1,7 +1,7 @@
 import {
   IsArray,
-  IsBoolean,
   IsNotEmpty,
+  IsPhoneNumber,
   IsString,
   Length,
 } from 'class-validator';
@@ -12,17 +12,13 @@ export class CreateSubAdminDTO {
   userName: string;
 
   @IsNotEmpty()
-  @IsString()
+  @IsPhoneNumber()
   phone: string;
 
   @IsNotEmpty()
   @IsString()
   @Length(8, 255)
   password: string;
-
-  @IsNotEmpty()
-  @IsBoolean()
-  isSuperAdmin: boolean;
 
   @IsNotEmpty()
   @IsArray()

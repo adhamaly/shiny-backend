@@ -15,7 +15,7 @@ export class Admin {
   @Prop()
   password: string;
 
-  @Prop()
+  @Prop({ default: false })
   isSuperAdmin: boolean;
 
   @Prop({ type: [{ type: mongoose.Types.ObjectId, ref: 'city' }] })
