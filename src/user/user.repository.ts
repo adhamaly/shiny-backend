@@ -92,6 +92,7 @@ export class UserRepository {
   async delete(userId: string) {
     const userProfile = await this.findUserById(userId);
     userProfile.isDeleted = true;
+
     await userProfile.save();
   }
 
