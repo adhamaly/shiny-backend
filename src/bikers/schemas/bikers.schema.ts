@@ -10,6 +10,9 @@ export class Biker {
   userName: string;
 
   @Prop()
+  password: string;
+
+  @Prop()
   phone: string;
 
   @Prop()
@@ -35,6 +38,12 @@ export class Biker {
 
   @Prop({ type: mongoose.Types.ObjectId, ref: 'city' })
   city: City;
+
+  @Prop()
+  nationalId: string;
+
+  @Prop({ default: 'ACTIVE' })
+  status: string;
 
   @Prop()
   createdAt: Date;
