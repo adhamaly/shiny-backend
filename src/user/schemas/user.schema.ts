@@ -34,6 +34,12 @@ export class User {
 
   @Prop({ default: false })
   isDeleted: boolean;
+
+  @Prop({ default: 0 })
+  points: number;
+
+  @Prop({ default: 0 })
+  walletBalance: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
