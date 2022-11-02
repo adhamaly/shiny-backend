@@ -67,10 +67,10 @@ export class UserController {
     };
   }
 
-  @Get(':userId')
-  @UseGuards(UserAuthGuard, ProfileOwnerOrAuthClientGuard)
-  async getProfileController(@Param('userId') userId: string) {
-    const userProfile = await this.userService.getUserByIdOr404(userId);
+  @Get('')
+  @UseGuards(UserAuthGuard, ProfileOwnerGuard)
+  async getProfileController(@Account() account: any) {
+    const userProfile = await this.userService.getUserByIdOr404(account.id);
 
     return {
       success: true,
