@@ -18,9 +18,9 @@ export class CitiesService {
     if (citiesExists) return;
 
     await this.cityModel.create([
-      { name: 'القاهرة' },
-      { name: 'الاسكندرية' },
-      { name: 'بورسعيد' },
+      { name: 'القاهرة', latitude: 30.06263, longitude: 31.24967 },
+      { name: 'الاسكندرية', latitude: 31.21564, longitude: 29.95527 },
+      { name: 'بورسعيد', latitude: 31.25654, longitude: 32.28411 },
     ]);
   }
 }

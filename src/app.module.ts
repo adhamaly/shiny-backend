@@ -5,6 +5,7 @@ import { AuthModule } from './auth/auth.module';
 import { AdminModule } from './admin/admin.module';
 import { CityModule } from './city/city.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
+import { BikersModule } from './bikers/bikers.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { VehiclesModule } from './vehicles/vehicles.module';
     AdminModule,
     CityModule,
     VehiclesModule,
+    BikersModule,
   ],
   controllers: [],
   providers: [],

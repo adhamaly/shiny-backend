@@ -7,6 +7,15 @@ export type CityModel = City & Document;
 export class City {
   @Prop()
   name: string;
+
+  @Prop()
+  latitude: number;
+
+  @Prop()
+  longitude: number;
+
+  @Prop({ default: true })
+  isExist: boolean;
 }
 
 export const CitySchema = SchemaFactory.createForClass(City);

@@ -18,7 +18,7 @@ export class Admin {
   @Prop({ default: false })
   isSuperAdmin: boolean;
 
-  @Prop({ type: [{ type: mongoose.Types.ObjectId, ref: 'city' }] })
+  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'city' }] })
   city: City[];
 
   @Prop()
