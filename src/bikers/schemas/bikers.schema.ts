@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
+import { Admin } from 'src/admin/schemas/admin.schema';
 import { City } from 'src/city/schemas/city.schema';
 
 export type BikerModel = Biker & Document;
@@ -9,14 +10,11 @@ export class Biker {
   @Prop()
   userName: string;
 
-  @Prop()
+  @Prop({ select: false })
   password: string;
 
   @Prop()
   phone: string;
-
-  @Prop()
-  gender: string;
 
   @Prop()
   imagePath: string;
@@ -36,7 +34,7 @@ export class Biker {
   @Prop()
   longitude: number;
 
-  @Prop({ type: mongoose.Types.ObjectId, ref: 'city' })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'city' })
   city: City;
 
   @Prop()
@@ -44,6 +42,12 @@ export class Biker {
 
   @Prop({ default: 'ACTIVE' })
   status: string;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'admin' })
+  createdBy: Admin;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'admin' })
+  updatedBy: Admin;
 
   @Prop()
   createdAt: Date;

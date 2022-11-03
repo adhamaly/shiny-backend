@@ -15,11 +15,6 @@ export class CreateBikerDTO {
   phone: string;
 
   @IsNotEmpty()
-  @IsString()
-  gender: string;
-
-  @IsNotEmpty()
-  @IsString()
   city: string;
 
   @IsNotEmpty()

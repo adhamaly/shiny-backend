@@ -12,10 +12,7 @@ export class UpdateBikerDTO {
 
   @IsNotEmpty()
   @IsString()
-  gender: string;
-
-  @IsNotEmpty()
-  city: City;
+  city: string;
 
   @IsNotEmpty()
   @IsString()

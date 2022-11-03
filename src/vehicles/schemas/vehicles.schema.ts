@@ -27,7 +27,7 @@ export class Vehicle {
   @Prop()
   imagePath: string;
 
-  @Prop({ type: mongoose.Types.ObjectId, ref: 'user' })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'user' })
   user: User;
 
   @Prop()
