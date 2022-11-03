@@ -30,6 +30,7 @@ export class AdminBikerController {
     @Body() createBikerDTO: CreateBikerDTO,
     @UploadedFile() image: Express.Multer.File,
   ) {
+    //TODO:CHECK IF SUPERADMIN OR SAME CITY ADMIN
     const createdBiker = await this.bikersService.createBiker(
       account.id,
       createBikerDTO,
