@@ -41,7 +41,7 @@ export class VehiclesRepository {
       await createdVehicle.save();
     }
 
-    return createdVehicle.toObject();
+    return createdVehicle;
   }
 
   async findAll(userId: string) {
@@ -56,7 +56,7 @@ export class VehiclesRepository {
         ar: 'لاتوجد هذه السيارة',
         en: 'Vehicle Not Found',
       });
-    return vehicle.toObject();
+    return vehicle;
   }
 
   async delete(id: string) {
@@ -92,7 +92,7 @@ export class VehiclesRepository {
       await vehicle.save();
     }
 
-    return vehicle.toObject();
+    return vehicle;
   }
 
   async findById(id: string) {

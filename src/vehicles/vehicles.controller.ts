@@ -33,17 +33,13 @@ export class VehiclesController {
     @Body() createVehicleDTO: CreateVehicleDTO,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    const result = await this.vehiclesService.createVehicle(
-      account.id,
-      createVehicleDTO,
-      image,
-    );
-
     return {
       success: true,
-      data: {
-        ...result,
-      },
+      data: await this.vehiclesService.createVehicle(
+        account.id,
+        createVehicleDTO,
+        image,
+      ),
     };
   }
   @Get('')
@@ -81,11 +77,9 @@ export class VehiclesController {
   @Get(':vehicleId')
   @UseGuards(UserAuthGuard, IsVehicleOwnerOrAdmin)
   async getByIdController(@Param('vehicleId') vehicleId: string) {
-    const vehicle = await this.vehiclesService.getByIdOr404(vehicleId);
-
     return {
       success: true,
-      data: { ...vehicle },
+      data: await this.vehiclesService.getByIdOr404(vehicleId),
     };
   }
 
@@ -107,17 +101,13 @@ export class VehiclesController {
     @Body() createVehicleDTO: CreateVehicleDTO,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    const vehicle = await this.vehiclesService.update(
-      vehicleId,
-      createVehicleDTO,
-      image,
-    );
-
     return {
       success: true,
-      data: {
-        ...vehicle,
-      },
+      data: await this.vehiclesService.update(
+        vehicleId,
+        createVehicleDTO,
+        image,
+      ),
     };
   }
 }
