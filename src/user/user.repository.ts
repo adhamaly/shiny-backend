@@ -35,7 +35,7 @@ export class UserRepository {
       phone: userRegsiterDTO.phone,
     });
 
-    return createdUser.toObject();
+    return createdUser;
   }
 
   async update(
@@ -86,7 +86,7 @@ export class UserRepository {
       await userProfile.save();
     }
 
-    return userProfile.toObject();
+    return userProfile;
   }
 
   async delete(userId: string) {
@@ -112,7 +112,7 @@ export class UserRepository {
         en: 'User Not Found',
       });
 
-    return userDocument.toObject();
+    return userDocument;
   }
   async findUserById(id: string) {
     const userDocument = await this.userModel
@@ -180,6 +180,6 @@ export class UserRepository {
         en: 'phone is not exist',
       });
 
-    return userDocument.toObject();
+    return userDocument;
   }
 }

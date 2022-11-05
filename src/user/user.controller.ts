@@ -44,17 +44,13 @@ export class UserController {
     @Body() userUpdateProfileDTO: UserUpdateProfileDTO,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    const userProfile = await this.userService.update(
-      account.id,
-      userUpdateProfileDTO,
-      image,
-    );
-
     return {
       success: true,
-      data: {
-        ...userProfile,
-      },
+      data: await this.userService.update(
+        account.id,
+        userUpdateProfileDTO,
+        image,
+      ),
     };
   }
 
@@ -70,11 +66,9 @@ export class UserController {
   @Get(':userId')
   @UseGuards(UserAuthGuard, ProfileOwnerOrAuthClientGuard)
   async getProfileController(@Param('userId') userId: string) {
-    const userProfile = await this.userService.getUserByIdOr404(userId);
-
     return {
       success: true,
-      data: { ...userProfile },
+      data: await this.userService.getUserByIdOr404(userId),
     };
   }
 }

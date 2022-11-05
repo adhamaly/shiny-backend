@@ -27,7 +27,7 @@ export class AuthService {
     const refreshToken = this.generateRefreshToken(userDocument._id, 'user');
 
     return {
-      ...userDocument,
+      ...userDocument.toObject(),
       access_token: accessToken,
       refresh_token: refreshToken,
     };
@@ -43,7 +43,7 @@ export class AuthService {
     const refreshToken = this.generateRefreshToken(userDocument._id, 'user');
 
     return {
-      ...userDocument,
+      ...userDocument.toObject(),
       access_token: accessToken,
       refresh_token: refreshToken,
     };
