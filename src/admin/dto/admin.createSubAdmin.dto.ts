@@ -1,3 +1,4 @@
+import { City } from '../../city/schemas/city.schema';
 import {
   IsArray,
   IsNotEmpty,
@@ -22,5 +23,5 @@ export class CreateSubAdminDTO {
 
   @IsNotEmpty()
   @IsArray()
-  city: string[];
+  city: City[];
 }

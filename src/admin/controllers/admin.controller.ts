@@ -13,7 +13,7 @@ export class AdminController {
   async createSubAdminController(@Body() createSubAdminDTO: CreateSubAdminDTO) {
     return {
       success: true,
-      data: { ...(await this.adminService.createSubAdmin(createSubAdminDTO)) },
+      data: await this.adminService.createSubAdmin(createSubAdminDTO),
     };
   }
 }

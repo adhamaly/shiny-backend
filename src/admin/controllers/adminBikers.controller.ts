@@ -17,10 +17,14 @@ import { Account } from 'src/common/decorators/user.decorator';
 import { UpdateBikerDTO } from '../../bikers/dto/updateBiker.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateBikerDTO } from '../../bikers/dto/createBiker.dto';
+import { AdminService } from '../admin.service';
 
 @Controller('admins/bikers')
 export class AdminBikerController {
-  constructor(private bikersService: BikersService) {}
+  constructor(
+    private bikersService: BikersService,
+    private adminService: AdminService,
+  ) {}
 
   @Post('')
   @UseGuards(UserAuthGuard, IsAdminGuard)
@@ -30,7 +34,11 @@ export class AdminBikerController {
     @Body() createBikerDTO: CreateBikerDTO,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    //TODO:CHECK IF SUPERADMIN OR SAME CITY ADMIN
+    await this.adminService.CityPermissionForBikerCreation(
+      account.id,
+      createBikerDTO.city,
+    );
+
     const createdBiker = await this.bikersService.createBiker(
       account.id,
       createBikerDTO,
@@ -62,10 +70,21 @@ export class AdminBikerController {
 
   @Delete(':bikerId')
   @UseGuards(UserAuthGuard, IsAdminGuard)
-  async deleteBikerController(@Param('bikerId') bikerId: string) {
+  async deleteBikerController(
+    @Param('bikerId') bikerId: string,
+    @Account() account: any,
+  ) {
+    const biker = await this.bikersService.getByIdOr404(bikerId);
+
+    await this.adminService.CityPermissionForBikerCreation(
+      account.id,
+      biker.city,
+    );
+
+    await this.bikersService.deleteBiker(bikerId);
+
     return {
       success: true,
-      data: await this.bikersService.deleteBiker(bikerId),
     };
   }
 
