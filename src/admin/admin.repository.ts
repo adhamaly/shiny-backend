@@ -39,7 +39,9 @@ export class AdminRepository {
       password: hashedPassword,
     });
 
-    return { ...createdAdmin.toObject(), password: undefined };
+    createdAdmin.password = undefined;
+
+    return createdAdmin;
   }
 
   async findAdminByUserNameOr404(userName: string) {
@@ -47,6 +49,7 @@ export class AdminRepository {
       .findOne({
         userName: userName,
       })
+      .select('+password')
       .exec();
 
     if (!admin)
@@ -55,7 +58,7 @@ export class AdminRepository {
         en: 'User not found',
       });
 
-    return admin.toObject();
+    return admin;
   }
 
   async userNameIsAlreadyExits(userName: string) {
@@ -102,7 +105,7 @@ export class AdminRepository {
         ar: 'لا يوجد هذا المشرف',
         en: 'Admin Account Not Found',
       });
-    return admin.toObject();
+    return admin;
   }
 
   async phoneIsAlreadyExist(phone: string) {

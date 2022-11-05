@@ -65,7 +65,8 @@ export class BikersRepository {
     createdBiker.imagePath = filePath;
     await createdBiker.save();
 
-    return { ...createdBiker.toObject(), password: undefined };
+    createdBiker.password = undefined;
+    return createdBiker;
   }
 
   async findAll() {
@@ -89,7 +90,7 @@ export class BikersRepository {
         en: 'Biker not found',
       });
 
-    return biker.toObject();
+    return biker;
   }
 
   async delete(id: string) {
@@ -152,7 +153,7 @@ export class BikersRepository {
       await updatedBiker.save();
     }
 
-    return updatedBiker.toObject();
+    return updatedBiker;
   }
 
   async findById(id: string) {

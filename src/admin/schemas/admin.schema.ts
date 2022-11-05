@@ -12,7 +12,7 @@ export class Admin {
   @Prop()
   phone: string;
 
-  @Prop()
+  @Prop({ select: false })
   password: string;
 
   @Prop({ default: false })

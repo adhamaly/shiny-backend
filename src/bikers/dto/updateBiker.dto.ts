@@ -11,8 +11,7 @@ export class UpdateBikerDTO {
   phone: string;
 
   @IsNotEmpty()
-  @IsString()
-  city: string;
+  city: City;
 
   @IsNotEmpty()
   @IsString()

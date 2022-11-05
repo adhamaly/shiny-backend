@@ -84,9 +84,9 @@ export class AuthService {
       admin.isSuperAdmin ? 'superAdmin' : 'subAdmin',
     );
 
+    admin.password = undefined;
     return {
-      ...admin,
-      password: undefined,
+      ...admin.toObject(),
       access_token: accessToken,
       refresh_token: refreshToken,
     };
