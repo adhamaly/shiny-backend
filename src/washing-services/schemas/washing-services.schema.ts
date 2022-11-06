@@ -8,6 +8,9 @@ export class WashingService {
   name: string;
 
   @Prop()
+  description: string;
+
+  @Prop()
   duration: number;
 
   @Prop()
@@ -21,9 +24,6 @@ export class WashingService {
 
   @Prop()
   iconPath: string;
-
-  @Prop()
-  iconLink: string;
 
   @Prop()
   createdAt: Date;
