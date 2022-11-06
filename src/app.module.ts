@@ -6,6 +6,7 @@ import { AdminModule } from './admin/admin.module';
 import { CityModule } from './city/city.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
 import { BikersModule } from './bikers/bikers.module';
+import { WashingServicesModule } from './washing-services/washing-services.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { BikersModule } from './bikers/bikers.module';
     CityModule,
     VehiclesModule,
     BikersModule,
+    WashingServicesModule,
   ],
   controllers: [],
   providers: [],
