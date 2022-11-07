@@ -33,9 +33,13 @@ export class WashingServicesRepository {
     });
   }
 
-  async findAll() {
+  async findAll(role: string) {
     return await this.washingServicesModel
-      .find()
+      .find({
+        ...(role === 'superAdmin' || role === 'subAdmin'
+          ? {}
+          : { isArchived: false }),
+      })
       .populate(this.populatedPaths)
       .exec();
   }

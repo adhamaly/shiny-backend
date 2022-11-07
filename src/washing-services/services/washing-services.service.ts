@@ -19,15 +19,8 @@ export class WashingServicesService {
       await this.washingServicesRepository.create(createWashingServiceDTO);
   }
 
-  /** TODO:- For User Active Services and when view orders return any status
-   *             Biker Return Only Active Services
-   *             Admin Return All
-   *
-   *
-   *
-   */
-  async getAll() {
-    return await this.washingServicesRepository.findAll();
+  async getAll(role: string) {
+    return await this.washingServicesRepository.findAll(role);
   }
 
   /** TODO:- For User Active Service and when view orders return any status

@@ -11,6 +11,7 @@ import { CreateWashingServiceDTO } from '../dtos';
 import { WashingServicesService } from '../services/washing-services.service';
 import { UserAuthGuard } from '../../auth/guards/userAuthentication.guard';
 import { IsAdminGuard } from '../../admin/guard/isAdmin.guard';
+import { Account } from 'src/common/decorators/user.decorator';
 
 @Controller('washing-services')
 export class WashingServicesController {
@@ -32,10 +33,10 @@ export class WashingServicesController {
 
   @Get('')
   @UseGuards(UserAuthGuard)
-  async getAllWashingServicesController() {
+  async getAllWashingServicesController(@Account() account: any) {
     return {
       success: true,
-      data: await this.washingServicesService.getAll(),
+      data: await this.washingServicesService.getAll(account.role),
     };
   }
 
