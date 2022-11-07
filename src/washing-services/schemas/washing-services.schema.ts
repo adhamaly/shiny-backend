@@ -1,4 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { ServiceIcon } from '../../services-icons/schemas/services-icons.schema';
+import mongoose from 'mongoose';
 
 export type WashingServicesModel = WashingService & Document;
 
@@ -22,8 +24,11 @@ export class WashingService {
   @Prop({ default: 0 })
   pointsToPay: number;
 
-  @Prop()
-  iconPath: string;
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: ServiceIcon.name })
+  icon: ServiceIcon;
+
+  @Prop({ default: false })
+  isArchived: boolean;
 
   @Prop()
   createdAt: Date;

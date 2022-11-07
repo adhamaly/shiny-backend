@@ -82,4 +82,38 @@ export class FirebaseService {
   async deleteUser(uid: string) {
     await admin.auth().deleteUser(uid);
   }
+
+  async uploadIcon(fileName: string, prefix = 'uploadedIcon') {
+    const fileId = uuidv4();
+    const metadata = {
+      // used to create a download token
+      metadata: { firebaseStorageDownloadTokens: fileId },
+      contentType: 'image/jpeg',
+      cacheControl: 'public, max-age=31536000',
+    };
+    const filePath = `${prefix}-${fileId}`;
+
+    let data: any;
+    try {
+      data = await this.storage.upload(`icons/${fileName}`, {
+        // Support for HTTP requests made with `Accept-Encoding: gzip`
+        gzip: true,
+        metadata: metadata,
+        destination: filePath,
+      });
+    } catch {
+      throw new MethodNotAllowedResponse({
+        ar: 'خطأ داخلى فى رفع الصور، برجاء إعادة المحاولة',
+        en: 'Error uploading images to the cloud, please try again.',
+      });
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    unlink(`${process.cwd()}/icons/${fileName}`, () => {});
+
+    return {
+      fileLink: this.getDownloadLink(data[0], fileId),
+      filePath: filePath,
+    };
+  }
 }

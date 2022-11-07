@@ -1,4 +1,5 @@
 import { IsNotEmpty, IsString } from 'class-validator';
+import { ServiceIcon } from '../../services-icons/schemas/services-icons.schema';
 
 export class CreateWashingServiceDTO {
   @IsNotEmpty()
@@ -23,6 +24,5 @@ export class CreateWashingServiceDTO {
   pointsToPay: number;
 
   @IsNotEmpty()
-  @IsString()
-  icon: string;
+  icon: ServiceIcon;
 }

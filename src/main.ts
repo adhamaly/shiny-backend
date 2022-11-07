@@ -4,6 +4,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { CitiesService } from './city/city.service';
 import { AdminRepository } from './admin/admin.repository';
+import { ServicesIconsService } from './services-icons/services-icons.service';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { bufferLogs: true });
@@ -14,7 +15,10 @@ async function bootstrap() {
   await app.listen(process.env.PORT || 3000);
   const adminRepository = app.get(AdminRepository);
   const cityService = app.get(CitiesService);
+  const servicesIconsService = app.get(ServicesIconsService);
+
   await cityService.injectCities();
   await adminRepository.injectSuperAdmin();
+  await servicesIconsService.injectIcons();
 }
 bootstrap();

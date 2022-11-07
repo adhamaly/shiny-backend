@@ -7,6 +7,7 @@ import { CityModule } from './city/city.module';
 import { VehiclesModule } from './vehicles/vehicles.module';
 import { BikersModule } from './bikers/bikers.module';
 import { WashingServicesModule } from './washing-services/washing-services.module';
+import { ServicesIconsModule } from './services-icons/services-icons.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { WashingServicesModule } from './washing-services/washing-services.modul
     VehiclesModule,
     BikersModule,
     WashingServicesModule,
+    ServicesIconsModule,
   ],
   controllers: [],
   providers: [],
