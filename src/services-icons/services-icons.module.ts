@@ -17,5 +17,6 @@ import { ServicesIconsService } from './services-icons.service';
   ],
   providers: [ServicesIconsService],
   controllers: [ServicesIconsController],
+  exports: [ServicesIconsService],
 })
 export class ServicesIconsModule {}

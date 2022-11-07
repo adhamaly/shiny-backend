@@ -1,12 +1,23 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Put,
+  UseGuards,
+} from '@nestjs/common';
 import { CreateWashingServiceDTO } from '../dtos';
 import { WashingServicesService } from '../services/washing-services.service';
+import { UserAuthGuard } from '../../auth/guards/userAuthentication.guard';
+import { IsAdminGuard } from '../../admin/guard/isAdmin.guard';
 
 @Controller('washing-services')
 export class WashingServicesController {
   constructor(private washingServicesService: WashingServicesService) {}
 
   @Post('')
+  @UseGuards(UserAuthGuard, IsAdminGuard)
   async createWashingServiceController(
     @Body() createWashingServiceDTO: CreateWashingServiceDTO,
   ) {
@@ -20,6 +31,7 @@ export class WashingServicesController {
   }
 
   @Get('')
+  @UseGuards(UserAuthGuard)
   async getAllWashingServicesController() {
     return {
       success: true,
@@ -28,6 +40,7 @@ export class WashingServicesController {
   }
 
   @Get(':washingServiceId')
+  @UseGuards(UserAuthGuard)
   async getByIdController(@Param('washingServiceId') washingServiceId: string) {
     return {
       success: true,
@@ -36,6 +49,7 @@ export class WashingServicesController {
   }
 
   @Put(':washingServiceId')
+  @UseGuards(UserAuthGuard, IsAdminGuard)
   async updateController(
     @Param('washingServiceId') washingServiceId: string,
     @Body() createWashingServiceDTO: CreateWashingServiceDTO,
@@ -49,6 +63,7 @@ export class WashingServicesController {
     };
   }
   @Put(':washingServiceId/activate')
+  @UseGuards(UserAuthGuard, IsAdminGuard)
   async activateWashingServiceController(
     @Param('washingServiceId') washingServiceId: string,
   ) {
@@ -59,6 +74,7 @@ export class WashingServicesController {
     };
   }
   @Put(':washingServiceId/archive')
+  @UseGuards(UserAuthGuard, IsAdminGuard)
   async archiveWashingServiceController(
     @Param('washingServiceId') washingServiceId: string,
   ) {

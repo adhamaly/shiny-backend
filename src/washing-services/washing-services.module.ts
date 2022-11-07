@@ -3,6 +3,7 @@ import { WashingServicesService } from './services/washing-services.service';
 import { WashingServicesController } from './controllers/washing-services.controller';
 import { WashingServicesRepository } from './repositories/washing-services.repository';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ServicesIconsModule } from '../services-icons/services-icons.module';
 import {
   WashingService,
   WashingServicesSchema,
@@ -13,6 +14,7 @@ import {
     MongooseModule.forFeature([
       { name: WashingService.name, schema: WashingServicesSchema },
     ]),
+    ServicesIconsModule,
   ],
   providers: [WashingServicesService, WashingServicesRepository],
   controllers: [WashingServicesController],

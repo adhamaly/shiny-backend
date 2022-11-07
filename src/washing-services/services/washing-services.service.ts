@@ -1,13 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { CreateWashingServiceDTO } from '../dtos';
 import { WashingServicesRepository } from '../repositories/washing-services.repository';
+import { ServicesIconsService } from '../../services-icons/services-icons.service';
 
 @Injectable()
 export class WashingServicesService {
-  constructor(private washingServicesRepository: WashingServicesRepository) {}
+  constructor(
+    private washingServicesRepository: WashingServicesRepository,
+    private servicesIconsService: ServicesIconsService,
+  ) {}
 
   async createWashingService(createWashingServiceDTO: CreateWashingServiceDTO) {
-    await this.washingServicesRepository.create(createWashingServiceDTO);
+    if (
+      await this.servicesIconsService.isExistOr404(
+        String(createWashingServiceDTO.icon),
+      )
+    )
+      await this.washingServicesRepository.create(createWashingServiceDTO);
   }
 
   /** TODO:- For User Active Services and when view orders return any status
@@ -32,7 +41,12 @@ export class WashingServicesService {
     return await this.washingServicesRepository.findOneByIdOr404(id);
   }
   async update(id: string, createWashingServiceDTO: CreateWashingServiceDTO) {
-    await this.washingServicesRepository.update(id, createWashingServiceDTO);
+    if (
+      await this.servicesIconsService.isExistOr404(
+        String(createWashingServiceDTO.icon),
+      )
+    )
+      await this.washingServicesRepository.update(id, createWashingServiceDTO);
   }
 
   async archive(id: string) {

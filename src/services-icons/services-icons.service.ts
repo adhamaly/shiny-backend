@@ -7,6 +7,7 @@ import {
   ServicesIconsModel,
 } from './schemas/services-icons.schema';
 import { Model } from 'mongoose';
+import { NotFoundResponse } from '../common/errors/NotFoundResponse';
 
 @Injectable()
 export class ServicesIconsService {
@@ -46,5 +47,27 @@ export class ServicesIconsService {
 
   async getCount() {
     return await this.servicesIconsModel.count().exec();
+  }
+
+  async getByIdOr404(id: string) {
+    const icon = await this.servicesIconsModel.findById(id).exec();
+    if (!icon)
+      throw new NotFoundResponse({
+        ar: 'لاتوجد هذه الصورة',
+        en: 'Icon not found',
+      });
+
+    return icon;
+  }
+
+  async isExistOr404(id: string) {
+    const icon = await this.servicesIconsModel.findById(id).exec();
+    if (!icon)
+      throw new NotFoundResponse({
+        ar: 'لاتوجد هذه الصورة',
+        en: 'Icon not found',
+      });
+
+    return true;
   }
 }
