@@ -20,6 +20,7 @@ import {
 import { UserService } from './user.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { UserUpdateProfileDTO } from './dto';
+import { UpdatePhoneNumberDTO } from './dto/user.updatePhoneNumber.dto';
 
 @Controller('users')
 export class UserController {
@@ -69,6 +70,21 @@ export class UserController {
     return {
       success: true,
       data: await this.userService.getUserByIdOr404(account.id),
+    };
+  }
+
+  @Put('phone-number')
+  @UseGuards(UserAuthGuard, ProfileOwnerGuard)
+  async updatePhoneNumberController(
+    @Account() account: any,
+    @Body() updatePhoneNumberDTO: UpdatePhoneNumberDTO,
+  ) {
+    return {
+      success: true,
+      data: await this.userService.updatePhoneNumber(
+        account.id,
+        updatePhoneNumberDTO,
+      ),
     };
   }
 }

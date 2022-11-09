@@ -10,9 +10,6 @@ export class UserUpdateProfileDTO {
   email: string;
 
   @IsNotEmpty()
-  phone: string;
-
-  @IsNotEmpty()
   @IsString()
   gender: string;
 }

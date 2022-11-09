@@ -46,17 +46,6 @@ export class UserRepository {
     const userProfile = await this.findUserById(userId);
 
     if (
-      await this.checkPhoneExistanceForAnotherUser(
-        userId,
-        userUpdateProfileDTO.phone,
-      )
-    )
-      throw new MethodNotAllowedResponse({
-        ar: 'هذا الرقم مسجل من قبل',
-        en: 'Phone is already exist',
-      });
-
-    if (
       await this.checkEmailExistanceForAnotherUser(
         userId,
         userUpdateProfileDTO.email,
@@ -69,7 +58,6 @@ export class UserRepository {
 
     userProfile.userName = userUpdateProfileDTO.userName;
     userProfile.email = userUpdateProfileDTO.email;
-    userProfile.phone = userUpdateProfileDTO.phone;
     userProfile.gender = userUpdateProfileDTO.gender;
     await userProfile.save();
 

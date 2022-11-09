@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { UserUpdateProfileDTO } from './dto/user.updateProfile.dto';
 import { UserRepository } from './user.repository';
 import { User } from './schemas/user.schema';
+import { UpdatePhoneNumberDTO } from './dto/user.updatePhoneNumber.dto';
 
 @Injectable()
 export class UserService {
@@ -28,6 +29,18 @@ export class UserService {
     );
 
     return updatedProfile;
+  }
+
+  async updatePhoneNumber(
+    id: string,
+    updatePhoneNumberDTO: UpdatePhoneNumberDTO,
+  ) {
+    const userDocument = await this.userRepository.findUserByIdOr404(id);
+
+    userDocument.phone = updatePhoneNumberDTO.phone;
+    await userDocument.save();
+
+    return userDocument;
   }
 
   async delete(userId: string) {
