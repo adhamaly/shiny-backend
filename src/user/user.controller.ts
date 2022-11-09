@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Put,
   UploadedFile,
   UseGuards,
@@ -73,7 +74,7 @@ export class UserController {
     };
   }
 
-  @Put('phone-number')
+  @Patch('phone-number')
   @UseGuards(UserAuthGuard, ProfileOwnerGuard)
   async updatePhoneNumberController(
     @Account() account: any,
