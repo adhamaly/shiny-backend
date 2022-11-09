@@ -1,4 +1,4 @@
-import { IsArray, IsNotEmpty, IsString } from 'class-validator';
+import { IsArray, IsMongoId, IsNotEmpty, IsString } from 'class-validator';
 import { ServiceIcon } from '../../services-icons/schemas/services-icons.schema';
 export class CreatePlanDTO {
   @IsNotEmpty()
