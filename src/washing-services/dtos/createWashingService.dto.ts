@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString } from 'class-validator';
+import { IsMongoId, IsNotEmpty, IsString } from 'class-validator';
 import { ServiceIcon } from '../../services-icons/schemas/services-icons.schema';
 
 export class CreateWashingServiceDTO {
@@ -24,5 +24,6 @@ export class CreateWashingServiceDTO {
   pointsToPay: number;
 
   @IsNotEmpty()
+  @IsMongoId()
   icon: ServiceIcon;
 }

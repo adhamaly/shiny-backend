@@ -1,4 +1,10 @@
-import { IsNotEmpty, IsPhoneNumber, IsString, Length } from 'class-validator';
+import {
+  IsMongoId,
+  IsNotEmpty,
+  IsPhoneNumber,
+  IsString,
+  Length,
+} from 'class-validator';
 import { City } from '../../city/schemas/city.schema';
 
 export class CreateBikerDTO {
@@ -16,6 +22,7 @@ export class CreateBikerDTO {
   phone: string;
 
   @IsNotEmpty()
+  @IsMongoId()
   city: City;
 
   @IsNotEmpty()
