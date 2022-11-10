@@ -4,10 +4,19 @@ import { UserUpdateProfileDTO } from './dto/user.updateProfile.dto';
 import { UserRepository } from './user.repository';
 import { User } from './schemas/user.schema';
 import { UpdatePhoneNumberDTO } from './dto/user.updatePhoneNumber.dto';
+import { UpdateUserLocation } from './dto';
+import { UserQueriesHelper } from './userQueriesHelper.service';
+import { City } from 'src/city/schemas/city.schema';
+import { Types } from 'mongoose';
+import { NearestCityCalculator } from '../city/nearestCityCalculator.service';
 
 @Injectable()
 export class UserService {
-  constructor(private userRepository: UserRepository) {}
+  constructor(
+    private userRepository: UserRepository,
+    private userQueriesHelper: UserQueriesHelper,
+    private nearestCityCalculator: NearestCityCalculator,
+  ) {}
 
   async create(userRegsiterDTO: UserRegisterDTO) {
     // Create User
@@ -41,6 +50,22 @@ export class UserService {
     await userDocument.save();
 
     return userDocument;
+  }
+
+  async updateUserLocation(id: string, updateUserLocation: UpdateUserLocation) {
+    // TODO: Get the nearest city:- Calculate Nearest city for this lat and long
+
+    const nearestCity = await this.nearestCityCalculator.findNearestCity(
+      Number(updateUserLocation.latitude),
+      Number(updateUserLocation.longitude),
+    );
+
+    // Update User Location
+    await this.userQueriesHelper.updateUserLocation(
+      id,
+      updateUserLocation,
+      nearestCity.id,
+    );
   }
 
   async delete(userId: string) {
