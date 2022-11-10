@@ -1,8 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { ServiceIcon } from '../../services-icons/schemas/services-icons.schema';
+import {
+  ServiceIcon,
+  servicesIconModelName,
+} from '../../services-icons/schemas/services-icons.schema';
 import mongoose from 'mongoose';
 
 export type WashingServicesModel = WashingService & Document;
+export const WashingServicesModelName = 'washing-service';
 
 @Schema({ timestamps: true })
 export class WashingService {
@@ -24,7 +28,7 @@ export class WashingService {
   @Prop({ default: 0 })
   pointsToPay: number;
 
-  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: ServiceIcon.name })
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: servicesIconModelName })
   icon: ServiceIcon;
 
   @Prop({ default: false })

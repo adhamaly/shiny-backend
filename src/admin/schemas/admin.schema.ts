@@ -1,8 +1,9 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
-import { City } from '../../city/schemas/city.schema';
+import { City, cityModelName } from '../../city/schemas/city.schema';
 
 export type AdminModel = Admin & Document;
+export const adminModelName = 'admin';
 
 @Schema({ timestamps: true })
 export class Admin {
@@ -18,7 +19,9 @@ export class Admin {
   @Prop({ default: false })
   isSuperAdmin: boolean;
 
-  @Prop({ type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'city' }] })
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: cityModelName }],
+  })
   city: City[];
 
   @Prop()

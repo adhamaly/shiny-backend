@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { FirebaseService } from '../common/services/firebase/firebase.service';
 import { InjectModel } from '@nestjs/mongoose';
-import { User, UserModel } from './schemas/user.schema';
+import { User, UserModel, userModelName } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { UserRegisterDTO, UserUpdateProfileDTO } from './dto';
 import { MethodNotAllowedResponse, NotFoundResponse } from 'src/common/errors';
@@ -9,7 +9,7 @@ import { MethodNotAllowedResponse, NotFoundResponse } from 'src/common/errors';
 @Injectable()
 export class UserRepository {
   constructor(
-    @InjectModel(User.name) private readonly userModel: Model<UserModel>,
+    @InjectModel(userModelName) private readonly userModel: Model<UserModel>,
     private firebaseService: FirebaseService,
   ) {}
 

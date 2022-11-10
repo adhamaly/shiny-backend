@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreatePlanDTO } from '../dtos';
-import { Plan, PlansModel } from '../schemas/plans.schema';
+import { Plan, PlansModel, plansModelName } from '../schemas/plans.schema';
 import { NotFoundResponse } from '../../common/errors/NotFoundResponse';
 
 @Injectable()
@@ -10,7 +10,7 @@ export class PlansRepository {
   // Attributes
 
   constructor(
-    @InjectModel(Plan.name) private readonly plansModel: Model<PlansModel>,
+    @InjectModel(plansModelName) private readonly plansModel: Model<PlansModel>,
   ) {}
 
   // Functions

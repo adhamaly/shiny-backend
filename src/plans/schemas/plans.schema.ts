@@ -1,9 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { WashingService } from '../../washing-services/schemas/washing-services.schema';
+import {
+  WashingService,
+  WashingServicesModelName,
+} from '../../washing-services/schemas/washing-services.schema';
 import mongoose from 'mongoose';
 
 export type PlansModel = Plan & Document;
-
+export const plansModelName = 'plan';
 @Schema({ timestamps: true })
 export class Plan {
   @Prop()
@@ -21,7 +24,9 @@ export class Plan {
   @Prop()
   durationUnit: string;
 
-  @Prop([{ type: mongoose.Schema.Types.ObjectId, ref: WashingService.name }])
+  @Prop([
+    { type: mongoose.Schema.Types.ObjectId, ref: WashingServicesModelName },
+  ])
   washingServices: WashingService[];
 
   @Prop({ default: false })

@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import { InjectModel } from '@nestjs/mongoose';
 import {
   ServiceIcon,
+  servicesIconModelName,
   ServicesIconsModel,
 } from './schemas/services-icons.schema';
 import { Model } from 'mongoose';
@@ -12,7 +13,7 @@ import { NotFoundResponse } from '../common/errors/NotFoundResponse';
 @Injectable()
 export class ServicesIconsService {
   constructor(
-    @InjectModel(ServiceIcon.name)
+    @InjectModel(servicesIconModelName)
     private readonly servicesIconsModel: Model<ServicesIconsModel>,
     private firebaseService: FirebaseService,
   ) {}

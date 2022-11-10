@@ -2,7 +2,7 @@ import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
 
 export type UserModel = User & Document;
-
+export const userModelName = 'user';
 @Schema({ timestamps: true })
 export class User {
   @Prop()

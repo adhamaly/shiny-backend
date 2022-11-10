@@ -5,14 +5,14 @@ import { WashingServicesRepository } from './repositories/washing-services.repos
 import { MongooseModule } from '@nestjs/mongoose';
 import { ServicesIconsModule } from '../services-icons/services-icons.module';
 import {
-  WashingService,
+  WashingServicesModelName,
   WashingServicesSchema,
 } from './schemas/washing-services.schema';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
-      { name: WashingService.name, schema: WashingServicesSchema },
+      { name: WashingServicesModelName, schema: WashingServicesSchema },
     ]),
     ServicesIconsModule,
   ],

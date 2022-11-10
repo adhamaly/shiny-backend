@@ -2,8 +2,9 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreateWashingServiceDTO } from '../dtos/createWashingService.dto';
-import { ServiceIcon } from '../../services-icons/schemas/services-icons.schema';
 import { NotFoundResponse } from '../../common/errors/NotFoundResponse';
+import { servicesIconModelName } from '../../services-icons/schemas/services-icons.schema';
+import { WashingServicesModelName } from '../schemas/washing-services.schema';
 import {
   WashingService,
   WashingServicesModel,
@@ -12,11 +13,11 @@ import {
 @Injectable()
 export class WashingServicesRepository {
   populatedPaths = [
-    { path: 'icon', select: 'iconPath iconLink', model: ServiceIcon.name },
+    { path: 'icon', select: 'iconPath iconLink', model: servicesIconModelName },
   ];
 
   constructor(
-    @InjectModel(WashingService.name)
+    @InjectModel(WashingServicesModelName)
     private readonly washingServicesModel: Model<WashingServicesModel>,
   ) {}
 

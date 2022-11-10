@@ -2,24 +2,24 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { CreateBikerDTO, UpdateBikerDTO } from './dto';
-import { Biker, BikerModel } from './schemas/bikers.schema';
+import { Biker, BikerModel, bikerModelName } from './schemas/bikers.schema';
 import { MethodNotAllowedResponse } from '../common/errors/MethodNotAllowedResponse';
 import { BikerCrudValidator } from './bikersCrud.validator';
 import * as bcrypt from 'bcrypt';
 import { FirebaseService } from '../common/services/firebase/firebase.service';
 import { NotFoundResponse } from '../common/errors/NotFoundResponse';
-import { City } from 'src/city/schemas/city.schema';
-import { Admin } from 'src/admin/schemas/admin.schema';
+import { adminModelName } from '../admin/schemas/admin.schema';
+import { cityModelName } from '../city/schemas/city.schema';
 
 @Injectable()
 export class BikersRepository {
   populatedPaths = [
-    { path: 'city', select: 'name', model: City.name },
-    { path: 'createdBy', select: 'userName', model: Admin.name },
-    { path: 'createdBy', select: 'userName', model: Admin.name },
+    { path: 'city', select: 'name', model: cityModelName },
+    { path: 'createdBy', select: 'userName', model: adminModelName },
+    { path: 'createdBy', select: 'userName', model: adminModelName },
   ];
   constructor(
-    @InjectModel(Biker.name) private readonly bikerModel: Model<BikerModel>,
+    @InjectModel(bikerModelName) private readonly bikerModel: Model<BikerModel>,
     private bikerCrudValidator: BikerCrudValidator,
     private firebaseService: FirebaseService,
   ) {}
