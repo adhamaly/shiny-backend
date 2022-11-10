@@ -24,7 +24,7 @@ export class ServicesIconsService {
     if (countOfIconsUploaded) return;
 
     // Get Number of files in fileSystem
-    const staticIcons = fs.readdirSync(`/icons`);
+    const staticIcons = fs.readdirSync(`icons/`);
 
     let counter = staticIcons.length;
     // iterate and upload file
