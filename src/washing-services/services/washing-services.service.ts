@@ -2,21 +2,39 @@ import { Injectable } from '@nestjs/common';
 import { CreateWashingServiceDTO } from '../dtos';
 import { WashingServicesRepository } from '../repositories/washing-services.repository';
 import { ServicesIconsService } from '../../services-icons/services-icons.service';
+import { NotFoundResponse } from '../../common/errors/NotFoundResponse';
+import { CitiesService } from '../../city/city.service';
 
 @Injectable()
 export class WashingServicesService {
   constructor(
     private washingServicesRepository: WashingServicesRepository,
     private servicesIconsService: ServicesIconsService,
+    private citiesService: CitiesService,
   ) {}
 
   async createWashingService(createWashingServiceDTO: CreateWashingServiceDTO) {
     if (
-      await this.servicesIconsService.isExistOr404(
+      !(await this.servicesIconsService.isExistOr404(
         String(createWashingServiceDTO.icon),
-      )
+      ))
     )
-      await this.washingServicesRepository.create(createWashingServiceDTO);
+      throw new NotFoundResponse({
+        ar: 'لاتوجد هذه الايقونة',
+        en: 'Icon Not Found',
+      });
+
+    // Check SelectAll key for cities
+    let cities = [];
+    if (createWashingServiceDTO.selectAll) {
+      cities = await this.citiesService.getCities();
+    }
+    await this.washingServicesRepository.create(
+      createWashingServiceDTO,
+      createWashingServiceDTO.selectAll
+        ? cities
+        : createWashingServiceDTO.cities,
+    );
   }
 
   async getAll(role: string) {

@@ -5,6 +5,11 @@ import { CreateWashingServiceDTO } from '../dtos/createWashingService.dto';
 import { NotFoundResponse } from '../../common/errors/NotFoundResponse';
 import { servicesIconModelName } from '../../services-icons/schemas/services-icons.schema';
 import { WashingServicesModelName } from '../schemas/washing-services.schema';
+import { City } from '../../city/schemas/city.schema';
+import {
+  ServicesCitiesModelName,
+  ServicesCitiesModel,
+} from '../schemas/services-cities.schema';
 import {
   WashingService,
   WashingServicesModel,
@@ -19,11 +24,16 @@ export class WashingServicesRepository {
   constructor(
     @InjectModel(WashingServicesModelName)
     private readonly washingServicesModel: Model<WashingServicesModel>,
+    @InjectModel(ServicesCitiesModelName)
+    private readonly servicesCitiesModel: Model<ServicesCitiesModel>,
   ) {}
 
-  async create(createWashingServiceDTO: CreateWashingServiceDTO) {
-    // Create
-    await this.washingServicesModel.create({
+  async create(
+    createWashingServiceDTO: CreateWashingServiceDTO,
+    cities: City[],
+  ) {
+    // CreateService
+    const createdWashingService = await this.washingServicesModel.create({
       name: createWashingServiceDTO.name,
       description: createWashingServiceDTO.description,
       duration: createWashingServiceDTO.duration,
@@ -32,6 +42,14 @@ export class WashingServicesRepository {
       pointsToPay: createWashingServiceDTO.pointsToPay,
       icon: createWashingServiceDTO.icon,
     });
+
+    // //
+    // for (let i = 0; i < cities.length; i++) {
+    //   await this.servicesCitiesModel.create({
+    //     washingService: createdWashingService._id,
+    //     city: cities[i].id,
+    //   });
+    // }
   }
 
   async findAll(role: string) {

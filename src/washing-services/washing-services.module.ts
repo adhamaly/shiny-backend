@@ -4,6 +4,11 @@ import { WashingServicesController } from './controllers/washing-services.contro
 import { WashingServicesRepository } from './repositories/washing-services.repository';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ServicesIconsModule } from '../services-icons/services-icons.module';
+import { CityModule } from '../city/city.module';
+import {
+  ServicesCitiesModelName,
+  ServicesCitiesSchema,
+} from './schemas/services-cities.schema';
 import {
   WashingServicesModelName,
   WashingServicesSchema,
@@ -13,8 +18,10 @@ import {
   imports: [
     MongooseModule.forFeature([
       { name: WashingServicesModelName, schema: WashingServicesSchema },
+      { name: ServicesCitiesModelName, schema: ServicesCitiesSchema },
     ]),
     ServicesIconsModule,
+    CityModule,
   ],
   providers: [WashingServicesService, WashingServicesRepository],
   controllers: [WashingServicesController],

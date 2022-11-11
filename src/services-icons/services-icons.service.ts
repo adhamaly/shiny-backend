@@ -63,12 +63,7 @@ export class ServicesIconsService {
 
   async isExistOr404(id: string) {
     const icon = await this.servicesIconsModel.findById(id).exec();
-    if (!icon)
-      throw new NotFoundResponse({
-        ar: 'لاتوجد هذه الصورة',
-        en: 'Icon not found',
-      });
 
-    return true;
+    return icon ? true : false;
   }
 }
