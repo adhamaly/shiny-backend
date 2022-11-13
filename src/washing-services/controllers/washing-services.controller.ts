@@ -36,16 +36,22 @@ export class WashingServicesController {
   async getAllWashingServicesController(@Account() account: any) {
     return {
       success: true,
-      data: await this.washingServicesService.getAll(account.role),
+      data: await this.washingServicesService.getAll(account.id, account.role),
     };
   }
 
   @Get(':washingServiceId')
   @UseGuards(UserAuthGuard)
-  async getByIdController(@Param('washingServiceId') washingServiceId: string) {
+  async getByIdController(
+    @Param('washingServiceId') washingServiceId: string,
+    @Account() account: any,
+  ) {
     return {
       success: true,
-      data: await this.washingServicesService.getByIdOr404(washingServiceId),
+      data: await this.washingServicesService.getByIdOr404(
+        washingServiceId,
+        account.role,
+      ),
     };
   }
 
@@ -59,28 +65,6 @@ export class WashingServicesController {
       washingServiceId,
       createWashingServiceDTO,
     );
-    return {
-      success: true,
-    };
-  }
-  @Put(':washingServiceId/activate')
-  @UseGuards(UserAuthGuard, IsAdminGuard)
-  async activateWashingServiceController(
-    @Param('washingServiceId') washingServiceId: string,
-  ) {
-    await this.washingServicesService.activate(washingServiceId);
-
-    return {
-      success: true,
-    };
-  }
-  @Put(':washingServiceId/archive')
-  @UseGuards(UserAuthGuard, IsAdminGuard)
-  async archiveWashingServiceController(
-    @Param('washingServiceId') washingServiceId: string,
-  ) {
-    await this.washingServicesService.archive(washingServiceId);
-
     return {
       success: true,
     };

@@ -11,17 +11,17 @@ import {
   UseInterceptors,
 } from '@nestjs/common';
 import { Account } from 'src/common/decorators/user.decorator';
-import { VehiclesService } from '../vehicles/vehicles.service';
-import { UserAuthGuard } from '../auth/guards/userAuthentication.guard';
+import { VehiclesService } from '../../vehicles/vehicles.service';
+import { UserAuthGuard } from '../../auth/guards/userAuthentication.guard';
 import {
   UserAuthorizedGuard,
   ProfileOwnerOrAuthClientGuard,
   ProfileOwnerGuard,
-} from './guard';
-import { UserService } from './user.service';
+} from '../guard';
+import { UserService } from '../user.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UserUpdateProfileDTO } from './dto';
-import { UpdatePhoneNumberDTO } from './dto/user.updatePhoneNumber.dto';
+import { UserUpdateProfileDTO } from '../dto';
+import { UpdatePhoneNumberDTO } from '../dto/user.updatePhoneNumber.dto';
 
 @Controller('users')
 export class UserController {

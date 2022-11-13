@@ -38,7 +38,6 @@ export class CreateWashingServiceDTO {
   @IsBoolean()
   selectAll: boolean;
 
-  @IsNotEmpty()
   @IsArray()
   cities: City[];
 }

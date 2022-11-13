@@ -9,10 +9,23 @@ import { BikersModule } from './bikers/bikers.module';
 import { WashingServicesModule } from './washing-services/washing-services.module';
 import { ServicesIconsModule } from './services-icons/services-icons.module';
 import { PlansModule } from './plans/plans.module';
-
+import { RouterModule, Routes } from '@nestjs/core';
+const routes: Routes = [
+  {
+    path: '/users',
+    module: UserModule,
+    children: [
+      {
+        path: '/washing-services',
+        module: WashingServicesModule,
+      },
+    ],
+  },
+];
 @Module({
   imports: [
     MongooseModule.forRoot(process.env.DB),
+    RouterModule.register(routes),
     UserModule,
     AuthModule,
     AdminModule,

@@ -61,7 +61,7 @@ export class ServicesIconsService {
     return icon;
   }
 
-  async isExistOr404(id: string) {
+  async isExist(id: string) {
     const icon = await this.servicesIconsModel.findById(id).exec();
 
     return icon ? true : false;

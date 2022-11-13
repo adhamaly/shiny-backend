@@ -31,9 +31,6 @@ export class WashingService {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: servicesIconModelName })
   icon: ServiceIcon;
 
-  @Prop({ default: false })
-  isArchived: boolean;
-
   @Prop()
   createdAt: Date;
 
