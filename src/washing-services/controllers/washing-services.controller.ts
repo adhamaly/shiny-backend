@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -12,6 +13,8 @@ import { WashingServicesService } from '../services/washing-services.service';
 import { UserAuthGuard } from '../../auth/guards/userAuthentication.guard';
 import { IsAdminGuard } from '../../admin/guard/isAdmin.guard';
 import { Account } from 'src/common/decorators/user.decorator';
+import { City } from '../../city/schemas/city.schema';
+import { WashingService } from '../schemas/washing-services.schema';
 
 @Controller('washing-services')
 export class WashingServicesController {
@@ -51,6 +54,7 @@ export class WashingServicesController {
       data: await this.washingServicesService.getByIdOr404(
         washingServiceId,
         account.role,
+        account.id,
       ),
     };
   }
@@ -61,10 +65,77 @@ export class WashingServicesController {
     @Param('washingServiceId') washingServiceId: string,
     @Body() createWashingServiceDTO: CreateWashingServiceDTO,
   ) {
-    await this.washingServicesService.update(
-      washingServiceId,
-      createWashingServiceDTO,
+    return {
+      success: true,
+      data: await this.washingServicesService.update(
+        washingServiceId,
+        createWashingServiceDTO,
+      ),
+    };
+  }
+
+  @Post('/services-cities')
+  @UseGuards(UserAuthGuard, IsAdminGuard)
+  async addWashingServiceToNewCityController(
+    @Body('washingService') washingService: WashingService,
+    @Body('city') city: City,
+  ) {
+    // TODO:
+    await this.washingServicesService.addWashingServiceToNewCity(
+      washingService,
+      city,
     );
+
+    return {
+      success: true,
+    };
+  }
+  @Delete('/services-cities')
+  @UseGuards(UserAuthGuard, IsAdminGuard)
+  async deleteWashingServiceFromCityController(
+    @Body('washingService') washingService: WashingService,
+    @Body('city') city: City,
+  ) {
+    // TODO:
+    await this.washingServicesService.deleteWashingServiceFromCity(
+      washingService,
+      city,
+    );
+
+    return {
+      success: true,
+    };
+  }
+
+  @Put('/services-cities/archive')
+  @UseGuards(UserAuthGuard, IsAdminGuard)
+  async archiveWashingServiceFromCityController(
+    @Body('washingService') washingService: WashingService,
+    @Body('city') city: City,
+  ) {
+    // TODO:
+    await this.washingServicesService.archiveWashingServiceFromCity(
+      washingService,
+      city,
+    );
+
+    return {
+      success: true,
+    };
+  }
+
+  @Put('/services-cities/activate')
+  @UseGuards(UserAuthGuard, IsAdminGuard)
+  async activateWashingServiceFromCityController(
+    @Body('washingService') washingService: WashingService,
+    @Body('city') city: City,
+  ) {
+    // TODO:
+    await this.washingServicesService.activateWashingServiceFromCity(
+      washingService,
+      city,
+    );
+
     return {
       success: true,
     };

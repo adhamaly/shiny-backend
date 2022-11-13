@@ -15,6 +15,7 @@ import {
   WashingServicesModelName,
   WashingServicesSchema,
 } from './schemas/washing-services.schema';
+import { ServicesCitiesRepository } from './repositories/services-cities.repository';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import {
     WashingServicesService,
     WashingServicesRepository,
     WashingServiceHelpers,
+    ServicesCitiesRepository,
   ],
   controllers: [WashingServicesController],
 })

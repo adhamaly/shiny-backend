@@ -6,6 +6,7 @@ import {
   WashingServicesModel,
 } from '../schemas/washing-services.schema';
 import mongoose, { Document, Model, Mongoose, Types } from 'mongoose';
+import { City } from '../../city/schemas/city.schema';
 import {
   ServicesCitiesModelName,
   ServicesCitiesModel,
@@ -24,7 +25,7 @@ export class WashingServiceHelpers {
     private readonly servicesCitiesModel: Model<ServicesCitiesModel>,
   ) {}
 
-  async findAllWashingServicesQuery(role: string) {
+  async findAllWashingServicesQuery(role: string, city?: City) {
     const washingServices = await this.washingServicesModel
       .aggregate([
         {
@@ -39,6 +40,7 @@ export class WashingServiceHelpers {
                     ? {}
                     : {
                         isArchived: false,
+                        city: city,
                       }),
                 },
               },
@@ -74,7 +76,7 @@ export class WashingServiceHelpers {
     return washingServices;
   }
 
-  async findOneByIdQuery(id: string, role: string) {
+  async findOneByIdQuery(id: string, role: string, city?: City) {
     const washingService = await this.washingServicesModel
       .aggregate([
         {
@@ -92,6 +94,7 @@ export class WashingServiceHelpers {
                     ? {}
                     : {
                         isArchived: false,
+                        city: city,
                       }),
                 },
               },
@@ -124,6 +127,6 @@ export class WashingServiceHelpers {
       this.populatedPaths,
     );
 
-    return washingService;
+    return washingService[0];
   }
 }

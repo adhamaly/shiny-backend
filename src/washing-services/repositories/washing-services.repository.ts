@@ -9,10 +9,13 @@ import {
 } from '../schemas/washing-services.schema';
 import { City } from '../../city/schemas/city.schema';
 import { WashingServiceHelpers } from '../queries-helpers/washing-services.helper';
+import { NotFoundResponse } from '../../common/errors/NotFoundResponse';
 import {
   ServicesCitiesModelName,
   ServicesCitiesModel,
 } from '../schemas/services-cities.schema';
+import { title } from 'process';
+import { ServicesCitiesRepository } from './services-cities.repository';
 
 @Injectable()
 export class WashingServicesRepository {
@@ -40,57 +43,56 @@ export class WashingServicesRepository {
       icon: createWashingServiceDTO.icon,
     });
 
-    for (const element of createWashingServiceDTO.cities) {
-      await this.servicesCitiesModel.create({
-        washingService: createdWashingService,
-        city: element,
-      });
-    }
+    return createdWashingService;
   }
 
-  async createServiceForAllCities(
-    createWashingServiceDTO: CreateWashingServiceDTO,
-    cities: City[],
-  ) {
-    // CreateService
-    const createdWashingService = await this.washingServicesModel.create({
-      name: createWashingServiceDTO.name,
-      description: createWashingServiceDTO.description,
-      duration: createWashingServiceDTO.duration,
-      durationUnit: createWashingServiceDTO.durationUnit,
-      price: createWashingServiceDTO.price,
-      pointsToPay: createWashingServiceDTO.pointsToPay,
-      icon: createWashingServiceDTO.icon,
-    });
-
-    for (const element of cities) {
-      await this.servicesCitiesModel.create({
-        washingService: createdWashingService,
-        city: element,
-      });
-    }
-  }
-
-  async findAll(role: string) {
+  async findAll(role: string, city?: City) {
     const washingServices =
-      await this.washingServiceHelpers.findAllWashingServicesQuery(role);
+      await this.washingServiceHelpers.findAllWashingServicesQuery(role, city);
 
     return washingServices;
   }
 
-  ServicesChecker(servicesList: any) {
-    const filtered = servicesList.filter(
-      (washingService: any) => washingService.cities.length >= 1,
+  async findOneByIdOr404(id: string, role?: string, city?: City) {
+    const washingService = await this.washingServiceHelpers.findOneByIdQuery(
+      id,
+      role,
+      city,
     );
+    if (!washingService)
+      throw new NotFoundResponse({
+        ar: 'لاتوجد هذه الخدمة',
+        en: 'Washing Service Not Found',
+      });
 
-    return filtered;
-  }
-
-  async findOneByIdOr404(id: string, role?: string) {
-    return await this.washingServiceHelpers.findOneByIdQuery(id, role);
+    return washingService;
   }
 
   async update(id: string, createWashingServiceDTO: CreateWashingServiceDTO) {
     // TODO:
+    const washingService = await this.findOneOr404(id);
+
+    washingService.name = createWashingServiceDTO.name;
+    washingService.description = createWashingServiceDTO.description;
+    washingService.duration = createWashingServiceDTO.duration;
+    washingService.durationUnit = createWashingServiceDTO.durationUnit;
+    washingService.price = createWashingServiceDTO.price;
+    washingService.pointsToPay = createWashingServiceDTO.pointsToPay;
+    washingService.icon = createWashingServiceDTO.icon;
+
+    await washingService.save();
+
+    return washingService;
+  }
+
+  async findOneOr404(id: string) {
+    const washingService = await this.washingServicesModel.findById(id).exec();
+    if (!washingService)
+      throw new NotFoundResponse({
+        ar: 'لاتوجد هذه الخدمة',
+        en: 'Washing Service Not Found',
+      });
+
+    return washingService;
   }
 }

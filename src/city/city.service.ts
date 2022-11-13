@@ -30,6 +30,18 @@ export class CitiesService {
         latitude: 30.06263,
         longitude: 31.24967,
       },
+      {
+        'name.ar': 'كفر الشيخ',
+        'name.en': 'Kafr El-Sheikh',
+        latitude: 30.06263,
+        longitude: 31.24967,
+      },
+      {
+        'name.ar': 'دمياط',
+        'name.en': 'Domyat',
+        latitude: 30.06263,
+        longitude: 31.24967,
+      },
     ]);
   }
 }

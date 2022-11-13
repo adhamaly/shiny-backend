@@ -20,8 +20,11 @@ import {
 } from '../guard';
 import { UserService } from '../user.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { UserUpdateProfileDTO } from '../dto';
-import { UpdatePhoneNumberDTO } from '../dto/user.updatePhoneNumber.dto';
+import {
+  UpdateUserLocation,
+  UserUpdateProfileDTO,
+  UpdatePhoneNumberDTO,
+} from '../dto';
 
 @Controller('users')
 export class UserController {
@@ -85,6 +88,20 @@ export class UserController {
       data: await this.userService.updatePhoneNumber(
         account.id,
         updatePhoneNumberDTO,
+      ),
+    };
+  }
+  @Patch('user-location')
+  @UseGuards(UserAuthGuard, ProfileOwnerGuard)
+  async updateUserLocationController(
+    @Account() account: any,
+    @Body() updateUserLocation: UpdateUserLocation,
+  ) {
+    return {
+      success: true,
+      data: await this.userService.updateUserLocation(
+        account.id,
+        updateUserLocation,
       ),
     };
   }
