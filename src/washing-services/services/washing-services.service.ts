@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { CreateWashingServiceDTO } from '../dtos';
+import { CreateWashingServiceDTO, UpdateWashingServiceDTO } from '../dtos';
 import { WashingServicesRepository } from '../repositories/washing-services.repository';
 import { ServicesIconsService } from '../../services-icons/services-icons.service';
 import { NotFoundResponse } from '../../common/errors/NotFoundResponse';
@@ -94,15 +94,15 @@ export class WashingServicesService {
     }
     return await this.washingServicesRepository.findOneByIdOr404(id, role);
   }
-  async update(id: string, createWashingServiceDTO: CreateWashingServiceDTO) {
+  async update(id: string, updateWashingServiceDTO: UpdateWashingServiceDTO) {
     if (
       await this.servicesIconsService.isExist(
-        String(createWashingServiceDTO.icon),
+        String(updateWashingServiceDTO.icon),
       )
     )
       return await this.washingServicesRepository.update(
         id,
-        createWashingServiceDTO,
+        updateWashingServiceDTO,
       );
   }
 

@@ -7,6 +7,7 @@ import mongoose from 'mongoose';
 
 export type PlansModel = Plan & Document;
 export const plansModelName = 'plan';
+
 @Schema({ timestamps: true })
 export class Plan {
   @Prop()
@@ -24,13 +25,13 @@ export class Plan {
   @Prop()
   durationUnit: string;
 
+  @Prop({ default: 0 })
+  usageCount: number;
+
   @Prop([
     { type: mongoose.Schema.Types.ObjectId, ref: WashingServicesModelName },
   ])
   washingServices: WashingService[];
-
-  @Prop({ default: false })
-  isArchived: boolean;
 
   @Prop()
   createdAt: Date;
