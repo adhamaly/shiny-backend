@@ -8,13 +8,13 @@ import {
   Put,
   UseGuards,
 } from '@nestjs/common';
-import { CreateWashingServiceDTO } from '../dtos';
+import { CreateWashingServiceDTO, UpdateWashingServiceDTO } from '../dtos';
 import { WashingServicesService } from '../services/washing-services.service';
 import { UserAuthGuard } from '../../auth/guards/userAuthentication.guard';
 import { IsAdminGuard } from '../../admin/guard/isAdmin.guard';
-import { Account } from 'src/common/decorators/user.decorator';
 import { City } from '../../city/schemas/city.schema';
 import { WashingService } from '../schemas/washing-services.schema';
+import { Account } from '../../common/decorators/user.decorator';
 
 @Controller('washing-services')
 export class WashingServicesController {
@@ -63,13 +63,13 @@ export class WashingServicesController {
   @UseGuards(UserAuthGuard, IsAdminGuard)
   async updateController(
     @Param('washingServiceId') washingServiceId: string,
-    @Body() createWashingServiceDTO: CreateWashingServiceDTO,
+    @Body() updateWashingServiceDTO: UpdateWashingServiceDTO,
   ) {
     return {
       success: true,
       data: await this.washingServicesService.update(
         washingServiceId,
-        createWashingServiceDTO,
+        updateWashingServiceDTO,
       ),
     };
   }

@@ -1,7 +1,7 @@
-import { IsArray, IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import { Type } from 'class-transformer';
+import { ArrayMinSize, IsArray, IsNotEmpty, IsString } from 'class-validator';
 import { WashingService } from '../../washing-services/schemas/washing-services.schema';
-import { City } from '../../city/schemas/city.schema';
-export class CreatePlanDTO {
+export class UpdatePlanDTO {
   @IsNotEmpty()
   @IsString()
   type: string;
@@ -21,15 +21,9 @@ export class CreatePlanDTO {
   durationUnit: string;
 
   @IsArray()
+  @IsNotEmpty({ each: true })
   washingServices: WashingService[];
 
   @IsNotEmpty()
   usageCount: number;
-
-  @IsNotEmpty()
-  @IsBoolean()
-  selectAll: boolean;
-
-  @IsArray()
-  cities: City[];
 }

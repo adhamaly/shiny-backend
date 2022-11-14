@@ -1,9 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { Document } from 'mongoose';
-import { Admin } from 'src/admin/schemas/admin.schema';
-import { City } from 'src/city/schemas/city.schema';
-import { cityModelName } from '../../city/schemas/city.schema';
-import { adminModelName } from '../../admin/schemas/admin.schema';
+import { City, cityModelName } from '../../city/schemas/city.schema';
+import { Admin, adminModelName } from '../../admin/schemas/admin.schema';
 
 export type BikerModel = Biker & Document;
 export const bikerModelName = 'biker';

@@ -4,9 +4,10 @@ import { InjectModel } from '@nestjs/mongoose';
 import { User, UserModel, userModelName } from './schemas/user.schema';
 import { Model } from 'mongoose';
 import { UserRegisterDTO, UserUpdateProfileDTO } from './dto';
-import { MethodNotAllowedResponse, NotFoundResponse } from 'src/common/errors';
 import { UpdateUserLocation } from './dto/user.updateLocation.dto';
 import { City } from '../city/schemas/city.schema';
+import { MethodNotAllowedResponse } from '../common/errors/MethodNotAllowedResponse';
+import { NotFoundResponse } from '../common/errors/NotFoundResponse';
 
 @Injectable()
 export class UserRepository {

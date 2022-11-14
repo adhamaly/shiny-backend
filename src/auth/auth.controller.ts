@@ -1,5 +1,5 @@
 import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
-import { UserLoginDTO, UserLogoutDTO, UserRegisterDTO } from 'src/user/dto';
+import { UserLoginDTO, UserLogoutDTO, UserRegisterDTO } from '../user/dto';
 import { AuthService } from './auth.service';
 import { AdminLoginDTO } from '../admin/dto/admin.login.dto';
 import { UserAuthGuard } from './guards';

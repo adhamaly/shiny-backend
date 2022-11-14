@@ -6,7 +6,7 @@ import { User } from './schemas/user.schema';
 import { UpdatePhoneNumberDTO } from './dto/user.updatePhoneNumber.dto';
 import { UpdateUserLocation } from './dto';
 import { UserQueriesHelper } from './userQueriesHelper.service';
-import { City } from 'src/city/schemas/city.schema';
+import { City } from '../city/schemas/city.schema';
 import { Types } from 'mongoose';
 import { NearestCityCalculator } from '../city/nearestCityCalculator.service';
 

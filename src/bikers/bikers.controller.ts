@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { Account } from 'src/common/decorators/user.decorator';
+import { Account } from '../common/decorators/user.decorator';
 import { BikersService } from './bikers.service';
-import { UserAuthGuard } from 'src/auth/guards';
+import { UserAuthGuard } from '../auth/guards';
 import { ProfileOwnerGuard } from './guard/profileOwner.guard';
 
 @Controller('bikers')

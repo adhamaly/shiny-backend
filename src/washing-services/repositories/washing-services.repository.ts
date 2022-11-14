@@ -16,6 +16,7 @@ import {
 } from '../schemas/services-cities.schema';
 import { title } from 'process';
 import { ServicesCitiesRepository } from './services-cities.repository';
+import { UpdateWashingServiceDTO } from '../dtos';
 
 @Injectable()
 export class WashingServicesRepository {
@@ -68,17 +69,17 @@ export class WashingServicesRepository {
     return washingService;
   }
 
-  async update(id: string, createWashingServiceDTO: CreateWashingServiceDTO) {
+  async update(id: string, updateWashingServiceDTO: UpdateWashingServiceDTO) {
     // TODO:
     const washingService = await this.findOneOr404(id);
 
-    washingService.name = createWashingServiceDTO.name;
-    washingService.description = createWashingServiceDTO.description;
-    washingService.duration = createWashingServiceDTO.duration;
-    washingService.durationUnit = createWashingServiceDTO.durationUnit;
-    washingService.price = createWashingServiceDTO.price;
-    washingService.pointsToPay = createWashingServiceDTO.pointsToPay;
-    washingService.icon = createWashingServiceDTO.icon;
+    washingService.name = updateWashingServiceDTO.name;
+    washingService.description = updateWashingServiceDTO.description;
+    washingService.duration = updateWashingServiceDTO.duration;
+    washingService.durationUnit = updateWashingServiceDTO.durationUnit;
+    washingService.price = updateWashingServiceDTO.price;
+    washingService.pointsToPay = updateWashingServiceDTO.pointsToPay;
+    washingService.icon = updateWashingServiceDTO.icon;
 
     await washingService.save();
 

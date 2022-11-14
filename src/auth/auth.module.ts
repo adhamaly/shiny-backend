@@ -1,9 +1,9 @@
 import { Global, Module } from '@nestjs/common';
-import { UserModule } from 'src/user/user.module';
+import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
-import { AdminModule } from 'src/admin/admin.module';
+import { AdminModule } from '../admin/admin.module';
 
 @Global()
 @Module({
