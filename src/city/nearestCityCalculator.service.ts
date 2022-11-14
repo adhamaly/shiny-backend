@@ -10,11 +10,6 @@ export class NearestCityCalculator {
   ) {}
 
   async findNearestCity(latitude: number, longitude: number) {
-    // const city = await this.cityModel
-    //   .findOne({ latitude: latitude, longitude: longitude })
-    //   .exec();
-    // return city;
-
     const cities = await this.cityModel.find().exec();
     const distances = [];
     for (const city of cities) {
@@ -33,7 +28,7 @@ export class NearestCityCalculator {
       acc.distance < loc.distance ? acc : loc,
     );
     console.log(closest);
-    return cities[0];
+    return closest;
   }
 
   calculateDistanceFromTo(

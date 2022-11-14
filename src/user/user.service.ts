@@ -65,10 +65,10 @@ export class UserService {
     await this.userQueriesHelper.updateUserLocation(
       id,
       updateUserLocation,
-      nearestCity,
+      nearestCity['city'],
     );
 
-    return nearestCity.isExist
+    return nearestCity['city'].isExist
       ? undefined
       : {
           ar: 'خدمتنا غير موجودة حاليا ',
