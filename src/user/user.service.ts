@@ -56,6 +56,11 @@ export class UserService {
     // TODO: Get the nearest city:- Calculate Nearest city for this lat and long
     // TODO: Add TO USER Language prop for handling responses Messages
 
+    if (updateUserLocation.country.trim() !== 'Egypt')
+      return {
+        ar: 'خدمتنا غير موجودة حاليا ',
+        en: 'Our Service Not Exist Waiting for us soon..',
+      };
     const nearestCity = await this.nearestCityCalculator.findNearestCity(
       Number(updateUserLocation.latitude),
       Number(updateUserLocation.longitude),
