@@ -5,6 +5,9 @@ import { PlansCitiesRepository } from '../repositories/plans-cities.repository';
 import { CitiesService } from '../../city/city.service';
 import { UserService } from '../../user/user.service';
 import { UpdatePlanDTO } from '../dtos';
+import { Plan } from '../schemas/plans.schema';
+import { City } from '../../city/schemas/city.schema';
+import { NotFoundResponse } from '../../common/errors/NotFoundResponse';
 
 @Injectable()
 export class PlansService {
@@ -64,5 +67,40 @@ export class PlansService {
   }
   async updatePlan(id: string, updatePlanDTO: UpdatePlanDTO) {
     return await this.plansRepository.update(id, updatePlanDTO);
+  }
+
+  async addPlanToNewCity(plan: Plan, city: City) {
+    // TODO:
+    await this.plansCitiesRepository.insertOne(plan, city);
+  }
+
+  async deletePlanFromCity(plan: Plan, city: City) {
+    // TODO:
+    await this.plansCitiesRepository.deleteOne(plan, city);
+  }
+
+  async archivePlanFromCity(plan: Plan, city: City) {
+    const planDocument = await this.plansCitiesRepository.findOne(plan, city);
+    if (!planDocument)
+      throw new NotFoundResponse({
+        ar: 'الباقة لاتوجد في هذه المدينة',
+        en: 'Plan is not Exist in this city',
+      });
+
+    planDocument.isArchived = true;
+    await planDocument.save();
+  }
+
+  async activatePlanFromCity(plan: Plan, city: City) {
+    const planDocument = await this.plansCitiesRepository.findOne(plan, city);
+
+    if (!planDocument)
+      throw new NotFoundResponse({
+        ar: 'الباقة لاتوجد في هذه المدينة',
+        en: 'Plan is not Exist in this city',
+      });
+
+    planDocument.isArchived = false;
+    await planDocument.save();
   }
 }

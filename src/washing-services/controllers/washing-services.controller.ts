@@ -12,9 +12,9 @@ import { CreateWashingServiceDTO, UpdateWashingServiceDTO } from '../dtos';
 import { WashingServicesService } from '../services/washing-services.service';
 import { UserAuthGuard } from '../../auth/guards/userAuthentication.guard';
 import { IsAdminGuard } from '../../admin/guard/isAdmin.guard';
-import { Account } from 'src/common/decorators/user.decorator';
 import { City } from '../../city/schemas/city.schema';
 import { WashingService } from '../schemas/washing-services.schema';
+import { Account } from '../../common/decorators/user.decorator';
 
 @Controller('washing-services')
 export class WashingServicesController {

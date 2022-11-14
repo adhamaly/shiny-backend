@@ -4,7 +4,7 @@ import { Admin, AdminModel, adminModelName } from './schemas/admin.schema';
 import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 import { CreateSubAdminDTO } from './dto/admin.createSubAdmin.dto';
-import { MethodNotAllowedResponse } from 'src/common/errors';
+import { MethodNotAllowedResponse } from '../common/errors/MethodNotAllowedResponse';
 import { NotFoundResponse } from '../common/errors/NotFoundResponse';
 
 @Injectable()

@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -9,10 +10,11 @@ import {
 } from '@nestjs/common';
 import { PlansService } from '../services/plans.service';
 import { CreatePlanDTO } from '../dtos/createPlan.dto';
-import { Account } from 'src/common/decorators/user.decorator';
+import { Account } from '../../common/decorators/user.decorator';
 import { UserAuthGuard } from '../../auth/guards/userAuthentication.guard';
 import { IsAdminGuard } from '../../admin/guard/isAdmin.guard';
 import { UpdatePlanDTO } from '../dtos';
+import { UpdatePlanCitiesDTO } from '../dtos/updatePlanCities.dto';
 
 @Controller('plans')
 export class PlansController {
@@ -58,6 +60,68 @@ export class PlansController {
     return {
       success: true,
       data: await this.plansService.updatePlan(planId, updatePlanDTO),
+    };
+  }
+
+  @Post('/plans-cities')
+  @UseGuards(UserAuthGuard, IsAdminGuard)
+  async addPlanToCityController(
+    @Body() updatePlanCitiesDTO: UpdatePlanCitiesDTO,
+  ) {
+    await this.plansService.addPlanToNewCity(
+      updatePlanCitiesDTO.plan,
+      updatePlanCitiesDTO.city,
+    );
+
+    return {
+      success: true,
+    };
+  }
+
+  @Delete('/plans-cities')
+  @UseGuards(UserAuthGuard, IsAdminGuard)
+  async deletePlanFromCityController(
+    @Body() updatePlanCitiesDTO: UpdatePlanCitiesDTO,
+  ) {
+    await this.plansService.deletePlanFromCity(
+      updatePlanCitiesDTO.plan,
+      updatePlanCitiesDTO.city,
+    );
+
+    return {
+      success: true,
+    };
+  }
+
+  @Put('/plans-cities/archive')
+  @UseGuards(UserAuthGuard, IsAdminGuard)
+  async archivePlanFromCityController(
+    @Body() updatePlanCitiesDTO: UpdatePlanCitiesDTO,
+  ) {
+    // TODO:
+    await this.plansService.archivePlanFromCity(
+      updatePlanCitiesDTO.plan,
+      updatePlanCitiesDTO.city,
+    );
+
+    return {
+      success: true,
+    };
+  }
+
+  @Put('/plans-cities/activate')
+  @UseGuards(UserAuthGuard, IsAdminGuard)
+  async activatePlanFromCityController(
+    @Body() updatePlanCitiesDTO: UpdatePlanCitiesDTO,
+  ) {
+    // TODO:
+    await this.plansService.activatePlanFromCity(
+      updatePlanCitiesDTO.plan,
+      updatePlanCitiesDTO.city,
+    );
+
+    return {
+      success: true,
     };
   }
 }

@@ -10,7 +10,7 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { Account } from 'src/common/decorators/user.decorator';
+import { Account } from '../../common/decorators/user.decorator';
 import { VehiclesService } from '../../vehicles/vehicles.service';
 import { UserAuthGuard } from '../../auth/guards/userAuthentication.guard';
 import {

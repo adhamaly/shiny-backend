@@ -1,5 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
-import { ForbiddenResponse } from 'src/common/errors/ForbiddenResponse';
+import { ForbiddenResponse } from '..//../common/errors/ForbiddenResponse';
 import { UserService } from '../user.service';
 
 @Injectable()

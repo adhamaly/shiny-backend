@@ -3,10 +3,10 @@ import { ForbiddenException, Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import { UserRegisterDTO, UserLoginDTO } from 'src/user/dto';
 import { AdminLoginDTO } from '../admin/dto/admin.login.dto';
-import { AdminService } from 'src/admin/admin.service';
+import { AdminService } from '../admin/admin.service';
 import * as bcrypt from 'bcrypt';
-import { UnAuthorizedResponse } from 'src/common/errors/UnAuthorizedResponse';
-import { MethodNotAllowedResponse, NotFoundResponse } from 'src/common/errors';
+import { UnAuthorizedResponse } from '../common/errors/UnAuthorizedResponse';
+import { NotFoundResponse } from '../common/errors';
 import { UserLogoutDTO } from '../user/dto/userLogout.dto';
 
 @Injectable()

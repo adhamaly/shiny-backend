@@ -14,11 +14,11 @@ import {
 import { VehiclesService } from './vehicles.service';
 import { CreateVehicleDTO } from './dto/createVehicle.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Account } from 'src/common/decorators/user.decorator';
-import { UserAuthGuard } from 'src/auth/guards';
-import { UserAuthorizedGuard } from 'src/user/guard';
+import { Account } from '../common/decorators/user.decorator';
+import { UserAuthGuard } from '../auth/guards';
+import { UserAuthorizedGuard } from '../user/guard';
 import { IsVehicleOwner, IsVehicleOwnerOrAdmin } from './guard';
-import { IsAdminGuard } from 'src/admin/guard';
+import { IsAdminGuard } from '../admin/guard';
 import * as fs from 'fs';
 
 @Controller('vehicles')

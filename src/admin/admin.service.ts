@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { CreateSubAdminDTO } from './dto/admin.createSubAdmin.dto';
 import { AdminRepository } from './admin.repository';
-import { City } from 'src/city/schemas/city.schema';
-import { MethodNotAllowedResponse } from 'src/common/errors';
+import { City } from '../city/schemas/city.schema';
+import { MethodNotAllowedResponse } from '../common/errors';
 
 @Injectable()
 export class AdminService {
