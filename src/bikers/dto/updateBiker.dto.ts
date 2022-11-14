@@ -4,7 +4,7 @@ import {
   IsPhoneNumber,
   IsString,
 } from 'class-validator';
-import { City } from 'src/city/schemas/city.schema';
+import { City } from '../../city/schemas/city.schema';
 
 export class UpdateBikerDTO {
   @IsNotEmpty()

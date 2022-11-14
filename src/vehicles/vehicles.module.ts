@@ -9,7 +9,7 @@ import {
 } from './schemas/vehicles.schema';
 import { FirebaseModule } from '../common/services/firebase/firebase.module';
 import { UserModule } from '../user/user.module';
-import { VehiclesRepository } from './vehiclesRepository.service';
+import { VehiclesRepository } from './vehicles.repository.';
 @Module({
   imports: [
     MongooseModule.forFeature([
@@ -20,6 +20,6 @@ import { VehiclesRepository } from './vehiclesRepository.service';
   ],
   controllers: [VehiclesController],
   providers: [VehiclesService, VehiclesRepository],
-  exports: [VehiclesService, VehiclesRepository],
+  exports: [VehiclesService],
 })
 export class VehiclesModule {}

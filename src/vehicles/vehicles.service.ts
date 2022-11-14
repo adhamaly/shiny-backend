@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateVehicleDTO } from './dto/createVehicle.dto';
-import { VehiclesRepository } from './vehiclesRepository.service';
+import { VehiclesRepository } from './vehicles.repository.';
 
 @Injectable()
 export class VehiclesService {

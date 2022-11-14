@@ -1,5 +1,5 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
-import { UserAuthGuard } from 'src/auth/guards';
+import { UserAuthGuard } from '../auth/guards';
 import { CitiesService } from './city.service';
 
 @Controller('cities')

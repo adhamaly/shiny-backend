@@ -1,7 +1,7 @@
 import { JwtService } from '@nestjs/jwt';
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { UserService } from '../user/user.service';
-import { UserRegisterDTO, UserLoginDTO } from 'src/user/dto';
+import { UserRegisterDTO, UserLoginDTO } from '../user/dto';
 import { AdminLoginDTO } from '../admin/dto/admin.login.dto';
 import { AdminService } from '../admin/admin.service';
 import * as bcrypt from 'bcrypt';
