@@ -21,6 +21,8 @@ export class UserQueriesHelper {
         'location.latitude': updateUserLocation.latitude,
         'location.longitude': updateUserLocation.longitude,
         'location.streetName': updateUserLocation.streetName,
+        'location.subAdministrativeArea':
+          updateUserLocation.subAdministrativeArea,
         'location.country': updateUserLocation.country,
         'location.city': nearestCity,
       })

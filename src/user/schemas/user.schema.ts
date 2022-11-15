@@ -48,6 +48,7 @@ export class User {
       latitude: { type: Number, default: 0 },
       longitude: { type: Number, default: 0 },
       streetName: { type: String, default: '' },
+      subAdministrativeArea: { type: String, default: '' },
       city: { type: mongoose.Schema.Types.ObjectId, ref: cityModelName },
       country: { type: String, default: '' },
     }),

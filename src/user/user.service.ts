@@ -56,7 +56,10 @@ export class UserService {
     // TODO: Get the nearest city:- Calculate Nearest city for this lat and long
     // TODO: Add TO USER Language prop for handling responses Messages
 
-    if (updateUserLocation.country.trim() !== 'Egypt')
+    if (
+      updateUserLocation.country.trim() !== 'Egypt' ||
+      updateUserLocation.country.trim() !== 'egypt'
+    )
       return {
         ar: 'خدمتنا غير موجودة حاليا ',
         en: 'Our Service Not Exist Waiting for us soon..',
