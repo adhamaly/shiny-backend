@@ -20,6 +20,9 @@ export class UpdatePlanDTO {
   @IsString()
   durationUnit: string;
 
+  @IsNotEmpty()
+  pointsToPay: number;
+
   @IsArray()
   @IsNotEmpty({ each: true })
   washingServices: WashingService[];

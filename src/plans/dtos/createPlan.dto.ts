@@ -1,4 +1,10 @@
-import { IsArray, IsBoolean, IsNotEmpty, IsString } from 'class-validator';
+import {
+  IsArray,
+  IsBoolean,
+  IsNotEmpty,
+  IsNotEmptyObject,
+  IsString,
+} from 'class-validator';
 import { WashingService } from '../../washing-services/schemas/washing-services.schema';
 import { City } from '../../city/schemas/city.schema';
 export class CreatePlanDTO {
@@ -25,6 +31,9 @@ export class CreatePlanDTO {
 
   @IsNotEmpty()
   usageCount: number;
+
+  @IsNotEmpty()
+  pointsToPay: number;
 
   @IsNotEmpty()
   @IsBoolean()

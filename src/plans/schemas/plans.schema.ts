@@ -28,6 +28,9 @@ export class Plan {
   @Prop({ default: 0 })
   usageCount: number;
 
+  @Prop({ default: 0 })
+  pointsToPay: number;
+
   @Prop([
     { type: mongoose.Schema.Types.ObjectId, ref: WashingServicesModelName },
   ])

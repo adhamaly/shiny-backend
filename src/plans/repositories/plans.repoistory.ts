@@ -24,6 +24,7 @@ export class PlansRepository {
       price: createPlanDTO.price,
       duration: createPlanDTO.duration,
       durationUnit: createPlanDTO.durationUnit,
+      pointsToPay: createPlanDTO.pointsToPay,
       washingServices: createPlanDTO.washingServices,
       usageCount: createPlanDTO.usageCount,
     });
@@ -44,6 +45,7 @@ export class PlansRepository {
     plan.price = updatePlanDTO.price;
     plan.duration = updatePlanDTO.duration;
     plan.durationUnit = updatePlanDTO.durationUnit;
+    plan.pointsToPay = updatePlanDTO.pointsToPay;
     plan.washingServices = updatePlanDTO.washingServices;
     plan.usageCount = updatePlanDTO.usageCount;
 
