@@ -105,4 +105,15 @@ export class UserController {
       ),
     };
   }
+  @Patch('user-language')
+  @UseGuards(UserAuthGuard, ProfileOwnerGuard)
+  async updateUserLanguageController(
+    @Account() account: any,
+    @Body('language') language: string,
+  ) {
+    return {
+      success: true,
+      data: await this.userService.updateUserLanguage(account.id, language),
+    };
+  }
 }

@@ -84,6 +84,13 @@ export class UserService {
         };
   }
 
+  async updateUserLanguage(id: string, language: string) {
+    const userDocument = await this.userRepository.findUserByIdOr404(id);
+
+    userDocument.language = language;
+    await userDocument.save();
+  }
+
   async delete(userId: string) {
     await this.userRepository.delete(userId);
   }

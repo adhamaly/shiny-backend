@@ -54,6 +54,9 @@ export class User {
     }),
   )
   location: Record<string, any>;
+
+  @Prop({ default: 'en', trim: true, lowercase: true })
+  language: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);
