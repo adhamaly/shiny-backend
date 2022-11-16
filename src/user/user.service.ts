@@ -57,7 +57,7 @@ export class UserService {
     // TODO: Add TO USER Language prop for handling responses Messages
 
     if (
-      updateUserLocation.country.trim() !== 'Egypt' ||
+      updateUserLocation.country.trim() !== 'Egypt' &&
       updateUserLocation.country.trim() !== 'egypt'
     )
       return {
