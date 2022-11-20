@@ -25,6 +25,7 @@ export class LocationsRepository {
       subAdministrativeArea: string;
       country: string;
     },
+    forSave: boolean,
   ) {
     return await this.locationsModel.create({
       latitude: location.latitude,
@@ -34,6 +35,7 @@ export class LocationsRepository {
       city: city,
       country: location.country,
       user: user,
+      ...(forSave ? { type: 'SAVED_LOCATION' } : { type: 'RECENT_LOCATION' }),
     });
   }
   async findAll(user: User, isSaved: boolean) {
@@ -41,7 +43,9 @@ export class LocationsRepository {
     return await this.locationsModel
       .find({
         user: user,
-        ...(isSaved ? { isSaved: true } : {}),
+        ...(isSaved
+          ? { isSaved: true }
+          : { isSaved: false, type: 'RECENT_LOCATION' }),
       })
       .sort({ createdAt: 'desc' })
       .exec();

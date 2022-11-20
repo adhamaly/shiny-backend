@@ -14,7 +14,7 @@ export class LocationsService {
     private userService: UserService,
   ) {}
 
-  async saveOrderLocationOrGetIt(
+  async createOrderLocationOrGetIt(
     user: User,
     location: {
       latitude: number;
@@ -38,7 +38,12 @@ export class LocationsService {
       location.longitude,
     );
 
-    return await this.locationsRepository.create(user, city['city'], location);
+    return await this.locationsRepository.create(
+      user,
+      city['city'],
+      location,
+      false,
+    );
   }
 
   async getSavedLocations(user: User) {
@@ -107,6 +112,7 @@ export class LocationsService {
       user,
       city['city'],
       location,
+      true,
     );
 
     newLocation.isSaved = true;

@@ -32,6 +32,9 @@ export class Location {
   @Prop()
   savedName: string;
 
+  @Prop()
+  type: string;
+
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: userModelName })
   user: User;
 
