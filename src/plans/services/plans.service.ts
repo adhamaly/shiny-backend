@@ -8,6 +8,7 @@ import { UpdatePlanDTO } from '../dtos';
 import { Plan } from '../schemas/plans.schema';
 import { City } from '../../city/schemas/city.schema';
 import { NotFoundResponse } from '../../common/errors/NotFoundResponse';
+import { MethodNotAllowedResponse } from '../../common/errors/MethodNotAllowedResponse';
 
 @Injectable()
 export class PlansService {
@@ -20,6 +21,12 @@ export class PlansService {
 
   async createPlan(createPlanDTO: CreatePlanDTO) {
     const createdPlan = await this.plansRepository.create(createPlanDTO);
+
+    if (!createPlanDTO.selectAll && !createPlanDTO.cities)
+      throw new MethodNotAllowedResponse({
+        ar: 'ادخل المدن',
+        en: 'Select cities',
+      });
 
     await this.plansCitiesRepository.insertMany(
       createdPlan,

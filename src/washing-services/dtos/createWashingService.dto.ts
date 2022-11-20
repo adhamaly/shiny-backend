@@ -3,6 +3,7 @@ import {
   IsBoolean,
   IsMongoId,
   IsNotEmpty,
+  IsOptional,
   IsString,
 } from 'class-validator';
 import { ServiceIcon } from '../../services-icons/schemas/services-icons.schema';
@@ -39,5 +40,6 @@ export class CreateWashingServiceDTO {
   selectAll: boolean;
 
   @IsArray()
+  @IsOptional()
   cities: City[];
 }

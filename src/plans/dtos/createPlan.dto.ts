@@ -3,6 +3,7 @@ import {
   IsBoolean,
   IsNotEmpty,
   IsNotEmptyObject,
+  IsOptional,
   IsString,
 } from 'class-validator';
 import { WashingService } from '../../washing-services/schemas/washing-services.schema';
@@ -40,5 +41,6 @@ export class CreatePlanDTO {
   selectAll: boolean;
 
   @IsArray()
+  @IsOptional()
   cities: City[];
 }

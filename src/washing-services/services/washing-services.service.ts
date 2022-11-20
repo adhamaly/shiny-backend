@@ -8,6 +8,7 @@ import { UserService } from '../../user/user.service';
 import { City } from '../../city/schemas/city.schema';
 import { ServicesCitiesRepository } from '../repositories/services-cities.repository';
 import { WashingService } from '../schemas/washing-services.schema';
+import { MethodNotAllowedResponse } from '../../common/errors/MethodNotAllowedResponse';
 
 @Injectable()
 export class WashingServicesService {
@@ -28,6 +29,12 @@ export class WashingServicesService {
       throw new NotFoundResponse({
         ar: 'لاتوجد هذه الايقونة',
         en: 'Icon Not Found',
+      });
+
+    if (!createWashingServiceDTO.selectAll && !createWashingServiceDTO.cities)
+      throw new MethodNotAllowedResponse({
+        ar: 'ادخل المدن',
+        en: 'Select cities',
       });
 
     const createdWashingService = await this.washingServicesRepository.create(
