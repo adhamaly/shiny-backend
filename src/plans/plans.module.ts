@@ -29,6 +29,6 @@ import {
     PlansQueriesHelpers,
   ],
   controllers: [PlansController],
-  exports: [PlansService, PlansRepository],
+  exports: [PlansService, PlansRepository, PlansQueriesHelpers],
 })
 export class PlansModule {}

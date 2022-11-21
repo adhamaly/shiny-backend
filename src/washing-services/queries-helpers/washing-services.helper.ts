@@ -7,10 +7,6 @@ import {
 } from '../schemas/washing-services.schema';
 import mongoose, { Document, Model, Mongoose, Types } from 'mongoose';
 import { City } from '../../city/schemas/city.schema';
-import {
-  ServicesCitiesModelName,
-  ServicesCitiesModel,
-} from '../schemas/services-cities.schema';
 
 @Injectable()
 export class WashingServiceHelpers {
@@ -21,8 +17,6 @@ export class WashingServiceHelpers {
   constructor(
     @InjectModel(WashingServicesModelName)
     private readonly washingServicesModel: Model<WashingServicesModel>,
-    @InjectModel(ServicesCitiesModelName)
-    private readonly servicesCitiesModel: Model<ServicesCitiesModel>,
   ) {}
 
   async findAllWashingServicesQuery(role: string, city?: City) {

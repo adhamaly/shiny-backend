@@ -39,7 +39,7 @@ export class WashingServicesController {
   async getAllWashingServicesController(@Account() account: any) {
     return {
       success: true,
-      data: await this.washingServicesService.getAll(account.id, account.role),
+      data: await this.washingServicesService.getAll(account.role, account.id),
     };
   }
 

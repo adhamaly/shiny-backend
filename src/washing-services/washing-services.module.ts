@@ -34,6 +34,10 @@ import { ServicesCitiesRepository } from './repositories/services-cities.reposit
     ServicesCitiesRepository,
   ],
   controllers: [WashingServicesController],
-  exports: [WashingServicesService],
+  exports: [
+    WashingServicesService,
+    WashingServicesRepository,
+    WashingServiceHelpers,
+  ],
 })
 export class WashingServicesModule {}

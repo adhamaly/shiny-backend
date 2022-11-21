@@ -55,7 +55,7 @@ export class WashingServicesService {
    *
    *
    */
-  async getAll(clientId: string, role: string) {
+  async getAll(role: string, clientId?: string) {
     if (role === 'user') {
       const user = await this.userService.getUserById(clientId);
       const washingServices = await this.washingServicesRepository.findAll(
