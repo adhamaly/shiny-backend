@@ -9,7 +9,7 @@ import mongoose, { Document, Model, Mongoose, Types } from 'mongoose';
 import { City } from '../../city/schemas/city.schema';
 
 @Injectable()
-export class WashingServiceHelpers {
+export class WashingServiceQueriesHelpers {
   populatedPaths = [
     { path: 'icon', select: 'iconPath iconLink', model: servicesIconModelName },
   ];

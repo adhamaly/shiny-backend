@@ -1,14 +1,14 @@
 import { NearestCityCalculator } from '../city/nearestCityCalculator.service';
 import { Injectable } from '@nestjs/common';
 import { City } from '../city/schemas/city.schema';
-import { WashingServiceHelpers } from '../washing-services/queries-helpers/washing-services.helper';
+import { WashingServiceQueriesHelpers } from '../washing-services/queries-helpers/washing-services.helper';
 import { PlansQueriesHelpers } from '../plans/queries-helpers/plans-queries.helper';
 
 @Injectable()
 export class GuestService {
   constructor(
     private nearestCityCalculator: NearestCityCalculator,
-    private washingServiceHelpers: WashingServiceHelpers,
+    private washingServiceQueriesHelpers: WashingServiceQueriesHelpers,
     private plansQueriesHelpers: PlansQueriesHelpers,
   ) {}
 
@@ -19,7 +19,7 @@ export class GuestService {
     );
 
     const servicesList =
-      await this.washingServiceHelpers.findAllWashingServicesQuery(
+      await this.washingServiceQueriesHelpers.findAllWashingServicesQuery(
         'guest',
         city['city']._id,
       );

@@ -8,7 +8,7 @@ import {
   WashingServicesModel,
 } from '../schemas/washing-services.schema';
 import { City } from '../../city/schemas/city.schema';
-import { WashingServiceHelpers } from '../queries-helpers/washing-services.helper';
+import { WashingServiceQueriesHelpers } from '../queries-helpers/washing-services.helper';
 import { NotFoundResponse } from '../../common/errors/NotFoundResponse';
 import {
   ServicesCitiesModelName,
@@ -29,7 +29,7 @@ export class WashingServicesRepository {
     private readonly washingServicesModel: Model<WashingServicesModel>,
     @InjectModel(ServicesCitiesModelName)
     private readonly servicesCitiesModel: Model<ServicesCitiesModel>,
-    private washingServiceHelpers: WashingServiceHelpers,
+    private washingServiceQueriesHelpers: WashingServiceQueriesHelpers,
   ) {}
 
   async create(createWashingServiceDTO: CreateWashingServiceDTO) {
@@ -49,17 +49,17 @@ export class WashingServicesRepository {
 
   async findAll(role: string, city?: City) {
     const washingServices =
-      await this.washingServiceHelpers.findAllWashingServicesQuery(role, city);
+      await this.washingServiceQueriesHelpers.findAllWashingServicesQuery(
+        role,
+        city,
+      );
 
     return washingServices;
   }
 
   async findOneByIdOr404(id: string, role?: string, city?: City) {
-    const washingService = await this.washingServiceHelpers.findOneByIdQuery(
-      id,
-      role,
-      city,
-    );
+    const washingService =
+      await this.washingServiceQueriesHelpers.findOneByIdQuery(id, role, city);
     if (!washingService)
       throw new NotFoundResponse({
         ar: 'لاتوجد هذه الخدمة',
