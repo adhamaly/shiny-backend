@@ -5,6 +5,7 @@ import { VehicleModel, vehicleModelName } from './schemas/vehicles.schema';
 import { CreateVehicleDTO } from './dto/createVehicle.dto';
 import { FirebaseService } from '../common/services/firebase/firebase.service';
 import { NotFoundResponse } from '../common/errors/NotFoundResponse';
+import { MethodNotAllowedResponse } from '../common/errors/MethodNotAllowedResponse';
 
 @Injectable()
 export class VehiclesRepository {
@@ -19,6 +20,15 @@ export class VehiclesRepository {
     createVehicleDTO: CreateVehicleDTO,
     image: Express.Multer.File,
   ) {
+    const plateNumberAlreadyExist = await this.checkPlateNumber(
+      createVehicleDTO.plateNumber,
+    );
+    if (plateNumberAlreadyExist)
+      throw new MethodNotAllowedResponse({
+        ar: 'رقم السيارة مسجل من قبل',
+        en: 'Plate Number is already exist',
+      });
+
     // Create Vehicle
     const createdVehicle = await this.vehicleModel.create({
       type: createVehicleDTO.type,
@@ -68,6 +78,16 @@ export class VehiclesRepository {
     createVehicleDTO: CreateVehicleDTO,
     image: Express.Multer.File,
   ) {
+    const plateNumberAlreadyExist = await this.checkPlateNumberForAnotherCar(
+      id,
+      createVehicleDTO.plateNumber,
+    );
+    if (plateNumberAlreadyExist)
+      throw new MethodNotAllowedResponse({
+        ar: 'رقم السيارة مسجل من قبل',
+        en: 'Plate Number is already exist',
+      });
+
     const vehicle = await this.vehicleModel.findById(id).exec();
 
     vehicle.type = createVehicleDTO.type;
@@ -99,5 +119,26 @@ export class VehiclesRepository {
     const vehicle = await this.vehicleModel.findById(id).exec();
 
     return vehicle;
+  }
+
+  async checkPlateNumber(plateNumber: string) {
+    const plateIsExist = await this.vehicleModel
+      .findOne({
+        plateNumber: plateNumber.trim(),
+      })
+      .exec();
+
+    return plateIsExist ? true : false;
+  }
+
+  async checkPlateNumberForAnotherCar(id: string, plateNumber: string) {
+    const plateIsExist = await this.vehicleModel
+      .findOne({
+        _id: { $ne: id },
+        plateNumber: plateNumber.trim(),
+      })
+      .exec();
+
+    return plateIsExist ? true : false;
   }
 }
