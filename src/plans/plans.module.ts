@@ -8,6 +8,7 @@ import { PlansCitiesRepository } from './repositories/plans-cities.repository';
 import { CityModule } from '../city/city.module';
 import { UserModule } from '../user/user.module';
 import { PlansQueriesHelpers } from './queries-helpers/plans-queries.helper';
+import { AdminModule } from '../admin/admin.module';
 import {
   plansCitiesModelName,
   PlansCitiesSchema,
@@ -21,6 +22,7 @@ import {
     ]),
     CityModule,
     UserModule,
+    AdminModule,
   ],
   providers: [
     PlansService,

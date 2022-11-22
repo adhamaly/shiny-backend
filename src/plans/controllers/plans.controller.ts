@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { PlansService } from '../services/plans.service';
@@ -15,6 +16,7 @@ import { UserAuthGuard } from '../../auth/guards/userAuthentication.guard';
 import { IsAdminGuard } from '../../admin/guard/isAdmin.guard';
 import { UpdatePlanDTO } from '../dtos';
 import { UpdatePlanCitiesDTO } from '../dtos/updatePlanCities.dto';
+import { QueryParamsDTO } from '../dtos/queryParams.dto';
 
 @Controller('plans')
 export class PlansController {
@@ -30,12 +32,32 @@ export class PlansController {
     };
   }
 
-  @Get()
+  @Get('user')
   @UseGuards(UserAuthGuard)
-  async getAllPlansController(@Account() account: any) {
+  async getAllPlansForUserController(
+    @Account() account: any,
+    @Query() queryParamsDTO: QueryParamsDTO,
+  ) {
     return {
       success: true,
-      data: await this.plansService.getAll(account.id, account.role),
+      data: await this.plansService.getAllForUser(account.role, queryParamsDTO),
+    };
+  }
+
+  @Get('guest')
+  async getAllPlansForGuestController(@Query() queryParamsDTO: QueryParamsDTO) {
+    return {
+      success: true,
+      data: await this.plansService.getAllForUser('guest', queryParamsDTO),
+    };
+  }
+
+  @Get('admin')
+  @UseGuards(UserAuthGuard)
+  async getAllPlansForAdminController(@Account() account: any) {
+    return {
+      success: true,
+      data: await this.plansService.getAllForAdmin(account.id, account.role),
     };
   }
 

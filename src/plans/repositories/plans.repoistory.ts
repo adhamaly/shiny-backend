@@ -31,7 +31,7 @@ export class PlansRepository {
 
     return createdPlan;
   }
-  async findAll(role: string, city?: City) {
+  async findAll(role: string, city: City[]) {
     return await this.plansQueriesHelpers.findAllPlansQuery(role, city);
   }
   async findByIdOr404(id: string, role: string, city?: City) {

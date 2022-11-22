@@ -9,6 +9,9 @@ import { Plan } from '../schemas/plans.schema';
 import { City } from '../../city/schemas/city.schema';
 import { NotFoundResponse } from '../../common/errors/NotFoundResponse';
 import { MethodNotAllowedResponse } from '../../common/errors/MethodNotAllowedResponse';
+import { NearestCityCalculator } from '../../city/nearestCityCalculator.service';
+import { QueryParamsDTO } from '../dtos/queryParams.dto';
+import { AdminService } from '../../admin/admin.service';
 
 @Injectable()
 export class PlansService {
@@ -17,6 +20,8 @@ export class PlansService {
     private plansCitiesRepository: PlansCitiesRepository,
     private citiesService: CitiesService,
     private userService: UserService,
+    private nearestCityCalculator: NearestCityCalculator,
+    private adminService: AdminService,
   ) {}
 
   async createPlan(createPlanDTO: CreatePlanDTO) {
@@ -36,17 +41,20 @@ export class PlansService {
     );
   }
 
-  async getAll(clientId: string, role: string) {
-    if (role === 'user') {
-      const user = await this.userService.getUserById(clientId);
-      const plans = await this.plansRepository.findAll(
-        role,
-        user.location.city,
-      );
-      return this.plansFormaterForUser(plans);
-    }
+  async getAllForUser(role: string, queryParamsDTO: QueryParamsDTO) {
+    const city = await this.nearestCityCalculator.findNearestCity(
+      Number(queryParamsDTO.latitude),
+      Number(queryParamsDTO.longitude),
+    );
 
-    return await this.plansRepository.findAll(role);
+    const plans = await this.plansRepository.findAll(role, [city['city']._id]);
+
+    return this.plansFormaterForUser(plans);
+  }
+
+  async getAllForAdmin(adminId: string, role: string) {
+    const admin = await this.adminService.getById(adminId);
+    return await this.plansRepository.findAll(role, admin.city);
   }
   plansFormaterForUser(plansList: any) {
     const filtered = plansList.filter((plan: any) => plan.cities.length >= 1);

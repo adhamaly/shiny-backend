@@ -23,7 +23,7 @@ export class PlansQueriesHelpers {
     private readonly plansCitiesModel: Model<PlanCity>,
   ) {}
 
-  async findAllPlansQuery(role: string, city?: City) {
+  async findAllPlansQuery(role: string, city: City[]) {
     const plans = await this.plansModel
       .aggregate([
         {
@@ -34,12 +34,16 @@ export class PlansQueriesHelpers {
               {
                 $match: {
                   $expr: { $eq: ['$$planId', '$plan'] },
-                  ...(role === 'superAdmin' || role === 'subAdmin'
+                  ...(role === 'subAdmin'
+                    ? { city: { $in: city } }
+                    : role === 'superAdmin'
                     ? {}
-                    : {
+                    : role === 'user' || role === 'guest'
+                    ? {
                         isArchived: false,
-                        city: city,
-                      }),
+                        city: { $in: city },
+                      }
+                    : {}),
                 },
               },
               {
