@@ -14,8 +14,6 @@ import {
   ServicesCitiesModelName,
   ServicesCitiesModel,
 } from '../schemas/services-cities.schema';
-import { title } from 'process';
-import { ServicesCitiesRepository } from './services-cities.repository';
 import { UpdateWashingServiceDTO } from '../dtos';
 
 @Injectable()
@@ -47,7 +45,8 @@ export class WashingServicesRepository {
     return createdWashingService;
   }
 
-  async findAll(role: string, city?: City) {
+  async findAll(role: string, city: City[]) {
+    console.log(city);
     const washingServices =
       await this.washingServiceQueriesHelpers.findAllWashingServicesQuery(
         role,

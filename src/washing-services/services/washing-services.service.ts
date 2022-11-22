@@ -9,6 +9,9 @@ import { City } from '../../city/schemas/city.schema';
 import { ServicesCitiesRepository } from '../repositories/services-cities.repository';
 import { WashingService } from '../schemas/washing-services.schema';
 import { MethodNotAllowedResponse } from '../../common/errors/MethodNotAllowedResponse';
+import { AdminService } from '../../admin/admin.service';
+import { QueryParamsDTO } from '../dtos/queryParams.dto';
+import { NearestCityCalculator } from '../../city/nearestCityCalculator.service';
 
 @Injectable()
 export class WashingServicesService {
@@ -16,8 +19,10 @@ export class WashingServicesService {
     private washingServicesRepository: WashingServicesRepository,
     private servicesIconsService: ServicesIconsService,
     private citiesService: CitiesService,
+    private nearestCityCalculator: NearestCityCalculator,
     private userService: UserService,
     private servicesCitiesRepository: ServicesCitiesRepository,
+    private adminService: AdminService,
   ) {}
 
   async createWashingService(createWashingServiceDTO: CreateWashingServiceDTO) {
@@ -48,6 +53,10 @@ export class WashingServicesService {
     );
   }
 
+  async getAllWashingServicesForAdmin(role: string, adminId: string) {
+    const admin = await this.adminService.getById(adminId);
+    return await this.washingServicesRepository.findAll(role, admin.city);
+  }
   /** TODO:- For User (Active Service & his city) and when view orders return any status
    *             Biker Return Only Active Service
    *             Admin Return All
@@ -55,18 +64,21 @@ export class WashingServicesService {
    *
    *
    */
-  async getAll(role: string, clientId?: string) {
-    if (role === 'user') {
-      const user = await this.userService.getUserById(clientId);
-      const washingServices = await this.washingServicesRepository.findAll(
-        role,
-        user.location.city,
-      );
+  async getAllWashingServicesForUser(
+    role: string,
+    queryParamsDTO: QueryParamsDTO,
+  ) {
+    const city = await this.nearestCityCalculator.findNearestCity(
+      Number(queryParamsDTO.latitude),
+      Number(queryParamsDTO.longitude),
+    );
+    const washingServices = await this.washingServicesRepository.findAll(role, [
+      city['city']._id,
+    ]);
 
-      return this.washingServicesFormaterForUser(washingServices);
-    }
-    return await this.washingServicesRepository.findAll(role);
+    return this.washingServicesFormaterForUser(washingServices);
   }
+
   washingServicesFormaterForUser(servicesList: any) {
     const filtered = servicesList.filter(
       (washingService: any) => washingService.cities.length >= 1,

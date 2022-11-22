@@ -10,7 +10,6 @@ import { WashingServicesModule } from './washing-services/washing-services.modul
 import { ServicesIconsModule } from './services-icons/services-icons.module';
 import { PlansModule } from './plans/plans.module';
 import { LocationsModule } from './locations/locations.module';
-import { GuestModule } from './guest/guest.module';
 
 @Module({
   imports: [
@@ -25,7 +24,6 @@ import { GuestModule } from './guest/guest.module';
     ServicesIconsModule,
     PlansModule,
     LocationsModule,
-    GuestModule,
   ],
   controllers: [],
   providers: [],

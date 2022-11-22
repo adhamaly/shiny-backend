@@ -19,7 +19,7 @@ export class WashingServiceQueriesHelpers {
     private readonly washingServicesModel: Model<WashingServicesModel>,
   ) {}
 
-  async findAllWashingServicesQuery(role: string, city?: City) {
+  async findAllWashingServicesQuery(role: string, city: City[]) {
     const washingServices = await this.washingServicesModel
       .aggregate([
         {
@@ -30,12 +30,16 @@ export class WashingServiceQueriesHelpers {
               {
                 $match: {
                   $expr: { $eq: ['$$washingServiceId', '$washingService'] },
-                  ...(role === 'superAdmin' || role === 'subAdmin'
+                  ...(role === 'subAdmin'
+                    ? { city: { $in: city } }
+                    : role === 'superAdmin'
                     ? {}
-                    : {
+                    : role === 'user' || role === 'guest'
+                    ? {
                         isArchived: false,
-                        city: city,
-                      }),
+                        city: { $in: city },
+                      }
+                    : {}),
                 },
               },
               {

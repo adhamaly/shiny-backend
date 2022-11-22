@@ -16,6 +16,7 @@ import {
   WashingServicesSchema,
 } from './schemas/washing-services.schema';
 import { ServicesCitiesRepository } from './repositories/services-cities.repository';
+import { AdminModule } from '../admin/admin.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ServicesCitiesRepository } from './repositories/services-cities.reposit
     ServicesIconsModule,
     CityModule,
     UserModule,
+    AdminModule,
   ],
   providers: [
     WashingServicesService,

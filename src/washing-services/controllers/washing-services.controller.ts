@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { CreateWashingServiceDTO, UpdateWashingServiceDTO } from '../dtos';
@@ -15,6 +16,7 @@ import { IsAdminGuard } from '../../admin/guard/isAdmin.guard';
 import { City } from '../../city/schemas/city.schema';
 import { WashingService } from '../schemas/washing-services.schema';
 import { Account } from '../../common/decorators/user.decorator';
+import { QueryParamsDTO } from '../dtos/queryParams.dto';
 
 @Controller('washing-services')
 export class WashingServicesController {
@@ -34,12 +36,43 @@ export class WashingServicesController {
     };
   }
 
-  @Get('')
+  @Get('user')
   @UseGuards(UserAuthGuard)
-  async getAllWashingServicesController(@Account() account: any) {
+  async getAllWashingServicesForUserController(
+    @Account() account: any,
+    @Query() queryParamsDTO: QueryParamsDTO,
+  ) {
     return {
       success: true,
-      data: await this.washingServicesService.getAll(account.role, account.id),
+      data: await this.washingServicesService.getAllWashingServicesForUser(
+        account.role,
+        queryParamsDTO,
+      ),
+    };
+  }
+
+  @Get('guest')
+  async getAllWashingServicesForGuestController(
+    @Query() queryParamsDTO: QueryParamsDTO,
+  ) {
+    return {
+      success: true,
+      data: await this.washingServicesService.getAllWashingServicesForUser(
+        'guest',
+        queryParamsDTO,
+      ),
+    };
+  }
+
+  @Get('admin')
+  @UseGuards(UserAuthGuard)
+  async getAllWashingServicesForAdminController(@Account() account: any) {
+    return {
+      success: true,
+      data: await this.washingServicesService.getAllWashingServicesForAdmin(
+        account.role,
+        account.id,
+      ),
     };
   }
 
