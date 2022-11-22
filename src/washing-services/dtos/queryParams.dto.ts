@@ -1,4 +1,4 @@
-import { Matches } from 'class-validator';
+import { IsOptional, Matches } from 'class-validator';
 
 export class QueryParamsDTO {
   @Matches(/(-\d+\.\d\d\d\d\d+|\d+.\d\d\d\d\d+)/i, {
@@ -10,4 +10,7 @@ export class QueryParamsDTO {
     message: 'Longitude must be in the format X.dddddd+',
   })
   longitude: string;
+
+  @IsOptional()
+  country: string;
 }

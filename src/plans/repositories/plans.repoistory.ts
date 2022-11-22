@@ -34,7 +34,7 @@ export class PlansRepository {
   async findAll(role: string, city: City[]) {
     return await this.plansQueriesHelpers.findAllPlansQuery(role, city);
   }
-  async findByIdOr404(id: string, role: string, city?: City) {
+  async findByIdOr404(id: string, role: string, city: City[]) {
     return await this.plansQueriesHelpers.findOneByIdQuery(id, role, city);
   }
   async update(id: string, updatePlanDTO: UpdatePlanDTO) {

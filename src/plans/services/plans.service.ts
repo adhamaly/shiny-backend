@@ -42,6 +42,15 @@ export class PlansService {
   }
 
   async getAllForUser(role: string, queryParamsDTO: QueryParamsDTO) {
+    if (
+      queryParamsDTO.country !== 'Egypt' &&
+      queryParamsDTO.country !== 'egypt'
+    )
+      throw new NotFoundResponse({
+        ar: 'لاتوجد هذه الباقة في هذه الدولة',
+        en: 'Plan Not Found in Country',
+      });
+
     const city = await this.nearestCityCalculator.findNearestCity(
       Number(queryParamsDTO.latitude),
       Number(queryParamsDTO.longitude),
@@ -65,20 +74,51 @@ export class PlansService {
     return filtered;
   }
 
-  async getById(id: string, clientId: string, role: string) {
-    if (role === 'user') {
-      const user = await this.userService.getUserById(clientId);
-      const plan = await this.plansRepository.findByIdOr404(
-        id,
-        role,
-        user.location.city,
-      );
+  async getByIdForUser(
+    id: string,
+    role: string,
+    queryParamsDTO: QueryParamsDTO,
+  ) {
+    if (
+      queryParamsDTO.country !== 'Egypt' &&
+      queryParamsDTO.country !== 'egypt'
+    )
+      throw new NotFoundResponse({
+        ar: 'لاتوجد هذه الباقة في هذه الدولة',
+        en: 'Plan Not Found in Country',
+      });
 
-      plan['cities'] = undefined;
-      return plan;
-    }
+    const city = await this.nearestCityCalculator.findNearestCity(
+      Number(queryParamsDTO.latitude),
+      Number(queryParamsDTO.longitude),
+    );
 
-    return await this.plansRepository.findByIdOr404(id, role);
+    const plan = await this.plansRepository.findByIdOr404(id, role, [
+      city['city']._id,
+    ]);
+
+    if (!plan['cities'].length)
+      throw new NotFoundResponse({
+        ar: 'لاتوجد هذه الباقة',
+        en: 'Plan Not Found',
+      });
+
+    plan['cities'] = undefined;
+
+    return plan;
+  }
+
+  async getPlanByIdForAdmin(id: string, role: string, adminId: string) {
+    const admin = await this.adminService.getById(adminId);
+    const plan = await this.plansRepository.findByIdOr404(id, role, admin.city);
+
+    if (!plan['cities'].length)
+      throw new NotFoundResponse({
+        ar: 'لاتوجد هذه الباقة',
+        en: 'Plan Not Found',
+      });
+
+    return plan;
   }
   async updatePlan(id: string, updatePlanDTO: UpdatePlanDTO) {
     return await this.plansRepository.update(id, updatePlanDTO);

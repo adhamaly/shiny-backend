@@ -61,15 +61,49 @@ export class PlansController {
     };
   }
 
-  @Get(':planId')
+  @Get(':planId/user')
   @UseGuards(UserAuthGuard)
-  async getPlanByIdController(
+  async getPlanByIdForUserController(
+    @Param('planId') planId: string,
+    @Query() queryParamsDTO: QueryParamsDTO,
+    @Account() account: any,
+  ) {
+    return {
+      success: true,
+      data: await this.plansService.getByIdForUser(
+        planId,
+        account.role,
+        queryParamsDTO,
+      ),
+    };
+  }
+  @Get(':planId/admin')
+  @UseGuards(UserAuthGuard)
+  async getPlanByIdForAdminController(
     @Param('planId') planId: string,
     @Account() account: any,
   ) {
     return {
       success: true,
-      data: await this.plansService.getById(planId, account.id, account.role),
+      data: await this.plansService.getPlanByIdForAdmin(
+        planId,
+        account.role,
+        account.id,
+      ),
+    };
+  }
+  @Get(':planId/guest')
+  async getPlanByIdForGuestController(
+    @Param('planId') planId: string,
+    @Query() queryParamsDTO: QueryParamsDTO,
+  ) {
+    return {
+      success: true,
+      data: await this.plansService.getByIdForUser(
+        planId,
+        'guest',
+        queryParamsDTO,
+      ),
     };
   }
 

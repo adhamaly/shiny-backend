@@ -54,4 +54,8 @@ export class NearestCityCalculator {
   toRad(value: number) {
     return (value * Math.PI) / 180;
   }
+
+  validateCountryBoundaries(country: string) {
+    // TODO: create schema for countries and relate it with cities with key is Exist for each one
+  }
 }

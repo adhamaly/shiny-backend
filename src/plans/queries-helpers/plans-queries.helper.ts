@@ -75,7 +75,7 @@ export class PlansQueriesHelpers {
     return plans;
   }
 
-  async findOneByIdQuery(id: string, role: string, city?: City) {
+  async findOneByIdQuery(id: string, role: string, city: City[]) {
     const plan = await this.plansModel
       .aggregate([
         {
@@ -89,12 +89,16 @@ export class PlansQueriesHelpers {
               {
                 $match: {
                   $expr: { $eq: ['$$planId', '$plan'] },
-                  ...(role === 'superAdmin' || role === 'subAdmin'
+                  ...(role === 'subAdmin'
+                    ? { city: { $in: city } }
+                    : role === 'superAdmin'
                     ? {}
-                    : {
+                    : role === 'user' || role === 'guest'
+                    ? {
                         isArchived: false,
-                        city: city,
-                      }),
+                        city: { $in: city },
+                      }
+                    : {}),
                 },
               },
               {
