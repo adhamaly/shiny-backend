@@ -12,6 +12,7 @@ import { MethodNotAllowedResponse } from '../../common/errors/MethodNotAllowedRe
 import { AdminService } from '../../admin/admin.service';
 import { QueryParamsDTO } from '../dtos/queryParams.dto';
 import { NearestCityCalculator } from '../../city/nearestCityCalculator.service';
+import { Length } from 'class-validator';
 
 @Injectable()
 export class WashingServicesService {
@@ -90,29 +91,72 @@ export class WashingServicesService {
     return filtered;
   }
 
-  /** TODO:- For User Active Service For his city and when view orders return any status
-   *             Biker Return Only Active Service
-   *             Admin Return All
-   *
-   *
-   *
-   */
-  async getByIdOr404(id: string, role: string, clientId: string) {
-    if (role === 'user') {
-      const user = await this.userService.getUserById(clientId);
-      const washingService =
-        await this.washingServicesRepository.findOneByIdOr404(
-          id,
-          role,
-          user.location.city,
-        );
+  async getWashingServiceForUser(id: string, role: string, clientId: string) {
+    const user = await this.userService.getUserById(clientId);
+    const washingService =
+      await this.washingServicesRepository.findOneByIdOr404(id, role, [
+        user.location.city,
+      ]);
 
-      washingService['cities'] = undefined;
+    if (!washingService['cities'].length)
+      throw new NotFoundResponse({
+        ar: 'لاتوجد هذه الخدمة',
+        en: 'Washing Service Not Found',
+      });
 
-      return washingService;
-    }
-    return await this.washingServicesRepository.findOneByIdOr404(id, role);
+    washingService['cities'] = undefined;
+
+    return washingService;
   }
+
+  async getWashingServiceByIdForAdmin(
+    id: string,
+    role: string,
+    adminId: string,
+  ) {
+    const admin = await this.adminService.getById(adminId);
+    const washingService =
+      await this.washingServicesRepository.findOneByIdOr404(
+        id,
+        role,
+        admin.city,
+      );
+
+    if (!washingService['cities'].length)
+      throw new NotFoundResponse({
+        ar: 'لاتوجد هذه الخدمة',
+        en: 'Washing Service Not Found',
+      });
+
+    return washingService;
+  }
+
+  async getWashingServiceForGuest(
+    id: string,
+    role: string,
+    queryParamsDTO: QueryParamsDTO,
+  ) {
+    const city = await this.nearestCityCalculator.findNearestCity(
+      Number(queryParamsDTO.latitude),
+      Number(queryParamsDTO.longitude),
+    );
+
+    const washingService =
+      await this.washingServicesRepository.findOneByIdOr404(id, role, [
+        city['city']._id,
+      ]);
+
+    if (!washingService['cities'].length)
+      throw new NotFoundResponse({
+        ar: 'لاتوجد هذه الخدمة',
+        en: 'Washing Service Not Found',
+      });
+
+    washingService['cities'] = undefined;
+
+    return washingService;
+  }
+
   async update(id: string, updateWashingServiceDTO: UpdateWashingServiceDTO) {
     if (
       await this.servicesIconsService.isExist(

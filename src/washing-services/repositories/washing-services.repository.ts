@@ -56,7 +56,7 @@ export class WashingServicesRepository {
     return washingServices;
   }
 
-  async findOneByIdOr404(id: string, role?: string, city?: City) {
+  async findOneByIdOr404(id: string, role: string, city: City[]) {
     const washingService =
       await this.washingServiceQueriesHelpers.findOneByIdQuery(id, role, city);
     if (!washingService)

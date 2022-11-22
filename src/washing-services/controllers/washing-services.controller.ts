@@ -76,7 +76,7 @@ export class WashingServicesController {
     };
   }
 
-  @Get(':washingServiceId')
+  @Get(':washingServiceId/user')
   @UseGuards(UserAuthGuard)
   async getByIdController(
     @Param('washingServiceId') washingServiceId: string,
@@ -84,10 +84,41 @@ export class WashingServicesController {
   ) {
     return {
       success: true,
-      data: await this.washingServicesService.getByIdOr404(
+      data: await this.washingServicesService.getWashingServiceForUser(
         washingServiceId,
         account.role,
         account.id,
+      ),
+    };
+  }
+
+  @Get(':washingServiceId/admin')
+  @UseGuards(UserAuthGuard)
+  async getByIdForAdminController(
+    @Param('washingServiceId') washingServiceId: string,
+    @Account() account: any,
+  ) {
+    return {
+      success: true,
+      data: await this.washingServicesService.getWashingServiceByIdForAdmin(
+        washingServiceId,
+        account.role,
+        account.id,
+      ),
+    };
+  }
+
+  @Get(':washingServiceId/guest')
+  async getByIdForGuestController(
+    @Param('washingServiceId') washingServiceId: string,
+    @Query() queryParamsDTO: QueryParamsDTO,
+  ) {
+    return {
+      success: true,
+      data: await this.washingServicesService.getWashingServiceForGuest(
+        washingServiceId,
+        'guest',
+        queryParamsDTO,
       ),
     };
   }

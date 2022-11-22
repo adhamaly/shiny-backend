@@ -74,7 +74,7 @@ export class WashingServiceQueriesHelpers {
     return washingServices;
   }
 
-  async findOneByIdQuery(id: string, role: string, city?: City) {
+  async findOneByIdQuery(id: string, role: string, city: City[]) {
     const washingService = await this.washingServicesModel
       .aggregate([
         {
@@ -88,12 +88,16 @@ export class WashingServiceQueriesHelpers {
               {
                 $match: {
                   $expr: { $eq: ['$$washingServiceId', '$washingService'] },
-                  ...(role === 'superAdmin' || role === 'subAdmin'
+                  ...(role === 'subAdmin'
+                    ? { city: { $in: city } }
+                    : role === 'superAdmin'
                     ? {}
-                    : {
+                    : role === 'user' || role === 'guest'
+                    ? {
                         isArchived: false,
-                        city: city,
-                      }),
+                        city: { $in: city },
+                      }
+                    : {}),
                 },
               },
               {
