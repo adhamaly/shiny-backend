@@ -43,4 +43,20 @@ export class AdminService {
         en: 'You have no permission',
       });
   }
+
+  async CityPermissionCreation(adminId: string, cities: City[]) {
+    const admin = await this.getByIdOr404(adminId);
+
+    let hasPermission = false;
+    for (const city of cities) {
+      if (admin.city.includes(city)) {
+        hasPermission = true;
+      }
+    }
+    if (!hasPermission)
+      throw new MethodNotAllowedResponse({
+        ar: 'غير مصرح لك',
+        en: 'You have no permission',
+      });
+  }
 }

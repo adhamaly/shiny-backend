@@ -26,7 +26,11 @@ export class WashingServicesService {
     private adminService: AdminService,
   ) {}
 
-  async createWashingService(createWashingServiceDTO: CreateWashingServiceDTO) {
+  async createWashingService(
+    createWashingServiceDTO: CreateWashingServiceDTO,
+    adminId: string,
+    role: string,
+  ) {
     if (
       !(await this.servicesIconsService.isExist(
         String(createWashingServiceDTO.icon),
@@ -43,6 +47,27 @@ export class WashingServicesService {
         en: 'Select cities',
       });
 
+    switch (role) {
+      case 'superAdmin':
+        await this.createWashingServiceSuperAdmin(createWashingServiceDTO);
+        break;
+      case 'subAdmin':
+        await this.createWashingServiceSubAdmin(
+          createWashingServiceDTO,
+          adminId,
+        );
+        break;
+      default:
+        throw new MethodNotAllowedResponse({
+          ar: 'غير مصرح لك',
+          en: 'Not Auht',
+        });
+    }
+  }
+
+  async createWashingServiceSuperAdmin(
+    createWashingServiceDTO: CreateWashingServiceDTO,
+  ) {
     const createdWashingService = await this.washingServicesRepository.create(
       createWashingServiceDTO,
     );
@@ -50,6 +75,29 @@ export class WashingServicesService {
       createdWashingService,
       createWashingServiceDTO.selectAll
         ? await this.citiesService.getCities()
+        : createWashingServiceDTO.cities,
+    );
+  }
+
+  async createWashingServiceSubAdmin(
+    createWashingServiceDTO: CreateWashingServiceDTO,
+    adminId: string,
+  ) {
+    if (!createWashingServiceDTO.selectAll)
+      await this.adminService.CityPermissionCreation(
+        adminId,
+        createWashingServiceDTO.cities,
+      );
+
+    const admin = await this.adminService.getById(adminId);
+
+    const createdWashingService = await this.washingServicesRepository.create(
+      createWashingServiceDTO,
+    );
+    await this.servicesCitiesRepository.insertMany(
+      createdWashingService,
+      createWashingServiceDTO.selectAll
+        ? admin.city
         : createWashingServiceDTO.cities,
     );
   }

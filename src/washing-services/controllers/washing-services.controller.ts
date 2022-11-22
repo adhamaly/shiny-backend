@@ -25,10 +25,13 @@ export class WashingServicesController {
   @Post('')
   @UseGuards(UserAuthGuard, IsAdminGuard)
   async createWashingServiceController(
+    @Account() account: any,
     @Body() createWashingServiceDTO: CreateWashingServiceDTO,
   ) {
     await this.washingServicesService.createWashingService(
       createWashingServiceDTO,
+      account.id,
+      account.role,
     );
 
     return {
