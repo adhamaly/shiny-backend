@@ -24,6 +24,12 @@ export class CitiesService {
       .exec();
   }
 
+  async updateCityExistance(cityId: string, isExist: boolean) {
+    await this.cityModel
+      .updateOne({ _id: cityId }, { $set: { isExist: isExist } })
+      .exec();
+  }
+
   async injectCities() {
     const citiesExists = await this.cityModel.count().exec();
     if (citiesExists) return;
