@@ -1,4 +1,5 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Account } from 'src/common/decorators/user.decorator';
 import { UserAuthGuard } from '../auth/guards';
 import { CitiesService } from './city.service';
 
@@ -6,12 +7,12 @@ import { CitiesService } from './city.service';
 export class CitiesController {
   constructor(private citiesService: CitiesService) {}
 
-  @Get()
+  @Get('/admin')
   @UseGuards(UserAuthGuard)
-  async getAllController() {
+  async getAllController(@Account() account: any) {
     return {
       success: true,
-      data: await this.citiesService.getCities(),
+      data: await this.citiesService.getAdminCities(account.role, account.id),
     };
   }
 }
