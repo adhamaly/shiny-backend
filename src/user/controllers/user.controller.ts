@@ -99,7 +99,7 @@ export class UserController {
   ) {
     return {
       success: true,
-      data: await this.userService.updateUserLocation(
+      message: await this.userService.updateUserLocation(
         account.id,
         updateUserLocation,
       ),

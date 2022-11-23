@@ -55,7 +55,16 @@ export class NearestCityCalculator {
     return (value * Math.PI) / 180;
   }
 
-  validateCountryBoundaries(country: string) {
+  isCountryBoundariesValid(country: string) {
     // TODO: create schema for countries and relate it with cities with key is Exist for each one
+
+    if (country.trim() !== 'Egypt' && country.trim() !== 'egypt') return false;
+
+    return true;
+  }
+  isCityExistanceValid(nearestCity: City) {
+    if (!nearestCity.isExist) return false;
+
+    return true;
   }
 }

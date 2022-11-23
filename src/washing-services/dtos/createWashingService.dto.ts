@@ -14,9 +14,8 @@ export class CreateWashingServiceDTO {
   @IsString()
   name: string;
 
-  @IsNotEmpty()
-  @IsString()
-  description: string;
+  @IsArray()
+  description: string[];
 
   @IsNotEmpty()
   duration: number;

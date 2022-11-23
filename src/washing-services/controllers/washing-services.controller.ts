@@ -45,12 +45,16 @@ export class WashingServicesController {
     @Account() account: any,
     @Query() queryParamsDTO: QueryParamsDTO,
   ) {
-    return {
-      success: true,
-      data: await this.washingServicesService.getAllWashingServicesForUser(
+    const result =
+      await this.washingServicesService.getAllWashingServicesForUser(
+        account.id,
         account.role,
         queryParamsDTO,
-      ),
+      );
+    return {
+      success: true,
+      message: result.message,
+      data: result.washingServices,
     };
   }
 
@@ -58,12 +62,15 @@ export class WashingServicesController {
   async getAllWashingServicesForGuestController(
     @Query() queryParamsDTO: QueryParamsDTO,
   ) {
-    return {
-      success: true,
-      data: await this.washingServicesService.getAllWashingServicesForUser(
+    const result =
+      await this.washingServicesService.getAllWashingServicesForGuest(
         'guest',
         queryParamsDTO,
-      ),
+      );
+    return {
+      success: true,
+      message: result.message,
+      data: result.washingServices,
     };
   }
 
@@ -81,16 +88,11 @@ export class WashingServicesController {
 
   @Get(':washingServiceId/user')
   @UseGuards(UserAuthGuard)
-  async getByIdController(
-    @Param('washingServiceId') washingServiceId: string,
-    @Account() account: any,
-  ) {
+  async getByIdController(@Param('washingServiceId') washingServiceId: string) {
     return {
       success: true,
-      data: await this.washingServicesService.getWashingServiceForUser(
+      data: await this.washingServicesService.getWashingServiceById(
         washingServiceId,
-        account.role,
-        account.id,
       ),
     };
   }
@@ -114,14 +116,11 @@ export class WashingServicesController {
   @Get(':washingServiceId/guest')
   async getByIdForGuestController(
     @Param('washingServiceId') washingServiceId: string,
-    @Query() queryParamsDTO: QueryParamsDTO,
   ) {
     return {
       success: true,
-      data: await this.washingServicesService.getWashingServiceForGuest(
+      data: await this.washingServicesService.getWashingServiceById(
         washingServiceId,
-        'guest',
-        queryParamsDTO,
       ),
     };
   }

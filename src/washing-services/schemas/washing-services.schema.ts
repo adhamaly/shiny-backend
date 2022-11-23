@@ -13,8 +13,8 @@ export class WashingService {
   @Prop()
   name: string;
 
-  @Prop()
-  description: string;
+  @Prop([String])
+  description: string[];
 
   @Prop()
   duration: number;

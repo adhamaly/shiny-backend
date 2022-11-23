@@ -114,18 +114,91 @@ export class WashingServicesService {
    *
    */
   async getAllWashingServicesForUser(
+    userId: string,
     role: string,
     queryParamsDTO: QueryParamsDTO,
   ) {
+    const user = await this.userService.getUserById(userId);
+
+    if (
+      !this.nearestCityCalculator.isCountryBoundariesValid(
+        queryParamsDTO.country,
+      )
+    )
+      return {
+        washingServices: [],
+        message:
+          user.language === 'en'
+            ? 'Our Service Not Exist Waiting for us soon..'
+            : 'خدماتنا غير متوفرة حاليا',
+      };
+
     const city = await this.nearestCityCalculator.findNearestCity(
       Number(queryParamsDTO.latitude),
       Number(queryParamsDTO.longitude),
     );
+
+    if (!this.nearestCityCalculator.isCityExistanceValid(city['city']))
+      return {
+        washingServices: [],
+        message:
+          user.language === 'en'
+            ? 'Our Service Not Exist Waiting for us soon..'
+            : 'خدماتنا غير متوفرة حاليا',
+      };
+
     const washingServices = await this.washingServicesRepository.findAll(role, [
       city['city']._id,
     ]);
 
-    return this.washingServicesFormaterForUser(washingServices);
+    const formatedWashingServices =
+      this.washingServicesFormaterForUser(washingServices);
+
+    return {
+      washingServices: formatedWashingServices,
+      message: !formatedWashingServices.length
+        ? 'Our Service Not Exist Waiting for us soon..'
+        : '',
+    };
+  }
+  async getAllWashingServicesForGuest(
+    role: string,
+    queryParamsDTO: QueryParamsDTO,
+  ) {
+    if (
+      !this.nearestCityCalculator.isCountryBoundariesValid(
+        queryParamsDTO.country,
+      )
+    )
+      return {
+        washingServices: [],
+        message: 'There Is No Services In This Region',
+      };
+
+    const city = await this.nearestCityCalculator.findNearestCity(
+      Number(queryParamsDTO.latitude),
+      Number(queryParamsDTO.longitude),
+    );
+
+    if (!this.nearestCityCalculator.isCityExistanceValid(city['city']))
+      return {
+        washingServices: [],
+        message: 'Our Service Not Exist Waiting for us soon..',
+      };
+
+    const washingServices = await this.washingServicesRepository.findAll(role, [
+      city['city']._id,
+    ]);
+
+    const formatedWashingServices =
+      this.washingServicesFormaterForUser(washingServices);
+
+    return {
+      washingServices: formatedWashingServices,
+      message: !formatedWashingServices.length
+        ? 'Our Service Not Exist Waiting for us soon..'
+        : '',
+    };
   }
 
   washingServicesFormaterForUser(servicesList: any) {
@@ -137,24 +210,6 @@ export class WashingServicesService {
       washingService.cities = undefined;
     });
     return filtered;
-  }
-
-  async getWashingServiceForUser(id: string, role: string, clientId: string) {
-    const user = await this.userService.getUserById(clientId);
-    const washingService =
-      await this.washingServicesRepository.findOneByIdOr404(id, role, [
-        user.location.city,
-      ]);
-
-    if (!washingService['cities'].length)
-      throw new NotFoundResponse({
-        ar: 'لاتوجد هذه الخدمة',
-        en: 'Washing Service Not Found',
-      });
-
-    washingService['cities'] = undefined;
-
-    return washingService;
   }
 
   async getWashingServiceByIdForAdmin(
@@ -179,30 +234,8 @@ export class WashingServicesService {
     return washingService;
   }
 
-  async getWashingServiceForGuest(
-    id: string,
-    role: string,
-    queryParamsDTO: QueryParamsDTO,
-  ) {
-    const city = await this.nearestCityCalculator.findNearestCity(
-      Number(queryParamsDTO.latitude),
-      Number(queryParamsDTO.longitude),
-    );
-
-    const washingService =
-      await this.washingServicesRepository.findOneByIdOr404(id, role, [
-        city['city']._id,
-      ]);
-
-    if (!washingService['cities'].length)
-      throw new NotFoundResponse({
-        ar: 'لاتوجد هذه الخدمة',
-        en: 'Washing Service Not Found',
-      });
-
-    washingService['cities'] = undefined;
-
-    return washingService;
+  async getWashingServiceById(id: string) {
+    return await this.washingServicesRepository.findOneOr404(id);
   }
 
   async update(id: string, updateWashingServiceDTO: UpdateWashingServiceDTO) {

@@ -56,18 +56,26 @@ export class UserService {
     // TODO: Get the nearest city:- Calculate Nearest city for this lat and long
     // TODO: Add TO USER Language prop for handling responses Messages
 
+    const user = await this.userRepository.findUserById(id);
+
     if (
-      updateUserLocation.country.trim() !== 'Egypt' &&
-      updateUserLocation.country.trim() !== 'egypt'
+      !this.nearestCityCalculator.isCountryBoundariesValid(
+        updateUserLocation.country,
+      )
     )
-      return {
-        ar: 'خدمتنا غير موجودة حاليا ',
-        en: 'Our Service Not Exist Waiting for us soon..',
-      };
+      return user.language === 'en'
+        ? 'Our Service Not Exist Waiting for us soon..'
+        : 'خدماتنا غير متوفرة حاليا';
+
     const nearestCity = await this.nearestCityCalculator.findNearestCity(
       Number(updateUserLocation.latitude),
       Number(updateUserLocation.longitude),
     );
+
+    if (!this.nearestCityCalculator.isCityExistanceValid(nearestCity['city']))
+      return user.language === 'en'
+        ? 'Our Service Not Exist Waiting for us soon..'
+        : 'خدماتنا غير متوفرة حاليا';
 
     // Update User Location
     await this.userQueriesHelper.updateUserLocation(
@@ -76,12 +84,7 @@ export class UserService {
       nearestCity['city'],
     );
 
-    return nearestCity['city'].isExist
-      ? undefined
-      : {
-          ar: 'خدمتنا غير موجودة حاليا ',
-          en: 'Our Service Not Exist Waiting for us soon..',
-        };
+    return user.language === 'en' ? 'done' : 'تم التعديل بنجاح';
   }
 
   async updateUserLanguage(id: string, language: string) {

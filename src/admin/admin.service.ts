@@ -51,12 +51,14 @@ export class AdminService {
     for (const city of cities) {
       if (admin.city.includes(city)) {
         hasPermission = true;
+        continue;
       }
+      hasPermission = false;
+      if (!hasPermission)
+        throw new MethodNotAllowedResponse({
+          ar: 'غير مصرح لك',
+          en: 'You have no permission',
+        });
     }
-    if (!hasPermission)
-      throw new MethodNotAllowedResponse({
-        ar: 'غير مصرح لك',
-        en: 'You have no permission',
-      });
   }
 }
