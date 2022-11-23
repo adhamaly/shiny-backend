@@ -55,7 +55,7 @@ export class PlansService {
     await this.plansCitiesRepository.insertMany(
       createdPlan,
       createPlanDTO.selectAll
-        ? await this.citiesService.getCities()
+        ? await this.citiesService.getAdminCities('superAdmin')
         : createPlanDTO.cities,
     );
   }
@@ -67,13 +67,13 @@ export class PlansService {
         createPlanDTO.cities,
       );
 
-    const admin = await this.adminService.getById(adminId);
-
     const createdPlan = await this.plansRepository.create(createPlanDTO);
 
     await this.plansCitiesRepository.insertMany(
       createdPlan,
-      createPlanDTO.selectAll ? admin.city : createPlanDTO.cities,
+      createPlanDTO.selectAll
+        ? await this.citiesService.getAdminCities('subAdmin', adminId)
+        : createPlanDTO.cities,
     );
   }
 

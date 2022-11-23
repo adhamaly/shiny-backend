@@ -73,7 +73,7 @@ export class WashingServicesService {
     await this.servicesCitiesRepository.insertMany(
       createdWashingService,
       createWashingServiceDTO.selectAll
-        ? await this.citiesService.getCities()
+        ? await this.citiesService.getAdminCities('superAdmin')
         : createWashingServiceDTO.cities,
     );
   }
@@ -88,15 +88,13 @@ export class WashingServicesService {
         createWashingServiceDTO.cities,
       );
 
-    const admin = await this.adminService.getById(adminId);
-
     const createdWashingService = await this.washingServicesRepository.create(
       createWashingServiceDTO,
     );
     await this.servicesCitiesRepository.insertMany(
       createdWashingService,
       createWashingServiceDTO.selectAll
-        ? admin.city
+        ? await this.citiesService.getAdminCities('subAdmin', adminId)
         : createWashingServiceDTO.cities,
     );
   }

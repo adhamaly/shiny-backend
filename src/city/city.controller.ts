@@ -17,12 +17,24 @@ import { SuperAdminGuard } from '../auth/guards/superAdmin.guard';
 export class CitiesController {
   constructor(private citiesService: CitiesService) {}
 
-  @Get('/admin')
+  @Get('')
   @UseGuards(UserAuthGuard, IsAdminGuard)
   async getAllController(@Account() account: any) {
     return {
       success: true,
       data: await this.citiesService.getAdminCities(account.role, account.id),
+    };
+  }
+
+  @Get('/archived')
+  @UseGuards(UserAuthGuard, IsAdminGuard)
+  async getArchivedCities(@Account() account: any) {
+    return {
+      success: true,
+      data: await this.citiesService.getArchivedCities(
+        account.role,
+        account.id,
+      ),
     };
   }
 

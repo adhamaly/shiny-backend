@@ -12,13 +12,24 @@ export class CitiesService {
   ) {}
 
   async getCities() {
-    return await this.cityModel.find().exec();
+    return await this.cityModel.find({ isExist: true }).exec();
   }
 
-  async getAdminCities(role: string, adminId: string) {
+  async getAdminCities(role: string, adminId?: string) {
     const admin = await this.adminService.getById(adminId);
     return await this.cityModel
       .find({
+        isExist: true,
+        ...(role === 'superAdmin' ? {} : { _id: { $in: admin.city } }),
+      })
+      .exec();
+  }
+
+  async getArchivedCities(role: string, adminId?: string) {
+    const admin = await this.adminService.getById(adminId);
+    return await this.cityModel
+      .find({
+        isExist: false,
         ...(role === 'superAdmin' ? {} : { _id: { $in: admin.city } }),
       })
       .exec();
