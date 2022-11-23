@@ -24,8 +24,11 @@ export class PlansController {
 
   @Post()
   @UseGuards(UserAuthGuard, IsAdminGuard)
-  async createPlanController(@Body() createPlanDTO: CreatePlanDTO) {
-    await this.plansService.createPlan(createPlanDTO);
+  async createPlanController(
+    @Body() createPlanDTO: CreatePlanDTO,
+    @Account() account: any,
+  ) {
+    await this.plansService.createPlan(createPlanDTO, account.id, account.role);
 
     return {
       success: true,

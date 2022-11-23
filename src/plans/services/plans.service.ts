@@ -24,20 +24,56 @@ export class PlansService {
     private adminService: AdminService,
   ) {}
 
-  async createPlan(createPlanDTO: CreatePlanDTO) {
-    const createdPlan = await this.plansRepository.create(createPlanDTO);
-
+  async createPlan(
+    createPlanDTO: CreatePlanDTO,
+    adminId: string,
+    role: string,
+  ) {
     if (!createPlanDTO.selectAll && !createPlanDTO.cities)
       throw new MethodNotAllowedResponse({
         ar: 'ادخل المدن',
         en: 'Select cities',
       });
 
+    switch (role) {
+      case 'superAdmin':
+        await this.createPlanSuperAdmin(createPlanDTO);
+        break;
+      case 'subAdmin':
+        await this.createPlanSubAdmin(createPlanDTO, adminId);
+        break;
+      default:
+        throw new MethodNotAllowedResponse({
+          ar: 'غير مصرح لك',
+          en: 'Not Auht',
+        });
+    }
+  }
+  async createPlanSuperAdmin(createPlanDTO: CreatePlanDTO) {
+    const createdPlan = await this.plansRepository.create(createPlanDTO);
+
     await this.plansCitiesRepository.insertMany(
       createdPlan,
       createPlanDTO.selectAll
         ? await this.citiesService.getCities()
         : createPlanDTO.cities,
+    );
+  }
+
+  async createPlanSubAdmin(createPlanDTO: CreatePlanDTO, adminId: string) {
+    if (!createPlanDTO.selectAll)
+      await this.adminService.CityPermissionCreation(
+        adminId,
+        createPlanDTO.cities,
+      );
+
+    const admin = await this.adminService.getById(adminId);
+
+    const createdPlan = await this.plansRepository.create(createPlanDTO);
+
+    await this.plansCitiesRepository.insertMany(
+      createdPlan,
+      createPlanDTO.selectAll ? admin.city : createPlanDTO.cities,
     );
   }
 

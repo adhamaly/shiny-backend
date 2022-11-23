@@ -12,7 +12,6 @@ import { MethodNotAllowedResponse } from '../../common/errors/MethodNotAllowedRe
 import { AdminService } from '../../admin/admin.service';
 import { QueryParamsDTO } from '../dtos/queryParams.dto';
 import { NearestCityCalculator } from '../../city/nearestCityCalculator.service';
-import { Length } from 'class-validator';
 
 @Injectable()
 export class WashingServicesService {
@@ -60,7 +59,7 @@ export class WashingServicesService {
       default:
         throw new MethodNotAllowedResponse({
           ar: 'غير مصرح لك',
-          en: 'Not Auht',
+          en: 'Not Auth',
         });
     }
   }
