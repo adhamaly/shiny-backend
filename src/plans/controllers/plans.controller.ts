@@ -41,17 +41,28 @@ export class PlansController {
     @Account() account: any,
     @Query() queryParamsDTO: QueryParamsDTO,
   ) {
+    const result = await this.plansService.getAllForUser(
+      account.id,
+      account.role,
+      queryParamsDTO,
+    );
     return {
       success: true,
-      data: await this.plansService.getAllForUser(account.role, queryParamsDTO),
+      message: result.message,
+      data: result.plans,
     };
   }
 
   @Get('guest')
   async getAllPlansForGuestController(@Query() queryParamsDTO: QueryParamsDTO) {
+    const result = await this.plansService.getAllForGuest(
+      'guest',
+      queryParamsDTO,
+    );
     return {
       success: true,
-      data: await this.plansService.getAllForUser('guest', queryParamsDTO),
+      message: result.message,
+      data: result.plans,
     };
   }
 
@@ -66,18 +77,10 @@ export class PlansController {
 
   @Get(':planId/user')
   @UseGuards(UserAuthGuard)
-  async getPlanByIdForUserController(
-    @Param('planId') planId: string,
-    @Query() queryParamsDTO: QueryParamsDTO,
-    @Account() account: any,
-  ) {
+  async getPlanByIdForUserController(@Param('planId') planId: string) {
     return {
       success: true,
-      data: await this.plansService.getByIdForUser(
-        planId,
-        account.role,
-        queryParamsDTO,
-      ),
+      data: await this.plansService.getById(planId),
     };
   }
   @Get(':planId/admin')
@@ -96,17 +99,10 @@ export class PlansController {
     };
   }
   @Get(':planId/guest')
-  async getPlanByIdForGuestController(
-    @Param('planId') planId: string,
-    @Query() queryParamsDTO: QueryParamsDTO,
-  ) {
+  async getPlanByIdForGuestController(@Param('planId') planId: string) {
     return {
       success: true,
-      data: await this.plansService.getByIdForUser(
-        planId,
-        'guest',
-        queryParamsDTO,
-      ),
+      data: await this.plansService.getById(planId),
     };
   }
 

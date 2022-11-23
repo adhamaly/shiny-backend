@@ -77,24 +77,83 @@ export class PlansService {
     );
   }
 
-  async getAllForUser(role: string, queryParamsDTO: QueryParamsDTO) {
+  async getAllForUser(
+    userId: string,
+    role: string,
+    queryParamsDTO: QueryParamsDTO,
+  ) {
+    const user = await this.userService.getUserById(userId);
+
     if (
-      queryParamsDTO.country !== 'Egypt' &&
-      queryParamsDTO.country !== 'egypt'
+      !this.nearestCityCalculator.isCountryBoundariesValid(
+        queryParamsDTO.country,
+      )
     )
-      throw new NotFoundResponse({
-        ar: 'لاتوجد هذه الباقة في هذه الدولة',
-        en: 'Plan Not Found in Country',
-      });
+      return {
+        plans: [],
+        message:
+          user.language === 'en'
+            ? 'Our Service Not Exist Waiting for us soon..'
+            : 'خدماتنا غير متوفرة حاليا',
+      };
 
     const city = await this.nearestCityCalculator.findNearestCity(
       Number(queryParamsDTO.latitude),
       Number(queryParamsDTO.longitude),
     );
 
+    if (!this.nearestCityCalculator.isCityExistanceValid(city['city']))
+      return {
+        plans: [],
+        message:
+          user.language === 'en'
+            ? 'Our Service Not Exist Waiting for us soon..'
+            : 'خدماتنا غير متوفرة حاليا',
+      };
+
     const plans = await this.plansRepository.findAll(role, [city['city']._id]);
 
-    return this.plansFormaterForUser(plans);
+    const formatedPlans = this.plansFormaterForUser(plans);
+
+    return {
+      plans: formatedPlans,
+      message: !formatedPlans.length
+        ? 'Our Service Not Exist Waiting for us soon..'
+        : '',
+    };
+  }
+  async getAllForGuest(role: string, queryParamsDTO: QueryParamsDTO) {
+    if (
+      !this.nearestCityCalculator.isCountryBoundariesValid(
+        queryParamsDTO.country,
+      )
+    )
+      return {
+        plans: [],
+        message: 'Our Service Not Exist Waiting for us soon..',
+      };
+
+    const city = await this.nearestCityCalculator.findNearestCity(
+      Number(queryParamsDTO.latitude),
+      Number(queryParamsDTO.longitude),
+    );
+
+    if (!this.nearestCityCalculator.isCityExistanceValid(city['city']))
+      return {
+        plans: [],
+        message: 'Our Service Not Exist Waiting for us soon..',
+      };
+
+    const plans = await this.plansRepository.findAll(role, [city['city']._id]);
+
+    const formatedPlans = this.plansFormaterForUser(plans);
+
+    return {
+      plans: formatedPlans,
+      message: !formatedPlans.length
+        ? 'Our Service Not Exist Waiting for us soon..'
+        : '',
+    };
   }
 
   async getAllForAdmin(adminId: string, role: string) {
@@ -110,38 +169,8 @@ export class PlansService {
     return filtered;
   }
 
-  async getByIdForUser(
-    id: string,
-    role: string,
-    queryParamsDTO: QueryParamsDTO,
-  ) {
-    if (
-      queryParamsDTO.country !== 'Egypt' &&
-      queryParamsDTO.country !== 'egypt'
-    )
-      throw new NotFoundResponse({
-        ar: 'لاتوجد هذه الباقة في هذه الدولة',
-        en: 'Plan Not Found in Country',
-      });
-
-    const city = await this.nearestCityCalculator.findNearestCity(
-      Number(queryParamsDTO.latitude),
-      Number(queryParamsDTO.longitude),
-    );
-
-    const plan = await this.plansRepository.findByIdOr404(id, role, [
-      city['city']._id,
-    ]);
-
-    if (!plan['cities'].length)
-      throw new NotFoundResponse({
-        ar: 'لاتوجد هذه الباقة',
-        en: 'Plan Not Found',
-      });
-
-    plan['cities'] = undefined;
-
-    return plan;
+  async getById(id: string) {
+    return await this.plansRepository.findOneByIdOr404(id);
   }
 
   async getPlanByIdForAdmin(id: string, role: string, adminId: string) {
