@@ -122,10 +122,12 @@ export class PlansController {
   @UseGuards(UserAuthGuard, IsAdminGuard)
   async addPlanToCityController(
     @Body() updatePlanCitiesDTO: UpdatePlanCitiesDTO,
+    @Account() account: any,
   ) {
     await this.plansService.addPlanToNewCity(
       updatePlanCitiesDTO.plan,
       updatePlanCitiesDTO.city,
+      account.id,
     );
 
     return {

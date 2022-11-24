@@ -3,6 +3,8 @@ import { InjectModel } from '@nestjs/mongoose';
 import { City, CityModel, cityModelName } from './schemas/city.schema';
 import { Model } from 'mongoose';
 import { AdminService } from '../admin/admin.service';
+import { Admin, Roles } from '../admin/schemas/admin.schema';
+import { MethodNotAllowedResponse } from '../common/errors/MethodNotAllowedResponse';
 
 @Injectable()
 export class CitiesService {
@@ -16,11 +18,14 @@ export class CitiesService {
   }
 
   async getAdminCities(role: string, adminId?: string) {
-    const admin = await this.adminService.getById(adminId);
+    let admin: Admin;
+    if (role === Roles.SubAdmin) {
+      admin = await this.adminService.getById(adminId);
+    }
     return await this.cityModel
       .find({
         isExist: true,
-        ...(role === 'superAdmin' ? {} : { _id: { $in: admin.city } }),
+        ...(role === Roles.SuperAdmin ? {} : { _id: { $in: admin.city } }),
       })
       .exec();
   }
@@ -30,7 +35,7 @@ export class CitiesService {
     return await this.cityModel
       .find({
         isExist: false,
-        ...(role === 'superAdmin' ? {} : { _id: { $in: admin.city } }),
+        ...(role === Roles.SuperAdmin ? {} : { _id: { $in: admin.city } }),
       })
       .exec();
   }
@@ -39,6 +44,21 @@ export class CitiesService {
     await this.cityModel
       .updateOne({ _id: cityId }, { $set: { isExist: isExist } })
       .exec();
+  }
+
+  async checkCityExistance(city: City) {
+    const cityExistance = await this.cityModel
+      .findOne({
+        _id: city,
+        isExist: true,
+      })
+      .exec();
+
+    if (!cityExistance)
+      throw new MethodNotAllowedResponse({
+        ar: 'هذه المدينة مغلقة',
+        en: 'City is Archived',
+      });
   }
 
   async injectCities() {

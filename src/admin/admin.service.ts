@@ -28,23 +28,23 @@ export class AdminService {
     return await this.adminRepository.findByIdOr404(id);
   }
 
-  async CityPermissionForBikerCreation(adminId: string, bikerCity: City) {
+  async CityPermissionForCreation(adminId: string, city: City) {
     const admin = await this.getByIdOr404(adminId);
 
-    let hasPermission = false;
-    if (admin.city.includes(bikerCity)) {
-      hasPermission = true;
+    let isCityIncluded = false;
+    if (admin.city.includes(city)) {
+      isCityIncluded = true;
     }
 
-    const permissionResult = admin.isSuperAdmin ? true : hasPermission;
-    if (!permissionResult)
+    const hasPermission = admin.isSuperAdmin ? true : isCityIncluded;
+    if (!hasPermission)
       throw new MethodNotAllowedResponse({
         ar: 'غير مصرح لك',
         en: 'You have no permission',
       });
   }
 
-  async CityPermissionCreation(adminId: string, cities: City[]) {
+  async CitiesPermissionCreation(adminId: string, cities: City[]) {
     const admin = await this.getByIdOr404(adminId);
 
     let hasPermission = false;
@@ -57,7 +57,7 @@ export class AdminService {
       if (!hasPermission)
         throw new MethodNotAllowedResponse({
           ar: 'غير مصرح لك',
-          en: 'You have no permission',
+          en: 'You have no permission to add in this city',
         });
     }
   }

@@ -16,7 +16,7 @@ export class BikersService {
     createBikerDTO: CreateBikerDTO,
     image: Express.Multer.File,
   ) {
-    await this.adminService.CityPermissionForBikerCreation(
+    await this.adminService.CityPermissionForCreation(
       adminId,
       createBikerDTO.city,
     );
@@ -41,7 +41,7 @@ export class BikersService {
     updateBikerDTO: UpdateBikerDTO,
     image: Express.Multer.File,
   ) {
-    await this.adminService.CityPermissionForBikerCreation(
+    await this.adminService.CityPermissionForCreation(
       adminId,
       updateBikerDTO.city,
     );

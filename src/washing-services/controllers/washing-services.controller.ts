@@ -145,11 +145,13 @@ export class WashingServicesController {
   async addWashingServiceToNewCityController(
     @Body('washingService') washingService: WashingService,
     @Body('city') city: City,
+    @Account() account: any,
   ) {
     // TODO:
     await this.washingServicesService.addWashingServiceToNewCity(
       washingService,
       city,
+      account.id,
     );
 
     return {

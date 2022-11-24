@@ -12,6 +12,7 @@ import { MethodNotAllowedResponse } from '../../common/errors/MethodNotAllowedRe
 import { AdminService } from '../../admin/admin.service';
 import { QueryParamsDTO } from '../dtos/queryParams.dto';
 import { NearestCityCalculator } from '../../city/nearestCityCalculator.service';
+import { Roles } from '../../admin/schemas/admin.schema';
 
 @Injectable()
 export class WashingServicesService {
@@ -47,10 +48,10 @@ export class WashingServicesService {
       });
 
     switch (role) {
-      case 'superAdmin':
+      case Roles.SuperAdmin:
         await this.createWashingServiceSuperAdmin(createWashingServiceDTO);
         break;
-      case 'subAdmin':
+      case Roles.SubAdmin:
         await this.createWashingServiceSubAdmin(
           createWashingServiceDTO,
           adminId,
@@ -73,7 +74,7 @@ export class WashingServicesService {
     await this.servicesCitiesRepository.insertMany(
       createdWashingService,
       createWashingServiceDTO.selectAll
-        ? await this.citiesService.getAdminCities('superAdmin')
+        ? await this.citiesService.getAdminCities(Roles.SuperAdmin)
         : createWashingServiceDTO.cities,
     );
   }
@@ -83,7 +84,7 @@ export class WashingServicesService {
     adminId: string,
   ) {
     if (!createWashingServiceDTO.selectAll)
-      await this.adminService.CityPermissionCreation(
+      await this.adminService.CitiesPermissionCreation(
         adminId,
         createWashingServiceDTO.cities,
       );
@@ -94,7 +95,7 @@ export class WashingServicesService {
     await this.servicesCitiesRepository.insertMany(
       createdWashingService,
       createWashingServiceDTO.selectAll
-        ? await this.citiesService.getAdminCities('subAdmin', adminId)
+        ? await this.citiesService.getAdminCities(Roles.SubAdmin, adminId)
         : createWashingServiceDTO.cities,
     );
   }
@@ -247,8 +248,14 @@ export class WashingServicesService {
       );
   }
 
-  async addWashingServiceToNewCity(washingService: WashingService, city: City) {
-    // TODO:
+  async addWashingServiceToNewCity(
+    washingService: WashingService,
+    city: City,
+    adminId: string,
+  ) {
+    // TODO: Check city permission for admin and active status for city
+    await this.adminService.CityPermissionForCreation(adminId, city);
+    await this.citiesService.checkCityExistance(city);
     await this.servicesCitiesRepository.insertOne(washingService, city);
   }
 

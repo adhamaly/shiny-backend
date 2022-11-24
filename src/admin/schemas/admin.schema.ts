@@ -4,7 +4,10 @@ import { City, cityModelName } from '../../city/schemas/city.schema';
 
 export type AdminModel = Admin & Document;
 export const adminModelName = 'admin';
-
+export enum Roles {
+  SuperAdmin = 'superAdmin',
+  SubAdmin = 'subAdmin',
+}
 @Schema({ timestamps: true })
 export class Admin {
   @Prop()

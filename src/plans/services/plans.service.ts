@@ -12,6 +12,7 @@ import { MethodNotAllowedResponse } from '../../common/errors/MethodNotAllowedRe
 import { NearestCityCalculator } from '../../city/nearestCityCalculator.service';
 import { QueryParamsDTO } from '../dtos/queryParams.dto';
 import { AdminService } from '../../admin/admin.service';
+import { Roles } from '../../admin/schemas/admin.schema';
 
 @Injectable()
 export class PlansService {
@@ -36,10 +37,10 @@ export class PlansService {
       });
 
     switch (role) {
-      case 'superAdmin':
+      case Roles.SuperAdmin:
         await this.createPlanSuperAdmin(createPlanDTO);
         break;
-      case 'subAdmin':
+      case Roles.SubAdmin:
         await this.createPlanSubAdmin(createPlanDTO, adminId);
         break;
       default:
@@ -55,14 +56,14 @@ export class PlansService {
     await this.plansCitiesRepository.insertMany(
       createdPlan,
       createPlanDTO.selectAll
-        ? await this.citiesService.getAdminCities('superAdmin')
+        ? await this.citiesService.getAdminCities(Roles.SuperAdmin)
         : createPlanDTO.cities,
     );
   }
 
   async createPlanSubAdmin(createPlanDTO: CreatePlanDTO, adminId: string) {
     if (!createPlanDTO.selectAll)
-      await this.adminService.CityPermissionCreation(
+      await this.adminService.CitiesPermissionCreation(
         adminId,
         createPlanDTO.cities,
       );
@@ -72,7 +73,7 @@ export class PlansService {
     await this.plansCitiesRepository.insertMany(
       createdPlan,
       createPlanDTO.selectAll
-        ? await this.citiesService.getAdminCities('subAdmin', adminId)
+        ? await this.citiesService.getAdminCities(Roles.SubAdmin, adminId)
         : createPlanDTO.cities,
     );
   }
@@ -189,8 +190,10 @@ export class PlansService {
     return await this.plansRepository.update(id, updatePlanDTO);
   }
 
-  async addPlanToNewCity(plan: Plan, city: City) {
+  async addPlanToNewCity(plan: Plan, city: City, adminId: string) {
     // TODO:
+    await this.adminService.CityPermissionForCreation(adminId, city);
+    await this.citiesService.checkCityExistance(city);
     await this.plansCitiesRepository.insertOne(plan, city);
   }
 
