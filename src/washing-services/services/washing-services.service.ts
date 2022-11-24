@@ -13,6 +13,7 @@ import { AdminService } from '../../admin/admin.service';
 import { QueryParamsDTO } from '../dtos/queryParams.dto';
 import { NearestCityCalculator } from '../../city/nearestCityCalculator.service';
 import { Roles } from '../../admin/schemas/admin.schema';
+import mongoose from 'mongoose';
 
 @Injectable()
 export class WashingServicesService {
@@ -112,10 +113,31 @@ export class WashingServicesService {
     );
   }
 
-  async getAllWashingServicesForAdmin(role: string, adminId: string) {
+  async getAllWashingServicesForAdmin(
+    role: string,
+    adminId: string,
+    cities: string[],
+  ) {
+    if (cities.length) {
+      const formatedCities = [];
+      for (const city of cities) {
+        formatedCities.push(new mongoose.Types.ObjectId(city));
+      }
+      const washingServices = await this.washingServicesRepository.findAll(
+        role,
+        formatedCities,
+      );
+
+      return washingServices.filter(
+        (washingService: any) => washingService.cities.length >= 1,
+      );
+    }
+
     const admin = await this.adminService.getById(adminId);
+
     return await this.washingServicesRepository.findAll(role, admin.city);
   }
+
   /** TODO:- For User (Active Service & his city) and when view orders return any status
    *             Biker Return Only Active Service
    *             Admin Return All

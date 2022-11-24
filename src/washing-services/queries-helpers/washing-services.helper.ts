@@ -19,7 +19,7 @@ export class WashingServiceQueriesHelpers {
     private readonly washingServicesModel: Model<WashingServicesModel>,
   ) {}
 
-  async findAllWashingServicesQuery(role: string, city: City[]) {
+  async findAllWashingServicesQuery(role: string, city: City[] | string[]) {
     const washingServices = await this.washingServicesModel
       .aggregate([
         {
