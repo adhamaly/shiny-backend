@@ -19,7 +19,7 @@ export class WashingServiceQueriesHelpers {
     private readonly washingServicesModel: Model<WashingServicesModel>,
   ) {}
 
-  async findAllWashingServicesQuery(role: string, city: City[] | string[]) {
+  async findAllWashingServicesQuery(role: string, city?: City[] | string[]) {
     const washingServices = await this.washingServicesModel
       .aggregate([
         {
@@ -33,7 +33,7 @@ export class WashingServiceQueriesHelpers {
                   ...(role === 'subAdmin'
                     ? { city: { $in: city } }
                     : role === 'superAdmin'
-                    ? {}
+                    ? { ...(city?.length ? { city: { $in: city } } : {}) }
                     : role === 'user' || role === 'guest'
                     ? {
                         isArchived: false,

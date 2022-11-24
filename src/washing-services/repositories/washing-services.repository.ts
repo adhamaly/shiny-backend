@@ -45,8 +45,7 @@ export class WashingServicesRepository {
     return createdWashingService;
   }
 
-  async findAll(role: string, city: City[] | string[]) {
-    console.log(city);
+  async findAll(role: string, city?: City[] | string[]) {
     const washingServices =
       await this.washingServiceQueriesHelpers.findAllWashingServicesQuery(
         role,

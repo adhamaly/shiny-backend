@@ -133,9 +133,15 @@ export class WashingServicesService {
       );
     }
 
-    const admin = await this.adminService.getById(adminId);
-
-    return await this.washingServicesRepository.findAll(role, admin.city);
+    switch (role) {
+      case Roles.SuperAdmin:
+        return await this.washingServicesRepository.findAll(role);
+      case Roles.SubAdmin:
+        const admin = await this.adminService.getById(adminId);
+        return await this.washingServicesRepository.findAll(role, admin.city);
+      default:
+        return [];
+    }
   }
 
   /** TODO:- For User (Active Service & his city) and when view orders return any status
