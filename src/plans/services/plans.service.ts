@@ -51,6 +51,12 @@ export class PlansService {
     }
   }
   async createPlanSuperAdmin(createPlanDTO: CreatePlanDTO) {
+    if (!createPlanDTO.selectAll) {
+      // check cities Active status
+      for (const city of createPlanDTO.cities) {
+        await this.citiesService.checkCityExistance(city);
+      }
+    }
     const createdPlan = await this.plansRepository.create(createPlanDTO);
 
     await this.plansCitiesRepository.insertMany(
@@ -62,11 +68,17 @@ export class PlansService {
   }
 
   async createPlanSubAdmin(createPlanDTO: CreatePlanDTO, adminId: string) {
-    if (!createPlanDTO.selectAll)
+    if (!createPlanDTO.selectAll) {
+      // check admin permissions
       await this.adminService.CitiesPermissionCreation(
         adminId,
         createPlanDTO.cities,
       );
+      // check cities Active status
+      for (const city of createPlanDTO.cities) {
+        await this.citiesService.checkCityExistance(city);
+      }
+    }
 
     const createdPlan = await this.plansRepository.create(createPlanDTO);
 

@@ -68,6 +68,12 @@ export class WashingServicesService {
   async createWashingServiceSuperAdmin(
     createWashingServiceDTO: CreateWashingServiceDTO,
   ) {
+    if (!createWashingServiceDTO.selectAll) {
+      // check cities Active status
+      for (const city of createWashingServiceDTO.cities) {
+        await this.citiesService.checkCityExistance(city);
+      }
+    }
     const createdWashingService = await this.washingServicesRepository.create(
       createWashingServiceDTO,
     );
@@ -83,11 +89,17 @@ export class WashingServicesService {
     createWashingServiceDTO: CreateWashingServiceDTO,
     adminId: string,
   ) {
-    if (!createWashingServiceDTO.selectAll)
+    if (!createWashingServiceDTO.selectAll) {
+      // Check Cities Permissions
       await this.adminService.CitiesPermissionCreation(
         adminId,
         createWashingServiceDTO.cities,
       );
+      // check cities Active status
+      for (const city of createWashingServiceDTO.cities) {
+        await this.citiesService.checkCityExistance(city);
+      }
+    }
 
     const createdWashingService = await this.washingServicesRepository.create(
       createWashingServiceDTO,
