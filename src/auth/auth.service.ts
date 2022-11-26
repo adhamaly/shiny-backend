@@ -8,6 +8,7 @@ import * as bcrypt from 'bcrypt';
 import { UnAuthorizedResponse } from '../common/errors/UnAuthorizedResponse';
 import { NotFoundResponse } from '../common/errors';
 import { UserLogoutDTO } from '../user/dto/userLogout.dto';
+import { Roles } from 'src/admin/schemas/admin.schema';
 
 @Injectable()
 export class AuthService {
@@ -77,11 +78,11 @@ export class AuthService {
     // Generate Tokens
     const accessToken = this.generateAccessToken(
       admin._id,
-      admin.isSuperAdmin ? 'superAdmin' : 'subAdmin',
+      admin.isSuperAdmin ? Roles.SuperAdmin : Roles.SubAdmin,
     );
     const refreshToken = this.generateRefreshToken(
       admin._id,
-      admin.isSuperAdmin ? 'superAdmin' : 'subAdmin',
+      admin.isSuperAdmin ? Roles.SuperAdmin : Roles.SubAdmin,
     );
 
     admin.password = undefined;
@@ -161,7 +162,7 @@ export class AuthService {
   }
 
   async checkClientUserExistance(clientId: string, role: string) {
-    if (role === 'superAdmin' || role === 'subAdmin') {
+    if (role === Roles.SuperAdmin || role === Roles.SubAdmin) {
       const adminProfile = await this.adminService.getByIdOr404(clientId);
       return adminProfile;
     }

@@ -1,5 +1,6 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { ForbiddenResponse } from '../../common/errors/ForbiddenResponse';
+import { Roles } from '../schemas/admin.schema';
 
 @Injectable()
 export class IsAdminGuard implements CanActivate {
@@ -9,8 +10,8 @@ export class IsAdminGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
 
     if (
-      request.account.role === 'subAdmin' ||
-      request.account.role === 'superAdmin'
+      request.account.role === Roles.SubAdmin ||
+      request.account.role === Roles.SuperAdmin
     )
       return true;
     throw new ForbiddenResponse({

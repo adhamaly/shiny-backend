@@ -7,6 +7,9 @@ export const adminModelName = 'admin';
 export enum Roles {
   SuperAdmin = 'superAdmin',
   SubAdmin = 'subAdmin',
+  User = 'user',
+  Guest = 'guest',
+  Biker = 'biker',
 }
 @Schema({ timestamps: true })
 export class Admin {

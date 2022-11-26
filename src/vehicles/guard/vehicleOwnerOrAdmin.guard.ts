@@ -1,4 +1,5 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
+import { Roles } from 'src/admin/schemas/admin.schema';
 import { ForbiddenResponse } from '../../common/errors/ForbiddenResponse';
 import { VehiclesService } from '../vehicles.service';
 
@@ -16,8 +17,8 @@ export class IsVehicleOwnerOrAdmin implements CanActivate {
     if (vehicle.user.toString() === userId.toString()) return true;
 
     if (
-      request.account.role === 'superAdmin' ||
-      request.account.role === 'subAdmin'
+      request.account.role === Roles.SuperAdmin ||
+      request.account.role === Roles.SubAdmin
     )
       return true;
     throw new ForbiddenResponse({

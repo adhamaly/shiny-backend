@@ -170,8 +170,15 @@ export class PlansService {
   }
 
   async getAllForAdmin(adminId: string, role: string) {
-    const admin = await this.adminService.getById(adminId);
-    return await this.plansRepository.findAll(role, admin.city);
+    switch (role) {
+      case Roles.SuperAdmin:
+        return await this.plansRepository.findAll(role);
+      case Roles.SubAdmin:
+        const admin = await this.adminService.getById(adminId);
+        return await this.plansRepository.findAll(role, admin.city);
+      default:
+        return [];
+    }
   }
   plansFormaterForUser(plansList: any) {
     const filtered = plansList.filter((plan: any) => plan.cities.length >= 1);

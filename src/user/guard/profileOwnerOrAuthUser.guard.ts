@@ -1,4 +1,5 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
+import { Roles } from 'src/admin/schemas/admin.schema';
 import { ForbiddenResponse } from '..//../common/errors/ForbiddenResponse';
 import { UserService } from '../user.service';
 
@@ -20,9 +21,9 @@ export class ProfileOwnerOrAuthClientGuard implements CanActivate {
     }
 
     if (
-      request.account.role === 'subAdmin' ||
-      request.account.role === 'superAdmin' ||
-      request.account.role === 'biker'
+      request.account.role === Roles.SubAdmin ||
+      request.account.role === Roles.SuperAdmin ||
+      request.account.role === Roles.Biker
     )
       return true;
 

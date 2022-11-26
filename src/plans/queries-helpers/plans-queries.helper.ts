@@ -5,6 +5,7 @@ import { City } from '../../city/schemas/city.schema';
 import { plansModelName, PlansModel } from '../schemas/plans.schema';
 import { plansCitiesModelName, PlanCity } from '../schemas/plans-cities.schema';
 import { WashingServicesModelName } from '../../washing-services/schemas/washing-services.schema';
+import { Roles } from 'src/admin/schemas/admin.schema';
 
 @Injectable()
 export class PlansQueriesHelpers {
@@ -23,7 +24,7 @@ export class PlansQueriesHelpers {
     private readonly plansCitiesModel: Model<PlanCity>,
   ) {}
 
-  async findAllPlansQuery(role: string, city: City[]) {
+  async findAllPlansQuery(role: string, city?: City[]) {
     const plans = await this.plansModel
       .aggregate([
         {
@@ -34,9 +35,9 @@ export class PlansQueriesHelpers {
               {
                 $match: {
                   $expr: { $eq: ['$$planId', '$plan'] },
-                  ...(role === 'subAdmin'
+                  ...(role === Roles.SubAdmin
                     ? { city: { $in: city } }
-                    : role === 'superAdmin'
+                    : role === Roles.SuperAdmin
                     ? {}
                     : role === 'user' || role === 'guest'
                     ? {
@@ -89,9 +90,9 @@ export class PlansQueriesHelpers {
               {
                 $match: {
                   $expr: { $eq: ['$$planId', '$plan'] },
-                  ...(role === 'subAdmin'
+                  ...(role === Roles.SubAdmin
                     ? { city: { $in: city } }
-                    : role === 'superAdmin'
+                    : role === Roles.SuperAdmin
                     ? {}
                     : role === 'user' || role === 'guest'
                     ? {

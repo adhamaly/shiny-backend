@@ -7,6 +7,7 @@ import {
 } from '../schemas/washing-services.schema';
 import mongoose, { Document, Model, Mongoose, Types } from 'mongoose';
 import { City } from '../../city/schemas/city.schema';
+import { Roles } from 'src/admin/schemas/admin.schema';
 
 @Injectable()
 export class WashingServiceQueriesHelpers {
@@ -30,9 +31,9 @@ export class WashingServiceQueriesHelpers {
               {
                 $match: {
                   $expr: { $eq: ['$$washingServiceId', '$washingService'] },
-                  ...(role === 'subAdmin'
+                  ...(role === Roles.SubAdmin
                     ? { city: { $in: city } }
-                    : role === 'superAdmin'
+                    : role === Roles.SuperAdmin
                     ? { ...(city?.length ? { city: { $in: city } } : {}) }
                     : role === 'user' || role === 'guest'
                     ? {
@@ -88,10 +89,10 @@ export class WashingServiceQueriesHelpers {
               {
                 $match: {
                   $expr: { $eq: ['$$washingServiceId', '$washingService'] },
-                  ...(role === 'subAdmin'
+                  ...(role === Roles.SubAdmin
                     ? { city: { $in: city } }
-                    : role === 'superAdmin'
-                    ? {}
+                    : role === Roles.SuperAdmin
+                    ? { ...(city?.length ? { city: { $in: city } } : {}) }
                     : role === 'user' || role === 'guest'
                     ? {
                         isArchived: false,
