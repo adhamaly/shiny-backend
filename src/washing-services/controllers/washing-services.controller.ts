@@ -39,7 +39,7 @@ export class WashingServicesController {
     };
   }
 
-  @Get('user')
+  @Get('user/all')
   @UseGuards(UserAuthGuard)
   async getAllWashingServicesForUserController(
     @Account() account: any,
@@ -58,7 +58,7 @@ export class WashingServicesController {
     };
   }
 
-  @Get('guest')
+  @Get('guest/all')
   async getAllWashingServicesForGuestController(
     @Query() queryParamsDTO: QueryParamsDTO,
   ) {
@@ -74,7 +74,7 @@ export class WashingServicesController {
     };
   }
 
-  @Get('admin')
+  @Get('admin/all')
   @UseGuards(UserAuthGuard)
   async getAllWashingServicesForAdminController(
     @Account() account: any,
@@ -90,7 +90,7 @@ export class WashingServicesController {
     };
   }
 
-  @Get(':washingServiceId/user')
+  @Get('/user/details/:washingServiceId')
   @UseGuards(UserAuthGuard)
   async getByIdController(@Param('washingServiceId') washingServiceId: string) {
     return {
@@ -101,7 +101,7 @@ export class WashingServicesController {
     };
   }
 
-  @Get(':washingServiceId/admin')
+  @Get('/admin/details/:washingServiceId')
   @UseGuards(UserAuthGuard)
   async getByIdForAdminController(
     @Param('washingServiceId') washingServiceId: string,
@@ -117,7 +117,7 @@ export class WashingServicesController {
     };
   }
 
-  @Get(':washingServiceId/guest')
+  @Get('/guest/details/:washingServiceId')
   async getByIdForGuestController(
     @Param('washingServiceId') washingServiceId: string,
   ) {

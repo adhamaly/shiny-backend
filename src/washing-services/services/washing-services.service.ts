@@ -138,7 +138,14 @@ export class WashingServicesService {
         return await this.washingServicesRepository.findAll(role);
       case Roles.SubAdmin:
         const admin = await this.adminService.getById(adminId);
-        return await this.washingServicesRepository.findAll(role, admin.city);
+        const washingServices = await this.washingServicesRepository.findAll(
+          role,
+          admin.city,
+        );
+
+        return washingServices.filter(
+          (washingService: any) => washingService.cities.length >= 1,
+        );
       default:
         return [];
     }
