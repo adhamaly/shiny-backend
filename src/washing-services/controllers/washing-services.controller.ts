@@ -48,7 +48,6 @@ export class WashingServicesController {
     const result =
       await this.washingServicesService.getAllWashingServicesForUser(
         account.id,
-        account.role,
         queryParamsDTO,
       );
     return {
@@ -64,7 +63,6 @@ export class WashingServicesController {
   ) {
     const result =
       await this.washingServicesService.getAllWashingServicesForGuest(
-        'guest',
         queryParamsDTO,
       );
     return {

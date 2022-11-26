@@ -123,10 +123,11 @@ export class WashingServicesService {
       for (const city of cities) {
         formatedCities.push(new mongoose.Types.ObjectId(city));
       }
-      const washingServices = await this.washingServicesRepository.findAll(
-        role,
-        formatedCities,
-      );
+      const washingServices =
+        await this.washingServicesRepository.findAllForAdmins(
+          role,
+          formatedCities,
+        );
 
       return washingServices.filter(
         (washingService: any) => washingService.cities.length >= 1,
@@ -135,13 +136,14 @@ export class WashingServicesService {
 
     switch (role) {
       case Roles.SuperAdmin:
-        return await this.washingServicesRepository.findAll(role);
+        return await this.washingServicesRepository.findAllForAdmins(role);
       case Roles.SubAdmin:
         const admin = await this.adminService.getById(adminId);
-        const washingServices = await this.washingServicesRepository.findAll(
-          role,
-          admin.city,
-        );
+        const washingServices =
+          await this.washingServicesRepository.findAllForAdmins(
+            role,
+            admin.city,
+          );
 
         return washingServices.filter(
           (washingService: any) => washingService.cities.length >= 1,
@@ -160,7 +162,6 @@ export class WashingServicesService {
    */
   async getAllWashingServicesForUser(
     userId: string,
-    role: string,
     queryParamsDTO: QueryParamsDTO,
   ) {
     const user = await this.userService.getUserById(userId);
@@ -192,9 +193,9 @@ export class WashingServicesService {
             : 'خدماتنا غير متوفرة حاليا',
       };
 
-    const washingServices = await this.washingServicesRepository.findAll(role, [
+    const washingServices = await this.washingServicesRepository.findAll(
       city['city']._id,
-    ]);
+    );
 
     const formatedWashingServices =
       this.washingServicesFormaterForUser(washingServices);
@@ -206,10 +207,7 @@ export class WashingServicesService {
         : '',
     };
   }
-  async getAllWashingServicesForGuest(
-    role: string,
-    queryParamsDTO: QueryParamsDTO,
-  ) {
+  async getAllWashingServicesForGuest(queryParamsDTO: QueryParamsDTO) {
     if (
       !this.nearestCityCalculator.isCountryBoundariesValid(
         queryParamsDTO.country,
@@ -231,9 +229,9 @@ export class WashingServicesService {
         message: 'Our Service Not Exist Waiting for us soon..',
       };
 
-    const washingServices = await this.washingServicesRepository.findAll(role, [
+    const washingServices = await this.washingServicesRepository.findAll(
       city['city']._id,
-    ]);
+    );
 
     const formatedWashingServices =
       this.washingServicesFormaterForUser(washingServices);

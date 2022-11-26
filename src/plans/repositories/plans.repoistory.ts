@@ -136,12 +136,7 @@ export class PlansRepository {
               {
                 $match: {
                   $expr: { $eq: ['$$planId', '$plan'] },
-                  ...(role === Roles.SubAdmin
-                    ? { city: { $in: city } }
-                    : {
-                        isArchived: false,
-                        city: { $in: city },
-                      }),
+                  ...(role === Roles.SubAdmin ? { city: { $in: city } } : {}),
                 },
               },
               {

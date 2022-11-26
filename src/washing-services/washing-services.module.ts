@@ -5,7 +5,6 @@ import { WashingServicesRepository } from './repositories/washing-services.repos
 import { MongooseModule } from '@nestjs/mongoose';
 import { ServicesIconsModule } from '../services-icons/services-icons.module';
 import { CityModule } from '../city/city.module';
-import { WashingServiceQueriesHelpers } from './queries-helpers/washing-services.helper';
 import { UserModule } from '../user/user.module';
 import {
   ServicesCitiesModelName,
@@ -32,14 +31,9 @@ import { AdminModule } from '../admin/admin.module';
   providers: [
     WashingServicesService,
     WashingServicesRepository,
-    WashingServiceQueriesHelpers,
     ServicesCitiesRepository,
   ],
   controllers: [WashingServicesController],
-  exports: [
-    WashingServicesService,
-    WashingServicesRepository,
-    WashingServiceQueriesHelpers,
-  ],
+  exports: [WashingServicesService, WashingServicesRepository],
 })
 export class WashingServicesModule {}
