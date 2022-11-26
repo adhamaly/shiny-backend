@@ -35,7 +35,7 @@ export class PlansController {
     };
   }
 
-  @Get('user')
+  @Get('user/all')
   @UseGuards(UserAuthGuard)
   async getAllPlansForUserController(
     @Account() account: any,
@@ -53,7 +53,7 @@ export class PlansController {
     };
   }
 
-  @Get('guest')
+  @Get('guest/all')
   async getAllPlansForGuestController(@Query() queryParamsDTO: QueryParamsDTO) {
     const result = await this.plansService.getAllForGuest(
       'guest',
@@ -66,7 +66,7 @@ export class PlansController {
     };
   }
 
-  @Get('admin')
+  @Get('admin/all')
   @UseGuards(UserAuthGuard)
   async getAllPlansForAdminController(@Account() account: any) {
     return {
@@ -75,7 +75,7 @@ export class PlansController {
     };
   }
 
-  @Get(':planId/user')
+  @Get('/user/details/:planId')
   @UseGuards(UserAuthGuard)
   async getPlanByIdForUserController(@Param('planId') planId: string) {
     return {
@@ -83,7 +83,7 @@ export class PlansController {
       data: await this.plansService.getById(planId),
     };
   }
-  @Get(':planId/admin')
+  @Get('/admin/details/:planId')
   @UseGuards(UserAuthGuard)
   async getPlanByIdForAdminController(
     @Param('planId') planId: string,
@@ -98,7 +98,7 @@ export class PlansController {
       ),
     };
   }
-  @Get(':planId/guest')
+  @Get('/guest/details/:planId')
   async getPlanByIdForGuestController(@Param('planId') planId: string) {
     return {
       success: true,

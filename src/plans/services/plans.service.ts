@@ -175,7 +175,8 @@ export class PlansService {
         return await this.plansRepository.findAll(role);
       case Roles.SubAdmin:
         const admin = await this.adminService.getById(adminId);
-        return await this.plansRepository.findAll(role, admin.city);
+        const plans = await this.plansRepository.findAll(role, admin.city);
+        return plans.filter((plan: any) => plan.cities.length >= 1);
       default:
         return [];
     }
