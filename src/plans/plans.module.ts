@@ -7,7 +7,6 @@ import { PlansRepository } from './repositories/plans.repoistory';
 import { PlansCitiesRepository } from './repositories/plans-cities.repository';
 import { CityModule } from '../city/city.module';
 import { UserModule } from '../user/user.module';
-import { PlansQueriesHelpers } from './queries-helpers/plans-queries.helper';
 import { AdminModule } from '../admin/admin.module';
 import {
   plansCitiesModelName,
@@ -24,13 +23,8 @@ import {
     UserModule,
     AdminModule,
   ],
-  providers: [
-    PlansService,
-    PlansRepository,
-    PlansCitiesRepository,
-    PlansQueriesHelpers,
-  ],
+  providers: [PlansService, PlansRepository, PlansCitiesRepository],
   controllers: [PlansController],
-  exports: [PlansService, PlansRepository, PlansQueriesHelpers],
+  exports: [PlansService, PlansRepository],
 })
 export class PlansModule {}

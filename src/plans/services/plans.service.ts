@@ -90,11 +90,7 @@ export class PlansService {
     );
   }
 
-  async getAllForUser(
-    userId: string,
-    role: string,
-    queryParamsDTO: QueryParamsDTO,
-  ) {
+  async getAllForUser(userId: string, queryParamsDTO: QueryParamsDTO) {
     const user = await this.userService.getUserById(userId);
 
     if (
@@ -124,7 +120,7 @@ export class PlansService {
             : 'خدماتنا غير متوفرة حاليا',
       };
 
-    const plans = await this.plansRepository.findAll(role, [city['city']._id]);
+    const plans = await this.plansRepository.findAll(city['city']._id);
 
     const formatedPlans = this.plansFormaterForUser(plans);
 
@@ -135,7 +131,7 @@ export class PlansService {
         : '',
     };
   }
-  async getAllForGuest(role: string, queryParamsDTO: QueryParamsDTO) {
+  async getAllForGuest(queryParamsDTO: QueryParamsDTO) {
     if (
       !this.nearestCityCalculator.isCountryBoundariesValid(
         queryParamsDTO.country,
@@ -157,7 +153,7 @@ export class PlansService {
         message: 'Our Service Not Exist Waiting for us soon..',
       };
 
-    const plans = await this.plansRepository.findAll(role, [city['city']._id]);
+    const plans = await this.plansRepository.findAll(city['city']._id);
 
     const formatedPlans = this.plansFormaterForUser(plans);
 
@@ -172,10 +168,13 @@ export class PlansService {
   async getAllForAdmin(adminId: string, role: string) {
     switch (role) {
       case Roles.SuperAdmin:
-        return await this.plansRepository.findAll(role);
+        return await this.plansRepository.findAllForAdmins(role);
       case Roles.SubAdmin:
         const admin = await this.adminService.getById(adminId);
-        const plans = await this.plansRepository.findAll(role, admin.city);
+        const plans = await this.plansRepository.findAllForAdmins(
+          role,
+          admin.city,
+        );
         return plans.filter((plan: any) => plan.cities.length >= 1);
       default:
         return [];

@@ -1,19 +1,25 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { CreatePlanDTO, UpdatePlanDTO } from '../dtos';
 import { Plan, PlansModel, plansModelName } from '../schemas/plans.schema';
 import { NotFoundResponse } from '../../common/errors/NotFoundResponse';
-import { PlansQueriesHelpers } from '../queries-helpers/plans-queries.helper';
 import { City } from '../../city/schemas/city.schema';
+import { WashingServicesModelName } from '../../washing-services/schemas/washing-services.schema';
+import { Roles } from 'src/admin/schemas/admin.schema';
 
 @Injectable()
 export class PlansRepository {
   // Attributes
-
+  populatedPaths = [
+    {
+      path: 'washingServices',
+      select: 'name',
+      model: WashingServicesModelName,
+    },
+  ];
   constructor(
     @InjectModel(plansModelName) private readonly plansModel: Model<PlansModel>,
-    private plansQueriesHelpers: PlansQueriesHelpers,
   ) {}
 
   // Functions
@@ -31,12 +37,140 @@ export class PlansRepository {
 
     return createdPlan;
   }
-  async findAll(role: string, city?: City[]) {
-    console.log(city);
-    return await this.plansQueriesHelpers.findAllPlansQuery(role, city);
+  async findAllForAdmins(role: string, city?: City[]) {
+    const plans = await this.plansModel
+      .aggregate([
+        {
+          $lookup: {
+            from: 'plans-cities',
+            let: { planId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$$planId', '$plan'] },
+                  ...(role === Roles.SubAdmin ? { city: { $in: city } } : {}),
+                },
+              },
+              {
+                $lookup: {
+                  from: 'cities',
+                  let: { cityId: '$city' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$$cityId', '$_id'] },
+                      },
+                    },
+                  ],
+                  as: 'city',
+                },
+              },
+              { $project: { _id: 0, plan: 0 } },
+
+              { $unwind: '$city' },
+            ],
+            as: 'cities',
+          },
+        },
+      ])
+      .exec();
+
+    await this.plansModel.populate(plans, this.populatedPaths);
+
+    return plans;
+  }
+  async findAll(city: City) {
+    const plans = await this.plansModel
+      .aggregate([
+        {
+          $lookup: {
+            from: 'plans-cities',
+            let: { planId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$$planId', '$plan'] },
+                  isArchived: false,
+                  city: city,
+                },
+              },
+              {
+                $lookup: {
+                  from: 'cities',
+                  let: { cityId: '$city' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$$cityId', '$_id'] },
+                      },
+                    },
+                  ],
+                  as: 'city',
+                },
+              },
+              { $project: { _id: 0, plan: 0 } },
+
+              { $unwind: '$city' },
+            ],
+            as: 'cities',
+          },
+        },
+      ])
+      .exec();
+
+    await this.plansModel.populate(plans, this.populatedPaths);
+
+    return plans;
   }
   async findByIdOr404(id: string, role: string, city: City[]) {
-    return await this.plansQueriesHelpers.findOneByIdQuery(id, role, city);
+    const plan = await this.plansModel
+      .aggregate([
+        {
+          $match: { _id: new mongoose.Types.ObjectId(id) },
+        },
+        {
+          $lookup: {
+            from: 'plans-cities',
+            let: { planId: '$_id' },
+            pipeline: [
+              {
+                $match: {
+                  $expr: { $eq: ['$$planId', '$plan'] },
+                  ...(role === Roles.SubAdmin
+                    ? { city: { $in: city } }
+                    : {
+                        isArchived: false,
+                        city: { $in: city },
+                      }),
+                },
+              },
+              {
+                $lookup: {
+                  from: 'cities',
+                  let: { cityId: '$city' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: { $eq: ['$$cityId', '$_id'] },
+                      },
+                    },
+                  ],
+                  as: 'city',
+                },
+              },
+              { $project: { _id: 0, plan: 0 } },
+
+              { $unwind: '$city' },
+            ],
+            as: 'cities',
+          },
+        },
+      ])
+      .exec();
+
+    await this.plansModel.populate(plan, this.populatedPaths);
+
+    return plan[0];
   }
   async update(id: string, updatePlanDTO: UpdatePlanDTO) {
     const plan = await this.findOneByIdOr404(id);

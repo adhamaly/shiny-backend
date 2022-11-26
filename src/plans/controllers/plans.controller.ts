@@ -43,7 +43,6 @@ export class PlansController {
   ) {
     const result = await this.plansService.getAllForUser(
       account.id,
-      account.role,
       queryParamsDTO,
     );
     return {
@@ -55,10 +54,7 @@ export class PlansController {
 
   @Get('guest/all')
   async getAllPlansForGuestController(@Query() queryParamsDTO: QueryParamsDTO) {
-    const result = await this.plansService.getAllForGuest(
-      'guest',
-      queryParamsDTO,
-    );
+    const result = await this.plansService.getAllForGuest(queryParamsDTO);
     return {
       success: true,
       message: result.message,
