@@ -72,7 +72,7 @@ export class WashingServicesService {
     if (!createWashingServiceDTO.selectAll) {
       // check cities Active status
       for (const city of createWashingServiceDTO.cities) {
-        await this.citiesService.checkCityExistance(city);
+        await this.citiesService.checkCityExistence(city);
       }
     }
     const createdWashingService = await this.washingServicesRepository.create(
@@ -98,7 +98,7 @@ export class WashingServicesService {
       );
       // check cities Active status
       for (const city of createWashingServiceDTO.cities) {
-        await this.citiesService.checkCityExistance(city);
+        await this.citiesService.checkCityExistence(city);
       }
     }
 
@@ -176,7 +176,7 @@ export class WashingServicesService {
       Number(queryParamsDTO.longitude),
     );
 
-    if (!this.nearestCityCalculator.isCityExistanceValid(city['city']))
+    if (!this.nearestCityCalculator.isCityExistenceValid(city['city']))
       return {
         washingServices: [],
         message:
@@ -218,7 +218,7 @@ export class WashingServicesService {
       Number(queryParamsDTO.longitude),
     );
 
-    if (!this.nearestCityCalculator.isCityExistanceValid(city['city']))
+    if (!this.nearestCityCalculator.isCityExistenceValid(city['city']))
       return {
         washingServices: [],
         message: 'Our Service Not Exist Waiting for us soon..',
@@ -302,7 +302,7 @@ export class WashingServicesService {
   ) {
     // TODO: Check city permission for admin and active status for city
     await this.adminService.CityPermissionForCreation(adminId, city);
-    await this.citiesService.checkCityExistance(city);
+    await this.citiesService.checkCityExistence(city);
     await this.servicesCitiesRepository.insertOne(washingService, city);
   }
 

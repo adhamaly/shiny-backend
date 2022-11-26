@@ -17,14 +17,14 @@ export class UserRepository {
   ) {}
 
   async create(userRegsiterDTO: UserRegisterDTO) {
-    // Check existance
-    if (await this.checkPhoneExistance(userRegsiterDTO.phone))
+    // Check Existence
+    if (await this.checkPhoneExistence(userRegsiterDTO.phone))
       throw new MethodNotAllowedResponse({
         ar: 'الرقم مسجل من قبل',
         en: 'Phone is already exist',
       });
 
-    // Check EmailExistance
+    // Check EmailExistence
     if (await this.checkEmailIsAlreadyExist(userRegsiterDTO.email))
       throw new MethodNotAllowedResponse({
         ar: 'البريد الإلكتروني مسجل من قبل',
@@ -49,7 +49,7 @@ export class UserRepository {
     const userProfile = await this.findUserById(userId);
 
     if (
-      await this.checkEmailExistanceForAnotherUser(
+      await this.checkEmailExistenceForAnotherUser(
         userId,
         userUpdateProfileDTO.email,
       )
@@ -112,7 +112,7 @@ export class UserRepository {
     return userDocument;
   }
 
-  async checkPhoneExistance(phone: string) {
+  async checkPhoneExistence(phone: string) {
     const userDocument = await this.userModel
       .findOne({
         phone: phone,
@@ -122,7 +122,7 @@ export class UserRepository {
 
     return userDocument ? true : false;
   }
-  async checkPhoneExistanceForAnotherUser(userId: string, phone: string) {
+  async checkPhoneExistenceForAnotherUser(userId: string, phone: string) {
     const userDocument = await this.userModel
       .findOne({
         phone: phone,
@@ -145,7 +145,7 @@ export class UserRepository {
     return userDocument ? true : false;
   }
 
-  async checkEmailExistanceForAnotherUser(userId: string, email: string) {
+  async checkEmailExistenceForAnotherUser(userId: string, email: string) {
     const userDocument = await this.userModel
       .findOne({
         email: email,

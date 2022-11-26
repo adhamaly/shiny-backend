@@ -62,7 +62,7 @@ export class NearestCityCalculator {
 
     return true;
   }
-  isCityExistanceValid(nearestCity: City) {
+  isCityExistenceValid(nearestCity: City) {
     if (!nearestCity.isExist) return false;
 
     return true;

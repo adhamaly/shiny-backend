@@ -54,7 +54,7 @@ export class PlansService {
     if (!createPlanDTO.selectAll) {
       // check cities Active status
       for (const city of createPlanDTO.cities) {
-        await this.citiesService.checkCityExistance(city);
+        await this.citiesService.checkCityExistence(city);
       }
     }
     const createdPlan = await this.plansRepository.create(createPlanDTO);
@@ -76,7 +76,7 @@ export class PlansService {
       );
       // check cities Active status
       for (const city of createPlanDTO.cities) {
-        await this.citiesService.checkCityExistance(city);
+        await this.citiesService.checkCityExistence(city);
       }
     }
 
@@ -115,7 +115,7 @@ export class PlansService {
       Number(queryParamsDTO.longitude),
     );
 
-    if (!this.nearestCityCalculator.isCityExistanceValid(city['city']))
+    if (!this.nearestCityCalculator.isCityExistenceValid(city['city']))
       return {
         plans: [],
         message:
@@ -151,7 +151,7 @@ export class PlansService {
       Number(queryParamsDTO.longitude),
     );
 
-    if (!this.nearestCityCalculator.isCityExistanceValid(city['city']))
+    if (!this.nearestCityCalculator.isCityExistenceValid(city['city']))
       return {
         plans: [],
         message: 'Our Service Not Exist Waiting for us soon..',
@@ -223,7 +223,7 @@ export class PlansService {
   async addPlanToNewCity(plan: Plan, city: City, adminId: string) {
     // TODO:
     await this.adminService.CityPermissionForCreation(adminId, city);
-    await this.citiesService.checkCityExistance(city);
+    await this.citiesService.checkCityExistence(city);
     await this.plansCitiesRepository.insertOne(plan, city);
   }
 

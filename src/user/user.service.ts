@@ -72,7 +72,7 @@ export class UserService {
       Number(updateUserLocation.longitude),
     );
 
-    if (!this.nearestCityCalculator.isCityExistanceValid(nearestCity['city']))
+    if (!this.nearestCityCalculator.isCityExistenceValid(nearestCity['city']))
       return user.language === 'en'
         ? 'Our Service Not Exist Waiting for us soon..'
         : 'خدماتنا غير متوفرة حاليا';
@@ -103,7 +103,7 @@ export class UserService {
   }
 
   async isPhoneExist(phone: string) {
-    return await this.userRepository.checkPhoneExistance(phone);
+    return await this.userRepository.checkPhoneExistence(phone);
   }
 
   async getUserByPhoneOr404(phone: string) {

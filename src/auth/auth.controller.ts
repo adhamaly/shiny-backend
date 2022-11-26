@@ -36,10 +36,10 @@ export class AuthController {
   }
 
   @Post('users/check-phone')
-  async checkPhoneExistanceController(@Body('phone') phone: string) {
+  async checkPhoneExistenceController(@Body('phone') phone: string) {
     return {
       success: true,
-      isExist: await this.authService.checkUserPhoneExistance(phone),
+      isExist: await this.authService.checkUserPhoneExistence(phone),
     };
   }
 

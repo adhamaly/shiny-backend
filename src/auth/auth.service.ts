@@ -54,7 +54,7 @@ export class AuthService {
     //TODO:REMOVE FCM FROM USERMOEL
   }
 
-  async checkUserPhoneExistance(phone: string) {
+  async checkUserPhoneExistence(phone: string) {
     return await this.userService.isPhoneExist(phone);
   }
 
@@ -124,8 +124,8 @@ export class AuthService {
     // decode refreshToken
     const payload = this.decodeRefreshToken(refresh_token);
 
-    // Check CLientUser Existance
-    const clientProfile = await this.checkClientUserExistance(
+    // Check CLientUser Existence
+    const clientProfile = await this.checkClientUserExistence(
       payload.id,
       payload.role,
     );
@@ -161,7 +161,7 @@ export class AuthService {
     }
   }
 
-  async checkClientUserExistance(clientId: string, role: string) {
+  async checkClientUserExistence(clientId: string, role: string) {
     if (role === Roles.SuperAdmin || role === Roles.SubAdmin) {
       const adminProfile = await this.adminService.getByIdOr404(clientId);
       return adminProfile;

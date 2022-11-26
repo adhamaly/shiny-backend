@@ -35,7 +35,7 @@ export class BikersRepository {
         en: 'Upload personal image',
       });
 
-    // Validate Input data Existance
+    // Validate Input data Existence
     await this.bikerCrudValidator.createValidator(
       createBikerDTO.phone,
       createBikerDTO.nationalId,

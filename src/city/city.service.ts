@@ -40,21 +40,21 @@ export class CitiesService {
       .exec();
   }
 
-  async updateCityExistance(cityId: string, isExist: boolean) {
+  async updateCityExistence(cityId: string, isExist: boolean) {
     await this.cityModel
       .updateOne({ _id: cityId }, { $set: { isExist: isExist } })
       .exec();
   }
 
-  async checkCityExistance(city: City) {
-    const cityExistance = await this.cityModel
+  async checkCityExistence(city: City) {
+    const cityExistence = await this.cityModel
       .findOne({
         _id: city,
         isExist: true,
       })
       .exec();
 
-    if (!cityExistance)
+    if (!cityExistence)
       throw new MethodNotAllowedResponse({
         ar: 'هذه المدينة مغلقة',
         en: 'City is Archived',

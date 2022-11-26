@@ -38,13 +38,13 @@ export class CitiesController {
     };
   }
 
-  @Patch(':cityId/existance')
+  @Patch(':cityId/existence')
   @UseGuards(UserAuthGuard, SuperAdminGuard)
-  async updateCityExistance(
+  async updateCityExistence(
     @Param('cityId') cityId: string,
     @Body('isExist', ParseBoolPipe) isExist: boolean,
   ) {
-    await this.citiesService.updateCityExistance(cityId, isExist);
+    await this.citiesService.updateCityExistence(cityId, isExist);
 
     return {
       success: true,
