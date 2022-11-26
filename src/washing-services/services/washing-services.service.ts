@@ -255,21 +255,28 @@ export class WashingServicesService {
     role: string,
     adminId: string,
   ) {
-    const admin = await this.adminService.getById(adminId);
-    const washingService =
-      await this.washingServicesRepository.findOneByIdOr404(
-        id,
-        role,
-        admin.city,
-      );
+    switch (role) {
+      case Roles.SuperAdmin:
+        return await this.washingServicesRepository.findOneOr404(id);
+      case Roles.SubAdmin:
+        const admin = await this.adminService.getById(adminId);
+        const washingService =
+          await this.washingServicesRepository.findOneByIdOr404(
+            id,
+            role,
+            admin.city,
+          );
 
-    if (!washingService['cities'].length)
-      throw new NotFoundResponse({
-        ar: 'لاتوجد هذه الخدمة',
-        en: 'Washing Service Not Found',
-      });
+        if (!washingService['cities'].length)
+          throw new NotFoundResponse({
+            ar: 'لاتوجد هذه الخدمة',
+            en: 'Washing Service Not Found',
+          });
 
-    return washingService;
+        return washingService;
+      default:
+        return {};
+    }
   }
 
   async getWashingServiceById(id: string) {

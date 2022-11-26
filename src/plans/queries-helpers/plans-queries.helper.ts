@@ -92,14 +92,10 @@ export class PlansQueriesHelpers {
                   $expr: { $eq: ['$$planId', '$plan'] },
                   ...(role === Roles.SubAdmin
                     ? { city: { $in: city } }
-                    : role === Roles.SuperAdmin
-                    ? {}
-                    : role === 'user' || role === 'guest'
-                    ? {
+                    : {
                         isArchived: false,
                         city: { $in: city },
-                      }
-                    : {}),
+                      }),
                 },
               },
               {

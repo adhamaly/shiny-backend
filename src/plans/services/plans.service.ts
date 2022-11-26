@@ -194,16 +194,27 @@ export class PlansService {
   }
 
   async getPlanByIdForAdmin(id: string, role: string, adminId: string) {
-    const admin = await this.adminService.getById(adminId);
-    const plan = await this.plansRepository.findByIdOr404(id, role, admin.city);
+    switch (role) {
+      case Roles.SuperAdmin:
+        return await this.plansRepository.findOneByIdOr404(id);
+      case Roles.SubAdmin:
+        const admin = await this.adminService.getById(adminId);
+        const plan = await this.plansRepository.findByIdOr404(
+          id,
+          role,
+          admin.city,
+        );
 
-    if (!plan['cities'].length)
-      throw new NotFoundResponse({
-        ar: 'لاتوجد هذه الباقة',
-        en: 'Plan Not Found',
-      });
+        if (!plan['cities'].length)
+          throw new NotFoundResponse({
+            ar: 'لاتوجد هذه الباقة',
+            en: 'Plan Not Found',
+          });
 
-    return plan;
+        return plan;
+      default:
+        return {};
+    }
   }
   async updatePlan(id: string, updatePlanDTO: UpdatePlanDTO) {
     return await this.plansRepository.update(id, updatePlanDTO);

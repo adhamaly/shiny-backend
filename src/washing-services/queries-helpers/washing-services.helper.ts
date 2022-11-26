@@ -92,7 +92,7 @@ export class WashingServiceQueriesHelpers {
                   ...(role === Roles.SubAdmin
                     ? { city: { $in: city } }
                     : role === Roles.SuperAdmin
-                    ? { ...(city?.length ? { city: { $in: city } } : {}) }
+                    ? {}
                     : role === 'user' || role === 'guest'
                     ? {
                         isArchived: false,
