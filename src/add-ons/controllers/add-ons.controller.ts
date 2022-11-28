@@ -46,7 +46,6 @@ export class AddOnsController {
   }
 
   @Get('/guest/all')
-  @UseGuards(UserAuthGuard)
   async getAllAddOnsesForGuestController(
     @Query() queryParamsDTO: QueryParamsDTO,
   ) {
