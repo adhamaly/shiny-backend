@@ -7,6 +7,8 @@ import { ServicesIconsModule } from '../services-icons/services-icons.module';
 import { AddOnsService } from './services/add-ons.service';
 import { AddOnsRepository } from './repositories/add-ons.repository';
 import { AddOnsCitiesRepository } from './repositories/add-ons-cities.repository';
+import { UserModule } from '../user/user.module';
+import { AddOnsController } from './controllers/add-ons.controller';
 import {
   addOnsCitiesModelName,
   AddOnsCitiesSchema,
@@ -21,7 +23,9 @@ import {
     AdminModule,
     CityModule,
     ServicesIconsModule,
+    UserModule,
   ],
   providers: [AddOnsService, AddOnsRepository, AddOnsCitiesRepository],
+  controllers: [AddOnsController],
 })
 export class AddOnsModule {}

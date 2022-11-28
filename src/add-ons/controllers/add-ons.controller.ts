@@ -6,7 +6,7 @@ import { CreateAddOnsDTO } from '../dtos/createAddOns.dto';
 import { Account } from '../../common/decorators/user.decorator';
 import { QueryParamsDTO } from '../dtos/add-ons-queryParams.dto';
 
-@Controller('add-onses')
+@Controller('add-ons')
 export class AddOnsController {
   constructor(private addOnsService: AddOnsService) {}
 
@@ -27,7 +27,7 @@ export class AddOnsController {
     };
   }
 
-  @Get('/user')
+  @Get('/user/all')
   @UseGuards(UserAuthGuard)
   async getAllAddOnsesForUserController(
     @Query() queryParamsDTO: QueryParamsDTO,
