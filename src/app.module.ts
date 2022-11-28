@@ -11,6 +11,7 @@ import { ServicesIconsModule } from './services-icons/services-icons.module';
 import { PlansModule } from './plans/plans.module';
 import { LocationsModule } from './locations/locations.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
+import { AddOnsModule } from './add-ons/add-ons.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { SubscriptionsModule } from './subscriptions/subscriptions.module';
     PlansModule,
     LocationsModule,
     SubscriptionsModule,
+    AddOnsModule,
   ],
   controllers: [],
   providers: [],
