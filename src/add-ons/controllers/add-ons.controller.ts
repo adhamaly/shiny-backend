@@ -44,4 +44,20 @@ export class AddOnsController {
       data: result.addOnses,
     };
   }
+
+  @Get('/guest/all')
+  @UseGuards(UserAuthGuard)
+  async getAllAddOnsesForGuestController(
+    @Query() queryParamsDTO: QueryParamsDTO,
+  ) {
+    const result = await this.addOnsService.getAllAddOnsForGuest(
+      queryParamsDTO,
+    );
+
+    return {
+      success: true,
+      messsage: result.message,
+      data: result.addOnses,
+    };
+  }
 }
