@@ -15,7 +15,7 @@ export class SubscriptionsRepository {
   populatedPaths = [
     {
       path: 'plan',
-      select: 'type',
+      select: 'type color',
       model: plansModelName,
     },
   ];
