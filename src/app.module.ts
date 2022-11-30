@@ -12,10 +12,12 @@ import { PlansModule } from './plans/plans.module';
 import { LocationsModule } from './locations/locations.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { AddOnsModule } from './add-ons/add-ons.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
     MongooseModule.forRoot(process.env.DB),
+    ScheduleModule.forRoot(),
     UserModule,
     AuthModule,
     AdminModule,

@@ -5,6 +5,8 @@ import { PlansService } from '../../plans/services/plans.service';
 import { UserService } from '../../user/user.service';
 import { User } from '../../user/schemas/user.schema';
 import { MethodNotAllowedResponse } from '../../common/errors/MethodNotAllowedResponse';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { SubscriptionsStatus } from '../schemas/subscriptions.schema';
 
 @Injectable()
 export class SubscriptionsService {
@@ -43,5 +45,36 @@ export class SubscriptionsService {
     const user = await this.userService.getUserById(userId);
 
     return await this.subscriptionsRepository.findOnePopulated(user);
+  }
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
+  async checkSubscriptionsExpiryDateReached() {
+    console.log(`Subscriptions Expiry Date Reached Started at ${new Date()}`);
+    const today = new Date();
+
+    // Get the Subscruption that today or befor is its expairy date
+    const expairedSubscriptions = await this.subscriptionsRepository.findAll({
+      expiryDate: { $lte: today },
+      status: SubscriptionsStatus.ACTIVE,
+    });
+
+    console.log(
+      `Number of Subscriptions to be Exipred at ${new Date()} is ${
+        expairedSubscriptions.length
+      }`,
+    );
+
+    // TODO: Send notifications to the Subscriptions Users
+
+    // Set the status of the Subscriptions to EXPIRED
+    await this.subscriptionsRepository.update(
+      {
+        _id: {
+          $in: expairedSubscriptions.map(
+            (expiredSubscription) => expiredSubscription._id,
+          ),
+        },
+      },
+      { status: SubscriptionsStatus.EXPIRED },
+    );
   }
 }

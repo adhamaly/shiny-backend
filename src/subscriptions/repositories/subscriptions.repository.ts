@@ -47,4 +47,19 @@ export class SubscriptionsRepository {
 
     return userSubscription ? userSubscription : {};
   }
+
+  async findAll(filter: any) {
+    return await this.subscriptionsModel.find({ ...filter }).exec();
+  }
+
+  async update(filter: any, updatedData: any) {
+    await this.subscriptionsModel
+      .updateMany(
+        {
+          ...filter,
+        },
+        { $set: updatedData },
+      )
+      .exec();
+  }
 }
