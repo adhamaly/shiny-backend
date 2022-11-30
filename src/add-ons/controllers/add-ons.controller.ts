@@ -40,7 +40,7 @@ export class AddOnsController {
 
     return {
       success: true,
-      messsage: result.message,
+      message: result.message,
       data: result.addOnses,
     };
   }
@@ -55,7 +55,7 @@ export class AddOnsController {
 
     return {
       success: true,
-      messsage: result.message,
+      message: result.message,
       data: result.addOnses,
     };
   }
