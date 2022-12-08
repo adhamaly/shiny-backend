@@ -46,6 +46,7 @@ export class SubscriptionsService {
 
     return await this.subscriptionsRepository.findOnePopulated(user);
   }
+
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async checkSubscriptionsExpiryDateReached() {
     console.log(`Subscriptions Expiry Date Reached Started at ${new Date()}`);

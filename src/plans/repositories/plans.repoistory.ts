@@ -194,4 +194,8 @@ export class PlansRepository {
 
     return plan;
   }
+
+  async findOne(id: Plan) {
+    return await this.plansModel.findOne({ _id: id }).exec();
+  }
 }

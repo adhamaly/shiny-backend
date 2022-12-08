@@ -15,6 +15,7 @@ import {
 } from '../schemas/services-cities.schema';
 import { UpdateWashingServiceDTO } from '../dtos';
 import { Roles } from 'src/admin/schemas/admin.schema';
+import { WashingService } from '../schemas/washing-services.schema';
 
 @Injectable()
 export class WashingServicesRepository {
@@ -214,5 +215,10 @@ export class WashingServicesRepository {
       });
 
     return washingService;
+  }
+  async findOrderWashingServices(washingServices: WashingService[]) {
+    return await this.washingServicesModel
+      .find({ _id: { $in: washingServices } })
+      .exec();
   }
 }

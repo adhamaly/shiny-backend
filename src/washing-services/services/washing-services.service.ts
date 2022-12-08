@@ -354,4 +354,19 @@ export class WashingServicesService {
     washingServiceCity.isArchived = false;
     await washingServiceCity.save();
   }
+
+  async getTotalDurationForWashingServices(washingServices: WashingService[]) {
+    console.log(washingServices);
+    const orderWashingServices =
+      await this.washingServicesRepository.findOrderWashingServices(
+        washingServices,
+      );
+
+    let totalDuration = 0;
+    orderWashingServices.forEach((washingService) => {
+      totalDuration += washingService.duration;
+    });
+
+    return totalDuration;
+  }
 }

@@ -193,6 +193,10 @@ export class PlansService {
     return await this.plansRepository.findOneByIdOr404(id);
   }
 
+  async getPlanById(id: Plan) {
+    return await this.plansRepository.findOne(id);
+  }
+
   async getPlanByIdForAdmin(id: string, role: string, adminId: string) {
     switch (role) {
       case Roles.SuperAdmin:

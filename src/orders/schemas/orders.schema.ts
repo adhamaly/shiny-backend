@@ -24,12 +24,14 @@ export type OrdersModel = Order & Document;
 export const ordersModelName = 'order';
 export enum OrderStatus {
   PENDING_USER_PAYMENT = 'PENDING_USER_PAYMENT',
+  PENDING_USER_REVIEW = 'PENDING_USER_REVIEW',
   ACTIVE = 'ACTIVE',
   CANCELLED_BY_USER = 'CANCELLED_BY_USER',
   ACCEPTED_BY_BIKER = 'ACCEPTED_BY_BIKER',
   WAITING_FOR_BIKER = 'WAITING_FOR_BIKER',
   AWAITING_BIKER_DELIVERY = 'AWAITING_BIKER_DELIVERY',
   CANCELLED_BY_BIKER = 'CANCELLED_BY_BIKER',
+  BIKER_DELIVERED = 'BIKER_DELIVERED',
   ON_WASHING = 'ON_WASHING',
   COMPLETED = 'COMPLETED',
 }
@@ -37,6 +39,12 @@ export enum OrderTypes {
   SUBSCRIPTION_BOOKING = 'SUBSCRIPTION_BOOKING',
   SERVICE_BOOKING = 'SERVICE_BOOKING',
 }
+export enum PaymentTypes {
+  WALLET = 'WALLET',
+  CREDIT = 'CREDIT',
+  CASH = 'CASH',
+}
+
 /*
     TODO:-(PromoCode) as a foriegn-key
   */
@@ -80,9 +88,9 @@ export class Order {
   endTime: string; // Setted From Biker when Update Order status TO "COMPLETED"
 
   @Prop()
-  totalDuration: string; // Setted From WashingServices Durations while placing order
+  totalDuration: number; // Setted From WashingServices Durations while placing order
 
-  @Prop({ default: OrderStatus.PENDING_USER_PAYMENT })
+  @Prop({})
   status: string;
 
   @Prop()
@@ -90,6 +98,9 @@ export class Order {
 
   @Prop()
   type: string;
+
+  @Prop()
+  paymentType: string;
 
   @Prop()
   totalPay: number;
