@@ -13,6 +13,7 @@ import { LocationsModule } from './locations/locations.module';
 import { SubscriptionsModule } from './subscriptions/subscriptions.module';
 import { AddOnsModule } from './add-ons/add-ons.module';
 import { ScheduleModule } from '@nestjs/schedule';
+import { PromoCodeModule } from './promo-code/promo-code.module';
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { ScheduleModule } from '@nestjs/schedule';
     LocationsModule,
     SubscriptionsModule,
     AddOnsModule,
+    PromoCodeModule,
   ],
   controllers: [],
   providers: [],
