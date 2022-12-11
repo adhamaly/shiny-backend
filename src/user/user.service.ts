@@ -1,5 +1,5 @@
 import { UserRegisterDTO } from './dto/user.register.dto';
-import { Injectable } from '@nestjs/common';
+import { forwardRef, Inject, Injectable } from '@nestjs/common';
 import { UserUpdateProfileDTO } from './dto/user.updateProfile.dto';
 import { UserRepository } from './user.repository';
 import { User } from './schemas/user.schema';
@@ -9,6 +9,7 @@ import { UserQueriesHelper } from './userQueriesHelper.service';
 import { City } from '../city/schemas/city.schema';
 import { Types } from 'mongoose';
 import { NearestCityCalculator } from '../city/nearestCityCalculator.service';
+import { SubscriptionsService } from '../subscriptions/services/subscriptions.service';
 
 @Injectable()
 export class UserService {
@@ -16,6 +17,8 @@ export class UserService {
     private userRepository: UserRepository,
     private userQueriesHelper: UserQueriesHelper,
     private nearestCityCalculator: NearestCityCalculator,
+    @Inject(forwardRef(() => SubscriptionsService))
+    private subscriptionsService: SubscriptionsService,
   ) {}
 
   async create(userRegsiterDTO: UserRegisterDTO) {
@@ -112,7 +115,15 @@ export class UserService {
     return userDocument;
   }
   async getUserByIdOr404(id: string) {
-    return await this.userRepository.findUserByIdOr404(id);
+    const subscription = await this.subscriptionsService.getUserSubscription(
+      id,
+    );
+    const user = await this.userRepository.findUserByIdOr404(id);
+
+    return {
+      ...user.toObject(),
+      isSubscribed: subscription ? true : false,
+    };
   }
   async getUserById(id: string) {
     return await this.userRepository.findUserById(id);

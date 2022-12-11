@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { PlansRepository } from '../repositories/plans.repoistory';
 import { CreatePlanDTO } from '../dtos/createPlan.dto';
 import { PlansCitiesRepository } from '../repositories/plans-cities.repository';
@@ -20,6 +20,7 @@ export class PlansService {
     private plansRepository: PlansRepository,
     private plansCitiesRepository: PlansCitiesRepository,
     private citiesService: CitiesService,
+    @Inject(forwardRef(() => UserService))
     private userService: UserService,
     private nearestCityCalculator: NearestCityCalculator,
     private adminService: AdminService,

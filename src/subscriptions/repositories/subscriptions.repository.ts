@@ -45,7 +45,7 @@ export class SubscriptionsRepository {
       .populate(this.populatedPaths)
       .exec();
 
-    return userSubscription ? userSubscription : {};
+    return userSubscription;
   }
 
   async findAll(filter: any) {
