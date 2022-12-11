@@ -17,13 +17,13 @@ import { OrderStatus, OrderTypes } from '../schemas/orders.schema';
 export class UserOrdersController {
   constructor(private usersOrdersService: UsersOrdersService) {}
 
-  @Post('place-order')
+  @Post('create-order')
   @UseGuards(UserAuthGuard)
-  async placeServicesOrderController(
+  async createServicesOrderController(
     @Account() account: any,
     @Body() orderCreationDTO: OrderCreationDTO,
   ) {
-    const result = await this.usersOrdersService.placeOrder(
+    const result = await this.usersOrdersService.createOrder(
       account.id,
       orderCreationDTO,
     );

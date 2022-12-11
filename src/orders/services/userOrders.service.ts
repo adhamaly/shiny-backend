@@ -24,7 +24,7 @@ export class UsersOrdersService {
     private orderStatusValidator: OrderStatusValidator,
   ) {}
 
-  async placeOrder(userId: string, orderCreationDTO: OrderCreationDTO) {
+  async createOrder(userId: string, orderCreationDTO: OrderCreationDTO) {
     // Get User
     const user = await this.userService.getUserById(userId);
 
