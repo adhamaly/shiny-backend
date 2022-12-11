@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { PlansService } from './services/plans.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { plansModelName, PlansSchema } from './schemas/plans.schema';
@@ -20,7 +20,7 @@ import {
       { name: plansCitiesModelName, schema: PlansCitiesSchema },
     ]),
     CityModule,
-    UserModule,
+    forwardRef(() => UserModule),
     AdminModule,
   ],
   providers: [PlansService, PlansRepository, PlansCitiesRepository],

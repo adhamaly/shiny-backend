@@ -8,11 +8,13 @@ import { FirebaseModule } from '../common/services/firebase/firebase.module';
 import { UserRepository } from './user.repository';
 import { UserQueriesHelper } from './userQueriesHelper.service';
 import { CityModule } from '../city/city.module';
+import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: userModelName, schema: UserSchema }]),
     forwardRef(() => VehiclesModule),
+    forwardRef(() => SubscriptionsModule),
     FirebaseModule,
     CityModule,
   ],

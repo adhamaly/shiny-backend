@@ -23,9 +23,12 @@ export class SubscriptionsController {
   @Get('/user')
   @UseGuards(UserAuthGuard)
   async getUserSubscriptionsController(@Account() account: any) {
+    const subscription = await this.subscriptionsService.getUserSubscription(
+      account.id,
+    );
     return {
       success: true,
-      data: await this.subscriptionsService.getUserSubscription(account.id),
+      data: subscription ? subscription : {},
     };
   }
 }
