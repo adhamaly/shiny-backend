@@ -194,6 +194,10 @@ export class PlansService {
     return await this.plansRepository.findOneByIdOr404(id);
   }
 
+  async getPlan(plan: Plan) {
+    return await this.plansRepository.findPlan(plan);
+  }
+
   async getPlanByIdForAdmin(id: string, role: string, adminId: string) {
     switch (role) {
       case Roles.SuperAdmin:
@@ -256,5 +260,9 @@ export class PlansService {
 
     planDocument.isArchived = false;
     await planDocument.save();
+  }
+
+  async checkPlanExistenceWithCity(plan: Plan, city: City) {
+    return await this.plansCitiesRepository.findOne(plan, city);
   }
 }
