@@ -261,4 +261,8 @@ export class PlansService {
     planDocument.isArchived = false;
     await planDocument.save();
   }
+
+  async checkPlanExistenceWithCity(plan: Plan, city: City) {
+    return await this.plansCitiesRepository.findOne(plan, city);
+  }
 }

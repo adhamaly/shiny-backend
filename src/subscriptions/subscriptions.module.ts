@@ -5,6 +5,7 @@ import { SubscriptionsService } from './services/subscriptions.service';
 import { SubscriptionsController } from './controllers/subscriptions.controller';
 import { PlansModule } from '../plans/plans.module';
 import { UserModule } from '../user/user.module';
+import { CityModule } from '../city/city.module';
 import {
   subscriptionsModelName,
   SubscriptionsSchema,
@@ -17,6 +18,7 @@ import {
     ]),
     forwardRef(() => UserModule),
     forwardRef(() => PlansModule),
+    CityModule,
   ],
   providers: [SubscriptionsRepository, SubscriptionsService],
   controllers: [SubscriptionsController],

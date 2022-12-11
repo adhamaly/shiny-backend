@@ -7,6 +7,8 @@ import { User } from '../../user/schemas/user.schema';
 import { MethodNotAllowedResponse } from '../../common/errors/MethodNotAllowedResponse';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { SubscriptionsStatus } from '../schemas/subscriptions.schema';
+import { GetSubscriptionByLocationDTO } from '../dtos/subscriptionByLocation.dto';
+import { NearestCityCalculator } from '../../city/nearestCityCalculator.service';
 
 @Injectable()
 export class SubscriptionsService {
@@ -15,6 +17,7 @@ export class SubscriptionsService {
     private plansService: PlansService,
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
+    private nearestCityCalculator: NearestCityCalculator,
   ) {}
 
   async createUserSubscription(userId: string, planId: string) {
@@ -46,6 +49,56 @@ export class SubscriptionsService {
     const user = await this.userService.getUserById(userId);
 
     return await this.subscriptionsRepository.findOnePopulated(user);
+  }
+
+  async getUserSubscriptionByLocation(
+    userId: string,
+    getSubscriptionByLocationDTO: GetSubscriptionByLocationDTO,
+  ) {
+    const user = await this.userService.getUserById(userId);
+    const subscription = await this.subscriptionsRepository.findOnePopulated(
+      user,
+    );
+
+    if (
+      !this.nearestCityCalculator.isCountryBoundariesValid(
+        getSubscriptionByLocationDTO.country,
+      )
+    )
+      return {
+        subscription,
+        message:
+          user.language === 'en'
+            ? 'Our Service Not Exist Waiting for us soon..'
+            : 'خدماتنا غير متوفرة حاليا',
+      };
+
+    const city = await this.nearestCityCalculator.findNearestCity(
+      Number(getSubscriptionByLocationDTO.latitude),
+      Number(getSubscriptionByLocationDTO.longitude),
+    );
+
+    if (!this.nearestCityCalculator.isCityExistenceValid(city['city']))
+      return {
+        subscription,
+        message:
+          user.language === 'en'
+            ? 'Our Service Not Exist Waiting for us soon..'
+            : 'خدماتنا غير متوفرة حاليا',
+      };
+
+    const isPlanExistInCity =
+      await this.plansService.checkPlanExistenceWithCity(
+        subscription.plan,
+        city['city'],
+      );
+
+    return {
+      subscription,
+      message: isPlanExistInCity
+        ? ''
+        : 'Your plan is not accepted in this city',
+    };
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)

@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { SubscriptionsService } from '../services/subscriptions.service';
 import { UserAuthGuard } from '../../auth/guards/userAuthentication.guard';
 import { Account } from 'src/common/decorators/user.decorator';
+import { GetSubscriptionByLocationDTO } from '../dtos/subscriptionByLocation.dto';
 
 @Controller('subscriptions')
 export class SubscriptionsController {
@@ -29,6 +30,24 @@ export class SubscriptionsController {
     return {
       success: true,
       data: subscription ? subscription : {},
+    };
+  }
+
+  @Get('/user/location')
+  @UseGuards(UserAuthGuard)
+  async getUserSubscriptionsByLocationController(
+    @Account() account: any,
+    @Query() getSubscriptionByLocationDTO: GetSubscriptionByLocationDTO,
+  ) {
+    const result =
+      await this.subscriptionsService.getUserSubscriptionByLocation(
+        account.id,
+        getSubscriptionByLocationDTO,
+      );
+    return {
+      success: true,
+      message: result.message,
+      data: result.subscription,
     };
   }
 }
