@@ -1,6 +1,7 @@
 import {
   IsArray,
   IsBoolean,
+  IsMongoId,
   IsNotEmpty,
   IsNotEmptyObject,
   IsOptional,
@@ -27,7 +28,9 @@ export class CreatePlanDTO {
   @IsString()
   durationUnit: string;
 
+  @IsNotEmpty()
   @IsArray()
+  @IsMongoId({ each: true })
   washingServices: WashingService[];
 
   @IsNotEmpty()
@@ -40,7 +43,8 @@ export class CreatePlanDTO {
   @IsBoolean()
   selectAll: boolean;
 
-  @IsArray()
   @IsOptional()
-  cities: City[];
+  @IsArray()
+  @IsMongoId({ each: true })
+  cities?: City[];
 }

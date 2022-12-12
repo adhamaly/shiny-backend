@@ -216,7 +216,7 @@ export class WashingServicesRepository {
 
     return washingService;
   }
-  async findOrderWashingServices(washingServices: WashingService[]) {
+  async findOrderWashingServices(washingServices: any[]) {
     return await this.washingServicesModel
       .find({ _id: { $in: washingServices } })
       .exec();

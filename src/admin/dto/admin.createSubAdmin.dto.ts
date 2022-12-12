@@ -1,6 +1,7 @@
 import { City } from '../../city/schemas/city.schema';
 import {
   IsArray,
+  IsMongoId,
   IsNotEmpty,
   IsPhoneNumber,
   IsString,
@@ -23,5 +24,6 @@ export class CreateSubAdminDTO {
 
   @IsNotEmpty()
   @IsArray()
+  @IsMongoId({ each: true })
   city: City[];
 }

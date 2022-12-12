@@ -17,10 +17,11 @@ export class AddOnsCitiesRepository {
 
   async insertMany(addOns: AddOns, cities: City[]) {
     for (const city of cities) {
-      await this.addOnsCitiesModel.create({
+      const res = await this.addOnsCitiesModel.create({
         addOns: addOns,
         city: city,
       });
+      console.log(res);
     }
   }
 }

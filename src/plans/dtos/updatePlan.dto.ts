@@ -1,5 +1,11 @@
 import { Type } from 'class-transformer';
-import { ArrayMinSize, IsArray, IsNotEmpty, IsString } from 'class-validator';
+import {
+  ArrayMinSize,
+  IsArray,
+  IsMongoId,
+  IsNotEmpty,
+  IsString,
+} from 'class-validator';
 import { WashingService } from '../../washing-services/schemas/washing-services.schema';
 export class UpdatePlanDTO {
   @IsNotEmpty()
@@ -23,8 +29,9 @@ export class UpdatePlanDTO {
   @IsNotEmpty()
   pointsToPay: number;
 
+  @IsNotEmpty()
   @IsArray()
-  @IsNotEmpty({ each: true })
+  @IsMongoId({ each: true })
   washingServices: WashingService[];
 
   @IsNotEmpty()

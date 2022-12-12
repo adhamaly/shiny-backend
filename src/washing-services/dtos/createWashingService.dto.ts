@@ -38,7 +38,8 @@ export class CreateWashingServiceDTO {
   @IsBoolean()
   selectAll: boolean;
 
-  @IsArray()
   @IsOptional()
-  cities: City[];
+  @IsArray()
+  @IsMongoId({ each: true })
+  cities?: City[];
 }

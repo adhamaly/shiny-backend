@@ -25,7 +25,8 @@ export class CreateAddOnsDTO {
   @IsBoolean()
   selectAll: boolean;
 
-  @IsArray()
   @IsOptional()
-  cities: City[];
+  @IsArray()
+  @IsMongoId({ each: true })
+  cities?: City[];
 }

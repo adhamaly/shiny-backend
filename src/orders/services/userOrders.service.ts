@@ -154,6 +154,11 @@ export class UsersOrdersService {
       paymentTypeUpdateDTO.order,
     );
 
+    this.orderStatusValidator.isStatusValidForOrder(
+      order,
+      OrderStatus.PENDING_USER_PAYMENT,
+    );
+
     // update Payment Type
     order.paymentType = paymentTypeUpdateDTO.paymentType;
     await order.save();

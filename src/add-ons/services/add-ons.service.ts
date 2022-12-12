@@ -11,6 +11,7 @@ import { AdminService } from '../../admin/admin.service';
 import { QueryParamsDTO } from '../dtos/add-ons-queryParams.dto';
 import { UserService } from '../../user/user.service';
 import { NearestCityCalculator } from '../../city/nearestCityCalculator.service';
+import { ServiceIcon } from '../../services-icons/schemas/services-icons.schema';
 
 @Injectable()
 export class AddOnsService {

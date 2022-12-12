@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsMongoId,
   IsNotEmpty,
   IsNotEmptyObject,
   IsNumber,
@@ -39,13 +40,16 @@ class LocationDTO {
 export class OrderCreationDTO {
   @IsOptional()
   @IsArray()
-  washingServices: WashingService[];
+  @IsMongoId({ each: true })
+  washingServices?: WashingService[];
 
   @IsOptional()
   @IsArray()
-  addOns: AddOns[];
+  @IsMongoId({ each: true })
+  addOns?: AddOns[];
 
   @IsNotEmpty()
+  @IsMongoId()
   vehicle: Vehicle;
 
   @IsNotEmptyObject()
@@ -63,10 +67,10 @@ export class OrderCreationDTO {
   @IsString()
   type: string;
 
-  @IsOptional()
   @IsNumber()
   totalPay: number;
 
   @IsOptional()
-  subscription: Subscription;
+  @IsMongoId()
+  subscription?: Subscription;
 }

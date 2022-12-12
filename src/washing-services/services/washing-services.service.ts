@@ -355,11 +355,15 @@ export class WashingServicesService {
     await washingServiceCity.save();
   }
 
-  async getTotalDurationForWashingServices(washingServices: WashingService[]) {
+  async getTotalDurationForWashingServices(washingServices: any[]) {
     console.log(washingServices);
+    const parsedWashingServices = [];
+    for (const item of washingServices) {
+      parsedWashingServices.push(new mongoose.Types.ObjectId(item));
+    }
     const orderWashingServices =
       await this.washingServicesRepository.findOrderWashingServices(
-        washingServices,
+        parsedWashingServices,
       );
 
     let totalDuration = 0;
