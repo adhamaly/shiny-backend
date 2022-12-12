@@ -28,16 +28,4 @@ export class PromoCodesController {
       data: await this.promoCodesService.getAllForUser(status),
     };
   }
-
-  @Post('user/apply')
-  @UseGuards(UserAuthGuard)
-  async applyPromoCode(
-    @Account() account: any,
-    @Body('promoCode') promoCode: string,
-  ) {
-    await this.promoCodesService.apply(account.id, promoCode);
-    return {
-      success: true,
-    };
-  }
 }

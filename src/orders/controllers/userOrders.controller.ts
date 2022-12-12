@@ -66,6 +66,23 @@ export class UserOrdersController {
     };
   }
 
+  @Post('apply-promo-code')
+  @UseGuards(UserAuthGuard)
+  async applyPromoCodeController(
+    @Account() account: any,
+    @Body('order') order: string,
+    @Body('code') code: string,
+  ) {
+    return {
+      success: true,
+      data: await this.usersOrdersService.applyPromoCodeForOrder(
+        account.id,
+        order,
+        code,
+      ),
+    };
+  }
+
   @Get('all')
   @UseGuards(UserAuthGuard)
   async getAllUserOrdersController(

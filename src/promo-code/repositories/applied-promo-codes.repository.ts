@@ -18,7 +18,7 @@ export class AppliedPromoCodesRepository {
 
   async applyPromoCode(user: User, promoCode: PromoCode) {
     await this.isValidPromoCode(user, promoCode);
-    return await this.appliedPromoCodeModel.create({
+    await this.appliedPromoCodeModel.create({
       user: user,
       promoCode: promoCode,
     });

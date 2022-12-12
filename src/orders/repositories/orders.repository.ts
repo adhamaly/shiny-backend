@@ -15,6 +15,8 @@ import {
 import { WashingServicesModelName } from '../../washing-services/schemas/washing-services.schema';
 import { addOnsModelName } from '../../add-ons/schemas/add-ons.schema';
 import { vehicleModelName } from '../../vehicles/schemas/vehicles.schema';
+import { Order } from '../schemas/orders.schema';
+import { promoCodeModelName } from '../../promo-code/schemas/promo-code.schema';
 
 @Injectable()
 export class OrdersRepository {
@@ -39,6 +41,11 @@ export class OrdersRepository {
       model: locationModelName,
       select:
         'latitude longitude streetName subAdministrativeArea isSaved savedName',
+    },
+    {
+      path: 'promoCode',
+      model: promoCodeModelName,
+      select: 'code',
     },
   ];
 
@@ -80,7 +87,21 @@ export class OrdersRepository {
       .populate(this.populatedPaths)
       .exec();
   }
-  async findOrderById(order: string) {
-    return await this.ordersModel.findById(order).exec();
+  async findOrderById(id: string) {
+    return await this.ordersModel.findById(id).exec();
+  }
+  async findOrder(order: Order) {
+    return await this.ordersModel.findOne({ _id: order }).exec();
+  }
+  async update(id: string, updatedKeys: any) {
+    return await this.ordersModel
+      .findByIdAndUpdate(
+        id,
+        {
+          $set: { ...updatedKeys },
+        },
+        { returnDocument: 'after' },
+      )
+      .exec();
   }
 }

@@ -12,6 +12,8 @@ import { Location } from '../../locations/schemas/location.schema';
 import { PaymentTypeUpdateDTO } from '../dtos/paymentTypeUpdate.dto';
 import { OrderStatusValidator } from '../validators/orderStatusValidator';
 import { MethodNotAllowedResponse } from '../../common/errors/MethodNotAllowedResponse';
+import { PromoCodesService } from '../../promo-code/services/promo-code.service';
+import { PromoCode } from '../../promo-code/schemas/promo-code.schema';
 
 @Injectable()
 export class UsersOrdersService {
@@ -23,6 +25,7 @@ export class UsersOrdersService {
     private subscriptionsService: SubscriptionsService,
     private plansService: PlansService,
     private orderStatusValidator: OrderStatusValidator,
+    private PromoCodesService: PromoCodesService,
   ) {}
 
   async createOrder(userId: string, orderCreationDTO: OrderCreationDTO) {
@@ -188,5 +191,34 @@ export class UsersOrdersService {
     );
     order.status = OrderStatus.CANCELLED_BY_USER;
     await order.save();
+  }
+
+  async applyPromoCodeForOrder(userId: string, orderId: string, code: string) {
+    const order = await this.ordersRepository.findOrderById(orderId);
+    const user = await this.userService.getUserById(userId);
+    const promoCode = await this.PromoCodesService.getByCode(code);
+
+    await this.PromoCodesService.apply(user, promoCode);
+
+    const totalPayAfterDiscount = this.getTotalPayAfterPromoCode(
+      promoCode,
+      order,
+    );
+
+    const updatedOrder = await this.ordersRepository.update(orderId, {
+      totalPay: totalPayAfterDiscount,
+      promoCode: promoCode,
+    });
+
+    await updatedOrder.populate(this.ordersRepository.populatedPaths);
+
+    updatedOrder.user = undefined;
+
+    return updatedOrder;
+  }
+  getTotalPayAfterPromoCode(promoCode: PromoCode, order: Order) {
+    const totalPay = order.totalPay;
+    const discountPercentage = promoCode.discountPercentage;
+    return totalPay - totalPay * (discountPercentage / 100);
   }
 }

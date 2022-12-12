@@ -10,6 +10,7 @@ import { UserOrdersController } from './controllers/userOrders.controller';
 import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 import { PlansModule } from '../plans/plans.module';
 import { OrderStatusValidator } from './validators/orderStatusValidator';
+import { PromoCodeModule } from '../promo-code/promo-code.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { OrderStatusValidator } from './validators/orderStatusValidator';
     WashingServicesModule,
     SubscriptionsModule,
     PlansModule,
+    PromoCodeModule,
   ],
   providers: [OrdersRepository, UsersOrdersService, OrderStatusValidator],
   controllers: [UserOrdersController],

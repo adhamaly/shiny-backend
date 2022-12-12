@@ -4,6 +4,10 @@ import { User, userModelName } from '../../user/schemas/user.schema';
 import { Biker, bikerModelName } from '../../bikers/schemas/bikers.schema';
 import { AddOns, addOnsModelName } from '../../add-ons/schemas/add-ons.schema';
 import {
+  PromoCode,
+  promoCodeModelName,
+} from '../../promo-code/schemas/promo-code.schema';
+import {
   Subscription,
   subscriptionsModelName,
 } from '../../subscriptions/schemas/subscriptions.schema';
@@ -77,6 +81,9 @@ export class Order {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: subscriptionsModelName })
   subscription: Subscription;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: promoCodeModelName })
+  promoCode: PromoCode;
 
   @Prop()
   walletUsedAmount: number; // Setted when user Apply WalletAmount Usage
