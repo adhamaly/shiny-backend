@@ -11,6 +11,7 @@ import { User } from '../../user/schemas/user.schema';
 import { Location } from '../../locations/schemas/location.schema';
 import { PaymentTypeUpdateDTO } from '../dtos/paymentTypeUpdate.dto';
 import { OrderStatusValidator } from '../validators/orderStatusValidator';
+import { MethodNotAllowedResponse } from '../../common/errors/MethodNotAllowedResponse';
 
 @Injectable()
 export class UsersOrdersService {
@@ -78,6 +79,12 @@ export class UsersOrdersService {
   ) {
     const userSubscription =
       await this.subscriptionsService.isUserHasSubscription(user);
+
+    if (!userSubscription)
+      throw new MethodNotAllowedResponse({
+        ar: 'لا يوجد لديك اشتراكات',
+        en: 'You Have No Subscription',
+      });
 
     const plan = await this.plansService.getPlanById(userSubscription.plan);
 
@@ -154,10 +161,11 @@ export class UsersOrdersService {
       paymentTypeUpdateDTO.order,
     );
 
-    this.orderStatusValidator.isStatusValidForOrder(
-      order,
-      OrderStatus.PENDING_USER_PAYMENT,
-    );
+    if (order.status === OrderStatus.PENDING_USER_REVIEW)
+      throw new MethodNotAllowedResponse({
+        ar: 'لا يوجد دفع في حالة اشتراكك في احدي باقتنا',
+        en: 'There Is No Payment',
+      });
 
     // update Payment Type
     order.paymentType = paymentTypeUpdateDTO.paymentType;
