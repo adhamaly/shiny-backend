@@ -109,7 +109,13 @@ export class Order {
   @Prop()
   paymentType: string;
 
-  @Prop()
+  @Prop({ default: 0 })
+  totalPrice: number;
+
+  @Prop({ default: 0 })
+  discount: number;
+
+  @Prop({ default: 0 })
   totalPay: number;
 
   @Prop()

@@ -68,7 +68,7 @@ export class OrderCreationDTO {
   type: string;
 
   @IsNumber()
-  totalPay: number;
+  totalPrice: number;
 
   @IsOptional()
   @IsMongoId()

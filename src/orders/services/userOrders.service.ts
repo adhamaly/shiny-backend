@@ -119,7 +119,7 @@ export class UsersOrdersService {
 
     return {
       createdOrder,
-      status: createdOrder.totalPay ? 'SET_PAYMENT_TYPE' : 'ORDER_VIEW',
+      status: createdOrder.totalPrice ? 'SET_PAYMENT_TYPE' : 'ORDER_VIEW',
     };
   }
 
@@ -197,17 +197,21 @@ export class UsersOrdersService {
     const order = await this.ordersRepository.findOrderById(orderId);
     const user = await this.userService.getUserById(userId);
     const promoCode = await this.PromoCodesService.getByCode(code);
+    if (!promoCode)
+      throw new MethodNotAllowedResponse({
+        ar: 'لا يوجد هذا الكود',
+        en: 'Promo Code Not Exist',
+      });
 
     await this.PromoCodesService.apply(user, promoCode);
 
-    const totalPayAfterDiscount = this.getTotalPayAfterPromoCode(
-      promoCode,
-      order,
-    );
+    const { totalPayAfterDiscount, discountAmount } =
+      this.getTotalPayAfterPromoCode(promoCode, order);
 
     const updatedOrder = await this.ordersRepository.update(orderId, {
       totalPay: totalPayAfterDiscount,
       promoCode: promoCode,
+      discount: discountAmount,
     });
 
     await updatedOrder.populate(this.ordersRepository.populatedPaths);
@@ -217,8 +221,11 @@ export class UsersOrdersService {
     return updatedOrder;
   }
   getTotalPayAfterPromoCode(promoCode: PromoCode, order: Order) {
-    const totalPay = order.totalPay;
-    const discountPercentage = promoCode.discountPercentage;
-    return totalPay - totalPay * (discountPercentage / 100);
+    const totalPrice = order.totalPrice;
+    const discountPercentage = promoCode.discountPercentage / 100;
+    const discountAmount = totalPrice * discountPercentage;
+    const totalPayAfterDiscount = totalPrice - discountAmount;
+
+    return { totalPayAfterDiscount, discountAmount };
   }
 }
