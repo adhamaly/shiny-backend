@@ -58,6 +58,25 @@ export class PromoCodesRepository {
       .exec();
   }
 
+  async findAll(filter: any) {
+    return await this.promoCodesModel
+      .find({
+        ...filter,
+      })
+      .exec();
+  }
+
+  async update(filter: any, updatedData: any) {
+    await this.promoCodesModel
+      .updateMany(
+        {
+          ...filter,
+        },
+        { $set: updatedData },
+      )
+      .exec();
+  }
+
   async appliedPromoCodesQueryForUser() {
     const res = await this.promoCodesModel
       .aggregate([

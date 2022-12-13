@@ -3,7 +3,8 @@ import { PromoCodesRepository } from '../repositories/promo-code.repository';
 import { CreatePromoCodeDTO } from '../dtos/createPromoCode.dto';
 import { AppliedPromoCodesRepository } from '../repositories/applied-promo-codes.repository';
 import { User } from '../../user/schemas/user.schema';
-import { PromoCode } from '../schemas/promo-code.schema';
+import { PromoCode, PromoCodeStatus } from '../schemas/promo-code.schema';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class PromoCodesService {
@@ -37,5 +38,34 @@ export class PromoCodesService {
 
   async apply(user: User, promoCode: PromoCode) {
     await this.appliedPromoCodesRepository.applyPromoCode(user, promoCode);
+  }
+
+  @Cron(CronExpression.EVERY_10_SECONDS)
+  async checkPromoCodeExpiryDateReached() {
+    console.log(`PromoCode Expiry Date Reached Started at ${new Date()}`);
+    const today = new Date();
+
+    // Get the PromoCodes that today or befor is its expairy date
+    const expairedPromoCodes = await this.promoCodesRepository.findAll({
+      expiryDate: { $lte: today },
+      status: PromoCodeStatus.ACTIVE,
+    });
+
+    console.log(
+      `Number of PromoCodes to be Exipred at ${new Date()} is ${
+        expairedPromoCodes.length
+      }`,
+    );
+
+    await this.promoCodesRepository.update(
+      {
+        _id: {
+          $in: expairedPromoCodes.map(
+            (expiredPromoCode) => expiredPromoCode._id,
+          ),
+        },
+      },
+      { status: PromoCodeStatus.EXPIRED },
+    );
   }
 }
