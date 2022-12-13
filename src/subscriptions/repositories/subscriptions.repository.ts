@@ -48,6 +48,18 @@ export class SubscriptionsRepository {
     return userSubscription;
   }
 
+  async findOneWithPlan(user: User) {
+    return await this.subscriptionsModel
+      .findOne({ user: user, status: SubscriptionsStatus.ACTIVE })
+      .populate([
+        {
+          path: 'plan',
+          model: plansModelName,
+        },
+      ])
+      .exec();
+  }
+
   async findAll(filter: any) {
     return await this.subscriptionsModel.find({ ...filter }).exec();
   }
