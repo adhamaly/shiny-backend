@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Plan, plansModelName } from '../../plans/schemas/plans.schema';
 import { User } from '../../user/schemas/user.schema';
+import { WashingServicesModelName } from '../../washing-services/schemas/washing-services.schema';
 import {
   subscriptionsModelName,
   SubscriptionsModel,
@@ -51,12 +52,15 @@ export class SubscriptionsRepository {
   async findOneWithPlan(user: User) {
     return await this.subscriptionsModel
       .findOne({ user: user, status: SubscriptionsStatus.ACTIVE })
-      .populate([
-        {
-          path: 'plan',
-          model: plansModelName,
+      .populate({
+        path: 'plan',
+        populate: {
+          path: 'washingServices',
+          select: 'name',
+          model: WashingServicesModelName,
         },
-      ])
+        model: plansModelName,
+      })
       .exec();
   }
 
