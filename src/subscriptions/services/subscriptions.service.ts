@@ -56,9 +56,14 @@ export class SubscriptionsService {
     getSubscriptionByLocationDTO: GetSubscriptionByLocationDTO,
   ) {
     const user = await this.userService.getUserById(userId);
-    const subscription = await this.subscriptionsRepository.findOnePopulated(
+    const subscription = await this.subscriptionsRepository.findOneWithPlan(
       user,
     );
+    if (!subscription)
+      throw new MethodNotAllowedResponse({
+        ar: 'انت ليس مشترك في باقة',
+        en: 'You Have No Subscription',
+      });
 
     if (
       !this.nearestCityCalculator.isCountryBoundariesValid(
