@@ -17,6 +17,7 @@ import { addOnsModelName } from '../../add-ons/schemas/add-ons.schema';
 import { vehicleModelName } from '../../vehicles/schemas/vehicles.schema';
 import { Order } from '../schemas/orders.schema';
 import { promoCodeModelName } from '../../promo-code/schemas/promo-code.schema';
+import { NotFoundResponse } from '../../common/errors/NotFoundResponse';
 
 @Injectable()
 export class OrdersRepository {
@@ -89,8 +90,28 @@ export class OrdersRepository {
       .populate(this.populatedPaths)
       .exec();
   }
-  async findOrderById(id: string) {
-    return await this.ordersModel.findById(id).exec();
+  async findOrderByIdOr404(id: string) {
+    const order = await this.ordersModel.findById(id).exec();
+    if (!order)
+      throw new NotFoundResponse({
+        ar: 'لا يوجد هذا الطلب',
+        en: 'Order Not Found',
+      });
+
+    return order;
+  }
+  async findOrderByIdPopulatedOr404(id: string) {
+    const order = await this.ordersModel
+      .findById(id)
+      .populate(this.populatedPaths)
+      .exec();
+    if (!order)
+      throw new NotFoundResponse({
+        ar: 'لا يوجد هذا الطلب',
+        en: 'Order Not Found',
+      });
+
+    return order;
   }
   async findOrder(order: Order) {
     return await this.ordersModel.findOne({ _id: order }).exec();

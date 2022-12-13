@@ -147,8 +147,11 @@ export class UsersOrdersService {
     return await this.ordersRepository.findAllUserOrders(user, status);
   }
 
+  async getOrderById(orderId: string) {
+    return await this.ordersRepository.findOrderByIdPopulatedOr404(orderId);
+  }
   async setOrderActive(order: string) {
-    const pendingOrder = await this.ordersRepository.findOrderById(order);
+    const pendingOrder = await this.ordersRepository.findOrderByIdOr404(order);
 
     this.orderStatusValidator.isStatusValidForOrder(
       pendingOrder,
@@ -160,7 +163,7 @@ export class UsersOrdersService {
   }
 
   async setPaymentType(paymentTypeUpdateDTO: PaymentTypeUpdateDTO) {
-    const order = await this.ordersRepository.findOrderById(
+    const order = await this.ordersRepository.findOrderByIdOr404(
       paymentTypeUpdateDTO.order,
     );
 
@@ -183,7 +186,7 @@ export class UsersOrdersService {
   }
 
   async cancelOrderByUser(orderId: string) {
-    const order = await this.ordersRepository.findOrderById(orderId);
+    const order = await this.ordersRepository.findOrderByIdOr404(orderId);
 
     this.orderStatusValidator.isStatusValidForOrder(
       order,
@@ -194,7 +197,7 @@ export class UsersOrdersService {
   }
 
   async applyPromoCodeForOrder(userId: string, orderId: string, code: string) {
-    const order = await this.ordersRepository.findOrderById(orderId);
+    const order = await this.ordersRepository.findOrderByIdOr404(orderId);
     const user = await this.userService.getUserById(userId);
     const promoCode = await this.PromoCodesService.getByCode(code);
     if (!promoCode)
@@ -229,7 +232,7 @@ export class UsersOrdersService {
     return { totalPayAfterDiscount, discountAmount };
   }
   async useWallet(userId: string, orderId: string, walletAmount: number) {
-    const order = await this.ordersRepository.findOrderById(orderId);
+    const order = await this.ordersRepository.findOrderByIdOr404(orderId);
     const user = await this.userService.getUserById(userId);
 
     const IsUserWalletBalanceValid = this.userService.checkWalletBalanceValid(

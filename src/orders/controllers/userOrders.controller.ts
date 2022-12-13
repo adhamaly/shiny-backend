@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Param,
   Patch,
   Post,
   Query,
@@ -108,6 +109,15 @@ export class UserOrdersController {
     return {
       success: true,
       data: await this.usersOrdersService.getAllUserOrders(account.id, status),
+    };
+  }
+
+  @Get('order-details/:orderId')
+  @UseGuards(UserAuthGuard)
+  async getOrderByIdController(@Param('orderId') orderId: string) {
+    return {
+      success: true,
+      data: await this.usersOrdersService.getOrderById(orderId),
     };
   }
 }
