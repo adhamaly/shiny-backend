@@ -72,6 +72,7 @@ export class OrdersRepository {
       description: orderCreationDTO.description,
       type: orderCreationDTO.type,
       totalPrice: orderCreationDTO.totalPrice,
+      totalPay: orderCreationDTO.totalPrice,
       subscription: orderCreationDTO.subscription,
       status: orderStatus,
     });

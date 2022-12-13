@@ -221,11 +221,46 @@ export class UsersOrdersService {
     return updatedOrder;
   }
   getTotalPayAfterPromoCode(promoCode: PromoCode, order: Order) {
-    const totalPrice = order.totalPrice;
+    const totalPay = order.totalPay;
     const discountPercentage = promoCode.discountPercentage / 100;
-    const discountAmount = totalPrice * discountPercentage;
-    const totalPayAfterDiscount = totalPrice - discountAmount;
+    const discountAmount = totalPay * discountPercentage;
+    const totalPayAfterDiscount = totalPay - discountAmount;
 
     return { totalPayAfterDiscount, discountAmount };
+  }
+  async useWallet(userId: string, orderId: string, walletAmount: number) {
+    const order = await this.ordersRepository.findOrderById(orderId);
+    const user = await this.userService.getUserById(userId);
+
+    const IsUserWalletBalanceValid = this.userService.checkWalletBalanceValid(
+      user,
+      walletAmount,
+    );
+    if (!IsUserWalletBalanceValid)
+      throw new MethodNotAllowedResponse({
+        ar: 'لا تحتوي محفظتك الإلكترونية علي هذا المبلغ',
+        en: 'Your Wallet Balance Is Not Valid',
+      });
+
+    const totalPayAfterWallet = this.getTotalPayAfterWallet(
+      order,
+      walletAmount,
+    );
+
+    const updatedOrder = await this.ordersRepository.update(orderId, {
+      totalPay: totalPayAfterWallet,
+      walletUsedAmount: walletAmount,
+    });
+
+    await this.userService.payWithWallet(userId, walletAmount);
+
+    await updatedOrder.populate(this.ordersRepository.populatedPaths);
+
+    updatedOrder.user = undefined;
+
+    return updatedOrder;
+  }
+  getTotalPayAfterWallet(order: Order, walletAmount: number) {
+    return order.totalPay - walletAmount;
   }
 }
