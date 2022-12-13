@@ -40,7 +40,7 @@ export class PromoCodesService {
     await this.appliedPromoCodesRepository.applyPromoCode(user, promoCode);
   }
 
-  @Cron(CronExpression.EVERY_10_SECONDS)
+  @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
   async checkPromoCodeExpiryDateReached() {
     console.log(`PromoCode Expiry Date Reached Started at ${new Date()}`);
     const today = new Date();

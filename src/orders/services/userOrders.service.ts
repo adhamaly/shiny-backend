@@ -144,7 +144,7 @@ export class UsersOrdersService {
     // Get User
     const user = await this.userService.getUserById(userId);
 
-    return await this.ordersRepository.findAllUserOrders(user);
+    return await this.ordersRepository.findAllUserOrders(user, status);
   }
 
   async setOrderActive(order: string) {

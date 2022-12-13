@@ -84,6 +84,7 @@ export class OrdersRepository {
     return await this.ordersModel
       .find({
         user: user,
+        status: status,
       })
       .populate(this.populatedPaths)
       .exec();
