@@ -55,7 +55,7 @@ export class OrderCreationDTO {
   @IsNotEmptyObject()
   location: LocationDTO;
 
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   description: string;
 
