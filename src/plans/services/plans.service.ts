@@ -13,6 +13,7 @@ import { NearestCityCalculator } from '../../city/nearestCityCalculator.service'
 import { QueryParamsDTO } from '../dtos/queryParams.dto';
 import { AdminService } from '../../admin/admin.service';
 import { Roles } from '../../admin/schemas/admin.schema';
+import { SubscriptionsService } from '../../subscriptions/services/subscriptions.service';
 
 @Injectable()
 export class PlansService {
@@ -24,6 +25,8 @@ export class PlansService {
     private userService: UserService,
     private nearestCityCalculator: NearestCityCalculator,
     private adminService: AdminService,
+    @Inject(forwardRef(() => SubscriptionsService))
+    private subscriptionsService: SubscriptionsService,
   ) {}
 
   async createPlan(
@@ -123,7 +126,16 @@ export class PlansService {
 
     const plans = await this.plansRepository.findAll(city['city']._id);
 
+    const userSubscribedPlan =
+      await this.subscriptionsService.isUserHasSubscription(user);
+
     const formatedPlans = this.plansFormaterForUser(plans);
+
+    formatedPlans.forEach((plan) => {
+      if (plan._id.toString() === userSubscribedPlan?.plan.toString())
+        plan.isSubscribed = true;
+      else plan.isSubscribed = false;
+    });
 
     return {
       plans: formatedPlans,
@@ -181,7 +193,7 @@ export class PlansService {
         return [];
     }
   }
-  plansFormaterForUser(plansList: any) {
+  plansFormaterForUser(plansList: any[]) {
     const filtered = plansList.filter((plan: any) => plan.cities.length >= 1);
 
     filtered.forEach((plan: any) => {

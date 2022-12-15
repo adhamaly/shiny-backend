@@ -14,6 +14,7 @@ import { NearestCityCalculator } from '../../city/nearestCityCalculator.service'
 export class SubscriptionsService {
   constructor(
     private subscriptionsRepository: SubscriptionsRepository,
+    @Inject(forwardRef(() => PlansService))
     private plansService: PlansService,
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
