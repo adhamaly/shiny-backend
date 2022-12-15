@@ -2,10 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { MethodNotAllowedResponse } from '../../common/errors/MethodNotAllowedResponse';
-import { City } from '../../city/schemas/city.schema';
-import { appliedPromoCodeModelName } from '../schemas/applied-promo-codes.schema';
-import { userModelName, User } from '../../user/schemas/user.schema';
-import { PromoCode } from '../schemas/promo-code.schema';
 import {
   promoCodeModelName,
   PromoCodesModel,
