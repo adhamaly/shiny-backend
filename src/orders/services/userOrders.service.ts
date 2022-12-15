@@ -231,13 +231,13 @@ export class UsersOrdersService {
 
     return { totalPayAfterDiscount, discountAmount };
   }
-  async useWallet(userId: string, orderId: string, walletAmount: number) {
+  async useWallet(userId: string, orderId: string) {
     const order = await this.ordersRepository.findOrderByIdOr404(orderId);
     const user = await this.userService.getUserById(userId);
 
     const IsUserWalletBalanceValid = this.userService.checkWalletBalanceValid(
       user,
-      walletAmount,
+      order.totalPrice,
     );
     if (!IsUserWalletBalanceValid)
       throw new MethodNotAllowedResponse({
@@ -245,23 +245,13 @@ export class UsersOrdersService {
         en: 'Your Wallet Balance Is Not Valid',
       });
 
-    const totalPayAfterWallet = this.getTotalPayAfterWallet(
-      order,
-      walletAmount,
-    );
-
+    // pay order
     const updatedOrder = await this.ordersRepository.update(orderId, {
-      totalPay: totalPayAfterWallet,
-      walletUsedAmount: walletAmount,
+      status: OrderStatus.ACTIVE,
     });
 
-    await this.userService.payWithWallet(userId, walletAmount);
-
-    await updatedOrder.populate(this.ordersRepository.populatedPaths);
-
-    updatedOrder.user = undefined;
-
-    return updatedOrder;
+    // Decrement wallet from user
+    await this.userService.payWithWallet(userId, order.totalPrice);
   }
   getTotalPayAfterWallet(order: Order, walletAmount: number) {
     return order.totalPay - walletAmount;

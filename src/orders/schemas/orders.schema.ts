@@ -85,9 +85,6 @@ export class Order {
   promoCode: PromoCode;
 
   @Prop()
-  walletUsedAmount: number; // Setted when user Apply WalletAmount Usage
-
-  @Prop()
   startTime: string;
 
   @Prop()

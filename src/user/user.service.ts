@@ -128,8 +128,8 @@ export class UserService {
   async getUserById(id: string) {
     return await this.userRepository.findUserById(id);
   }
-  checkWalletBalanceValid(user: User, walletAmount: number) {
-    return user.walletBalance >= walletAmount ? true : false;
+  checkWalletBalanceValid(user: User, orderTotalPrice: number) {
+    return user.walletBalance >= orderTotalPrice ? true : false;
   }
   async payWithWallet(userId: string, amount: number) {
     const userDocument = await this.userRepository.findUserByIdOr404(userId);

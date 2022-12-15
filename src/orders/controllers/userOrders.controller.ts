@@ -84,20 +84,15 @@ export class UserOrdersController {
     };
   }
 
-  @Post('use-wallet')
+  @Patch('use-wallet')
   @UseGuards(UserAuthGuard)
   async useWalletForOrderController(
     @Account() account: any,
     @Body('order') order: string,
-    @Body('walletAmount') walletAmount: number,
   ) {
     return {
       success: true,
-      data: await this.usersOrdersService.useWallet(
-        account.id,
-        order,
-        walletAmount,
-      ),
+      data: await this.usersOrdersService.useWallet(account.id, order),
     };
   }
   @Get('all')
