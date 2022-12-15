@@ -174,7 +174,7 @@ export class PromoCodesRepository {
     const filtered = res.filter((promoCode: any) => !promoCode.applied.length);
 
     filtered.forEach((promoCode) => {
-      promoCode.user_applied = undefined;
+      promoCode.applied = undefined;
     });
     return filtered;
   }
