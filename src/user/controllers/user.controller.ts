@@ -49,13 +49,17 @@ export class UserController {
     @Body() userUpdateProfileDTO: UserUpdateProfileDTO,
     @UploadedFile() image: Express.Multer.File,
   ) {
+    const userProfile = await this.userService.update(
+      account.id,
+      userUpdateProfileDTO,
+      image,
+    );
     return {
       success: true,
-      data: await this.userService.update(
-        account.id,
-        userUpdateProfileDTO,
-        image,
-      ),
+      data: {
+        ...userProfile.toObject(),
+        fcmTokens: undefined,
+      },
     };
   }
 
@@ -71,9 +75,13 @@ export class UserController {
   @Get('')
   @UseGuards(UserAuthGuard, ProfileOwnerGuard)
   async getProfileController(@Account() account: any) {
+    const profile = await this.userService.getUserByIdOr404(account.id);
     return {
       success: true,
-      data: await this.userService.getUserByIdOr404(account.id),
+      data: {
+        ...profile,
+        fcmTokens: undefined,
+      },
     };
   }
 
@@ -83,12 +91,16 @@ export class UserController {
     @Account() account: any,
     @Body() updatePhoneNumberDTO: UpdatePhoneNumberDTO,
   ) {
+    const userProfile = await this.userService.updatePhoneNumber(
+      account.id,
+      updatePhoneNumberDTO,
+    );
     return {
       success: true,
-      data: await this.userService.updatePhoneNumber(
-        account.id,
-        updatePhoneNumberDTO,
-      ),
+      data: {
+        ...userProfile.toObject(),
+        fcmTokens: undefined,
+      },
     };
   }
   @Patch('user-location')

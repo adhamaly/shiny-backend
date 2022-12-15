@@ -47,6 +47,7 @@ export class AuthService {
       ...userDocument.toObject(),
       access_token: accessToken,
       refresh_token: refreshToken,
+      fcmTokens: undefined,
     };
   }
 
