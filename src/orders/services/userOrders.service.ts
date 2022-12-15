@@ -5,7 +5,12 @@ import { LocationsService } from '../../locations/services/locations.service';
 import { WashingServicesService } from '../../washing-services/services/washing-services.service';
 import { SubscriptionsService } from '../../subscriptions/services/subscriptions.service';
 import { PlansService } from '../../plans/services/plans.service';
-import { OrderStatus, OrderTypes, Order } from '../schemas/orders.schema';
+import {
+  OrderStatus,
+  OrderTypes,
+  Order,
+  PaymentTypes,
+} from '../schemas/orders.schema';
 import { OrderCreationDTO } from '../dtos/OrderCreation.dto';
 import { User } from '../../user/schemas/user.schema';
 import { Location } from '../../locations/schemas/location.schema';
@@ -150,17 +155,6 @@ export class UsersOrdersService {
   async getOrderById(orderId: string) {
     return await this.ordersRepository.findOrderByIdPopulatedOr404(orderId);
   }
-  async setOrderActive(order: string) {
-    const pendingOrder = await this.ordersRepository.findOrderByIdOr404(order);
-
-    this.orderStatusValidator.isStatusValidForOrder(
-      pendingOrder,
-      OrderStatus.ACTIVE,
-    );
-
-    pendingOrder.status = OrderStatus.ACTIVE;
-    await pendingOrder.save();
-  }
 
   async setPaymentType(paymentTypeUpdateDTO: PaymentTypeUpdateDTO) {
     const order = await this.ordersRepository.findOrderByIdOr404(
@@ -200,10 +194,17 @@ export class UsersOrdersService {
     const order = await this.ordersRepository.findOrderByIdOr404(orderId);
     const user = await this.userService.getUserById(userId);
     const promoCode = await this.PromoCodesService.getByCode(code);
+
     if (!promoCode)
       throw new MethodNotAllowedResponse({
         ar: 'لا يوجد هذا الكود',
         en: 'Promo Code Not Exist',
+      });
+
+    if (order.paymentType === PaymentTypes.WALLET)
+      throw new MethodNotAllowedResponse({
+        ar: 'لا يمكنك استخدام مع المحفظة الإلكترونية ',
+        en: 'You could not Promo Code with wallet',
       });
 
     await this.PromoCodesService.apply(user, promoCode);
@@ -231,9 +232,40 @@ export class UsersOrdersService {
 
     return { totalPayAfterDiscount, discountAmount };
   }
+  async payOrder(userId: string, orderId: string) {
+    const pendingOrder = await this.ordersRepository.findOrderByIdOr404(
+      orderId,
+    );
+
+    this.orderStatusValidator.isStatusValidForOrder(
+      pendingOrder,
+      OrderStatus.ACTIVE,
+    );
+
+    if (!pendingOrder.paymentType)
+      throw new MethodNotAllowedResponse({
+        ar: 'لا يمكنك الدفع بدون تحديد طريقة الدفع ',
+        en: 'You could not pay without set payment type',
+      });
+
+    // TODO: Add Payment Service
+
+    // pay order
+    await this.ordersRepository.update(orderId, {
+      status: OrderStatus.ACTIVE,
+    });
+  }
   async useWallet(userId: string, orderId: string) {
     const order = await this.ordersRepository.findOrderByIdOr404(orderId);
     const user = await this.userService.getUserById(userId);
+
+    this.orderStatusValidator.isStatusValidForOrder(order, OrderStatus.ACTIVE);
+
+    if (order.discount || order.promoCode)
+      throw new MethodNotAllowedResponse({
+        ar: 'لا يمكنك الدفع بالمحفظة',
+        en: 'You could not pay using wallet',
+      });
 
     const IsUserWalletBalanceValid = this.userService.checkWalletBalanceValid(
       user,
@@ -245,8 +277,7 @@ export class UsersOrdersService {
         en: 'Your Wallet Balance Is Not Valid',
       });
 
-    // pay order
-    const updatedOrder = await this.ordersRepository.update(orderId, {
+    await this.ordersRepository.update(orderId, {
       status: OrderStatus.ACTIVE,
     });
 

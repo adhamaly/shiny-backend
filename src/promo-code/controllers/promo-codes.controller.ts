@@ -22,10 +22,13 @@ export class PromoCodesController {
 
   @Get('user')
   @UseGuards(UserAuthGuard)
-  async getAllForUserController(@Query('status') status: string) {
+  async getAllForUserController(
+    @Query('status') status: string,
+    @Account() account: any,
+  ) {
     return {
       success: true,
-      data: await this.promoCodesService.getAllForUser(status),
+      data: await this.promoCodesService.getAllForUser(status, account.id),
     };
   }
 }

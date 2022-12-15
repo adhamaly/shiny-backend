@@ -22,8 +22,8 @@ export class PromoCodesService {
     );
   }
 
-  async getAllForUser(status: string) {
-    return await this.promoCodesRepository.findAllForUser(status);
+  async getAllForUser(status: string, userId: string) {
+    return await this.promoCodesRepository.findAllForUser(status, userId);
   }
 
   calculateExpiryDate(duration: number) {

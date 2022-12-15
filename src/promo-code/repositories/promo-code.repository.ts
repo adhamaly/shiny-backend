@@ -48,12 +48,16 @@ export class PromoCodesRepository {
     return await this.promoCodesModel.findById(promoCodeId).exec();
   }
 
-  async findAllForUser(status: string) {
-    if (status === 'USED') return await this.appliedPromoCodesQueryForUser();
+  async findAllForUser(status: string, userId: string) {
+    if (status === 'USED')
+      return await this.appliedPromoCodesQueryForUser(userId);
+
+    if (status === PromoCodeStatus.ACTIVE)
+      return await this.findActivePromoCodes(userId);
 
     return await this.promoCodesModel
       .find({
-        status: status,
+        status: PromoCodeStatus.EXPIRED,
       })
       .exec();
   }
@@ -77,7 +81,7 @@ export class PromoCodesRepository {
       .exec();
   }
 
-  async appliedPromoCodesQueryForUser() {
+  async appliedPromoCodesQueryForUser(userId: string) {
     const res = await this.promoCodesModel
       .aggregate([
         {
@@ -94,7 +98,15 @@ export class PromoCodesRepository {
                     {
                       $match: {
                         $expr: {
-                          $eq: ['$$userId', '$_id'],
+                          $and: [
+                            { $eq: ['$$userId', '$_id'] },
+                            {
+                              $eq: [
+                                '$$userId',
+                                new mongoose.Types.ObjectId(userId),
+                              ],
+                            },
+                          ],
                         },
                       },
                     },
@@ -115,6 +127,62 @@ export class PromoCodesRepository {
 
     return this.appliedPromoCodesFormater(res);
   }
+
+  async findActivePromoCodes(userId: string) {
+    const res = await this.promoCodesModel
+      .aggregate([
+        {
+          $match: { status: PromoCodeStatus.ACTIVE },
+        },
+        {
+          $lookup: {
+            from: 'applied-promo-codes',
+            let: { promoCodeId: '$_id' },
+            pipeline: [
+              { $match: { $expr: { $eq: ['$$promoCodeId', '$promoCode'] } } },
+              {
+                $lookup: {
+                  from: 'users',
+                  let: { userId: '$user' },
+                  pipeline: [
+                    {
+                      $match: {
+                        $expr: {
+                          $and: [
+                            { $eq: ['$$userId', '$_id'] },
+                            {
+                              $eq: [
+                                '$$userId',
+                                new mongoose.Types.ObjectId(userId),
+                              ],
+                            },
+                          ],
+                        },
+                      },
+                    },
+                  ],
+                  as: 'user',
+                },
+              },
+              {
+                $project: { _id: 0, promoCode: 0, createdAt: 0, updatedAt: 0 },
+              },
+              { $unwind: '$user' },
+            ],
+            as: 'applied',
+          },
+        },
+      ])
+      .exec();
+
+    const filtered = res.filter((promoCode: any) => !promoCode.applied.length);
+
+    filtered.forEach((promoCode) => {
+      promoCode.user_applied = undefined;
+    });
+    return filtered;
+  }
+
   appliedPromoCodesFormater(promoCodes: any[]) {
     const filtered = promoCodes.filter(
       (promoCode: any) => promoCode.user_applied.length >= 1,

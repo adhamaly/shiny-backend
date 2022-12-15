@@ -49,10 +49,13 @@ export class UserOrdersController {
     };
   }
 
-  @Patch('set-order-active')
+  @Patch('pay-order')
   @UseGuards(UserAuthGuard)
-  async setOrderActiveController(@Body('order') order: string) {
-    await this.usersOrdersService.setOrderActive(order);
+  async setOrderActiveController(
+    @Account() account: any,
+    @Body('order') order: string,
+  ) {
+    await this.usersOrdersService.payOrder(account.id, order);
     return {
       success: true,
     };
@@ -67,7 +70,7 @@ export class UserOrdersController {
     };
   }
 
-  @Post('apply-promo-code')
+  @Patch('apply-promo-code')
   @UseGuards(UserAuthGuard)
   async applyPromoCodeController(
     @Account() account: any,
