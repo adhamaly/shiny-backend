@@ -18,8 +18,8 @@ export class UserQueriesHelper {
   ) {
     await this.userModel
       .findByIdAndUpdate(id, {
-        'location.latitude': updateUserLocation.latitude,
-        'location.longitude': updateUserLocation.longitude,
+        'location.latitude': Number(updateUserLocation.latitude),
+        'location.longitude': Number(updateUserLocation.longitude),
         'location.streetName': updateUserLocation.streetName,
         'location.subAdministrativeArea':
           updateUserLocation.subAdministrativeArea,
