@@ -6,7 +6,10 @@ import { UserService } from '../../user/user.service';
 import { User } from '../../user/schemas/user.schema';
 import { MethodNotAllowedResponse } from '../../common/errors/MethodNotAllowedResponse';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { SubscriptionsStatus } from '../schemas/subscriptions.schema';
+import {
+  SubscriptionsStatus,
+  Subscription,
+} from '../schemas/subscriptions.schema';
 import { GetSubscriptionByLocationDTO } from '../dtos/subscriptionByLocation.dto';
 import { NearestCityCalculator } from '../../city/nearestCityCalculator.service';
 
@@ -50,6 +53,14 @@ export class SubscriptionsService {
     const user = await this.userService.getUserById(userId);
 
     return await this.subscriptionsRepository.findOnePopulated(user);
+  }
+
+  async getById(subscriptionId: string) {
+    return await this.subscriptionsRepository.findById(subscriptionId);
+  }
+
+  async decrementUserRemainigWashes(subscription: Subscription) {
+    await this.subscriptionsRepository.decrementUserRemaingWashes(subscription);
   }
 
   async getUserSubscriptionByLocation(

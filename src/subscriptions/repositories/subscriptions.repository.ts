@@ -4,6 +4,7 @@ import { Model } from 'mongoose';
 import { Plan, plansModelName } from '../../plans/schemas/plans.schema';
 import { User } from '../../user/schemas/user.schema';
 import { WashingServicesModelName } from '../../washing-services/schemas/washing-services.schema';
+import { Subscription } from '../schemas/subscriptions.schema';
 import {
   subscriptionsModelName,
   SubscriptionsModel,
@@ -68,6 +69,10 @@ export class SubscriptionsRepository {
     return await this.subscriptionsModel.find({ ...filter }).exec();
   }
 
+  async findById(id: string) {
+    return await this.subscriptionsModel.findById(id).exec();
+  }
+
   async update(filter: any, updatedData: any) {
     await this.subscriptionsModel
       .updateMany(
@@ -75,6 +80,17 @@ export class SubscriptionsRepository {
           ...filter,
         },
         { $set: updatedData },
+      )
+      .exec();
+  }
+
+  async decrementUserRemaingWashes(id: Subscription) {
+    await this.subscriptionsModel
+      .updateMany(
+        {
+          _id: id,
+        },
+        { $inc: { remainingWashes: -1 } },
       )
       .exec();
   }

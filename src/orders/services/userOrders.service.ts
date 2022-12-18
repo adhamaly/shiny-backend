@@ -94,6 +94,12 @@ export class UsersOrdersService {
         en: 'You Have No Subscription',
       });
 
+    if (!userSubscription.remainingWashes)
+      throw new MethodNotAllowedResponse({
+        ar: 'لقد بلغت الحد الاقصي للاستخدام من الباقة',
+        en: 'You Have No Remaining Washes',
+      });
+
     const plan = await this.plansService.getPlanById(userSubscription.plan);
 
     // Calculate totalDuration for washingServices
@@ -232,7 +238,7 @@ export class UsersOrdersService {
 
     return { totalPayAfterDiscount, discountAmount };
   }
-  async payOrder(userId: string, orderId: string) {
+  async payOrder(orderId: string) {
     const pendingOrder = await this.ordersRepository.findOrderByIdOr404(
       orderId,
     );
@@ -249,6 +255,15 @@ export class UsersOrdersService {
       });
 
     // TODO: Add Payment Service
+
+    if (
+      pendingOrder.type === OrderTypes.SUBSCRIPTION_BOOKING ||
+      pendingOrder.subscription
+    ) {
+      await this.subscriptionsService.decrementUserRemainigWashes(
+        pendingOrder.subscription,
+      );
+    }
 
     // pay order
     await this.ordersRepository.update(orderId, {
@@ -277,12 +292,18 @@ export class UsersOrdersService {
         en: 'Your Wallet Balance Is Not Valid',
       });
 
-    await this.ordersRepository.update(orderId, {
-      status: OrderStatus.ACTIVE,
-    });
+    if (order.type === OrderTypes.SUBSCRIPTION_BOOKING || order.subscription) {
+      await this.subscriptionsService.decrementUserRemainigWashes(
+        order.subscription,
+      );
+    }
 
     // Decrement wallet from user
     await this.userService.payWithWallet(userId, order.totalPrice);
+
+    await this.ordersRepository.update(orderId, {
+      status: OrderStatus.ACTIVE,
+    });
   }
   getTotalPayAfterWallet(order: Order, walletAmount: number) {
     return order.totalPay - walletAmount;

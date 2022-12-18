@@ -55,7 +55,7 @@ export class UserOrdersController {
     @Account() account: any,
     @Body('order') order: string,
   ) {
-    await this.usersOrdersService.payOrder(account.id, order);
+    await this.usersOrdersService.payOrder(order);
     return {
       success: true,
     };
