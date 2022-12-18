@@ -43,7 +43,7 @@ export class BikersController {
     };
   }
   @Get('')
-  @UseGuards(UserAuthGuard, ProfileOwnerGuard)
+  @UseGuards(UserAuthGuard)
   async getByIdController(@Account() account: any) {
     return {
       success: true,
