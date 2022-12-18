@@ -86,7 +86,7 @@ export class SubscriptionsRepository {
 
   async decrementUserRemaingWashes(id: Subscription) {
     await this.subscriptionsModel
-      .updateMany(
+      .updateOne(
         {
           _id: id,
         },
