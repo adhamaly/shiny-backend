@@ -4,10 +4,11 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AdminModule } from '../admin/admin.module';
+import { BikersModule } from '../bikers/bikers.module';
 
 @Global()
 @Module({
-  imports: [UserModule, AdminModule, JwtModule.register({})],
+  imports: [UserModule, AdminModule, BikersModule, JwtModule.register({})],
   controllers: [AuthController],
   providers: [AuthService, JwtService],
   exports: [AuthService, JwtModule],

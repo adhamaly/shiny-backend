@@ -31,6 +31,10 @@ export class BikersService {
     return await this.bikersRepository.findByIdOr404(id);
   }
 
+  async getBikerByUserNameOr404(userName: string) {
+    return await this.bikersRepository.findByUserNameOr404(userName);
+  }
+
   async deleteBiker(id: string) {
     await this.bikersRepository.delete(id);
   }

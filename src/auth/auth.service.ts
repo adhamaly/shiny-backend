@@ -9,6 +9,8 @@ import { UnAuthorizedResponse } from '../common/errors/UnAuthorizedResponse';
 import { NotFoundResponse } from '../common/errors';
 import { UserLogoutDTO } from '../user/dto/userLogout.dto';
 import { Roles } from 'src/admin/schemas/admin.schema';
+import { BikerLoginDTO } from '../bikers/dto/bikerLogin.dto';
+import { BikersService } from '../bikers/bikers.service';
 
 @Injectable()
 export class AuthService {
@@ -17,6 +19,7 @@ export class AuthService {
     private jwtService: JwtService,
     private userService: UserService,
     private adminService: AdminService,
+    private bikersService: BikersService,
   ) {}
 
   async userRegisteration(userRegisterDTO: UserRegisterDTO) {
@@ -47,6 +50,33 @@ export class AuthService {
       ...userDocument.toObject(),
       access_token: accessToken,
       refresh_token: refreshToken,
+      fcmTokens: undefined,
+    };
+  }
+
+  async bikerLogin(bikerLoginDTO: BikerLoginDTO) {
+    const biker = await this.bikersService.getBikerByUserNameOr404(
+      bikerLoginDTO.userName,
+    );
+    // Decrypt biker password and Compare
+    const isMatch = await bcrypt.compare(
+      bikerLoginDTO.password,
+      biker.password,
+    );
+    if (!isMatch)
+      throw new UnAuthorizedResponse({
+        ar: 'بيانات المستخدم غير صالحة',
+        en: 'Invalid user credentials ',
+      });
+    // Generate Tokens
+    const accessToken = this.generateAccessToken(biker._id, 'biker');
+    const refreshToken = this.generateRefreshToken(biker._id, 'biker');
+
+    biker.password = undefined;
+    return {
+      ...biker.toObject(),
+      accessToken: accessToken,
+      refreshToken: refreshToken,
       fcmTokens: undefined,
     };
   }

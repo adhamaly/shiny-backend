@@ -4,6 +4,7 @@ import { AuthService } from './auth.service';
 import { AdminLoginDTO } from '../admin/dto/admin.login.dto';
 import { UserAuthGuard } from './guards';
 import { UserAuthorizedGuard } from '../user/guard/userAuthorized.guard';
+import { BikerLoginDTO } from '../bikers/dto/bikerLogin.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -50,6 +51,15 @@ export class AuthController {
       data: { ...(await this.authService.adminLogin(adminLoginDTO)) },
     };
   }
+
+  @Post('bikers/login')
+  async bikerLoginController(@Body() bikerLoginDTO: BikerLoginDTO) {
+    return {
+      success: true,
+      data: { ...(await this.authService.bikerLogin(bikerLoginDTO)) },
+    };
+  }
+
   @Post('refresh-token')
   async refreshTokenHandler(@Body('refresh_token') refresh_token: string) {
     const result = await this.authService.generateNewTokens(refresh_token);

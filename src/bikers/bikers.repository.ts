@@ -93,6 +93,21 @@ export class BikersRepository {
     return biker;
   }
 
+  async findByUserNameOr404(userName: string) {
+    const biker = await this.bikerModel
+      .findOne({ userName: userName, isDeleted: false })
+      .select('+password')
+      .exec();
+
+    if (!biker)
+      throw new NotFoundResponse({
+        ar: 'لا يوجد هذا السائق',
+        en: 'Biker not found',
+      });
+
+    return biker;
+  }
+
   async delete(id: string) {
     // TODO: CHECK HIS WALLET BEFORE DELETION
     const biker = await this.bikerModel
