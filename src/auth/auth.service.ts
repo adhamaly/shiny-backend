@@ -207,5 +207,10 @@ export class AuthService {
       const userProfile = await this.userService.getUserByIdOr404(clientId);
       return userProfile;
     }
+
+    if (role === 'biker') {
+      const bikerProfile = await this.bikersService.getByIdOr404(clientId);
+      return bikerProfile;
+    }
   }
 }
