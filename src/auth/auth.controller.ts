@@ -5,6 +5,8 @@ import { AdminLoginDTO } from '../admin/dto/admin.login.dto';
 import { UserAuthGuard } from './guards';
 import { UserAuthorizedGuard } from '../user/guard/userAuthorized.guard';
 import { BikerLoginDTO } from '../bikers/dto/bikerLogin.dto';
+import { BikerLogoutDTO } from '../bikers/dto/bikerLogout.dto';
+import { BikerProfileOwnerGuard } from '../bikers/guard/bikerProfileOwner.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -60,6 +62,14 @@ export class AuthController {
     };
   }
 
+  @Post('bikers/logout')
+  @UseGuards(UserAuthGuard)
+  async bikerLogoutController(@Body() bikerLogoutDTO: BikerLogoutDTO) {
+    await this.authService.bikerLogout(bikerLogoutDTO);
+    return {
+      success: true,
+    };
+  }
   @Post('refresh-token')
   async refreshTokenHandler(@Body('refresh_token') refresh_token: string) {
     const result = await this.authService.generateNewTokens(refresh_token);

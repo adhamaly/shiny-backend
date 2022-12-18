@@ -3,7 +3,7 @@ import { ForbiddenResponse } from '../../common/errors/ForbiddenResponse';
 import { BikersService } from '../bikers.service';
 
 @Injectable()
-export class ProfileOwnerGuard implements CanActivate {
+export class BikerProfileOwnerGuard implements CanActivate {
   constructor(private bikersService: BikersService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

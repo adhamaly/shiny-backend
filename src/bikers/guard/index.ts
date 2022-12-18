@@ -1,1 +1,1 @@
-export * from './profileOwner.guard';
+export * from './bikerProfileOwner.guard';

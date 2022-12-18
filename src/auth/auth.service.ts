@@ -11,6 +11,7 @@ import { UserLogoutDTO } from '../user/dto/userLogout.dto';
 import { Roles } from 'src/admin/schemas/admin.schema';
 import { BikerLoginDTO } from '../bikers/dto/bikerLogin.dto';
 import { BikersService } from '../bikers/bikers.service';
+import { BikerLogoutDTO } from '../bikers/dto/bikerLogout.dto';
 
 @Injectable()
 export class AuthService {
@@ -75,13 +76,17 @@ export class AuthService {
     biker.password = undefined;
     return {
       ...biker.toObject(),
-      accessToken: accessToken,
-      refreshToken: refreshToken,
+      access_token: accessToken,
+      refresh_token: refreshToken,
       fcmTokens: undefined,
     };
   }
 
   async userLogout(userLogoutDTO: UserLogoutDTO) {
+    //TODO:REMOVE FCM FROM USERMOEL
+  }
+
+  async bikerLogout(bikerLogoutDTO: BikerLogoutDTO) {
     //TODO:REMOVE FCM FROM USERMOEL
   }
 
