@@ -116,9 +116,11 @@ export class BikersRepository {
     // TODO: CHECK HIS WALLET BEFORE DELETION
     const biker = await this.bikerModel
       .findOne({ _id: id, isDeleted: false })
+      .select('+fcmTokens')
       .exec();
 
     biker.isDeleted = true;
+    biker.userName = '-d ' + biker.userName;
     biker.phone = '-d ' + biker.phone;
     biker.fcmTokens = [];
     biker.nationalId = '-d ' + biker.nationalId;

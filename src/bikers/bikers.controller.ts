@@ -46,6 +46,16 @@ export class BikersController {
     };
   }
 
+  @Delete('')
+  @UseGuards(UserAuthGuard)
+  async deleteBikerController(@Account() account: any) {
+    await this.bikersService.deleteBiker(account.id);
+
+    return {
+      success: true,
+    };
+  }
+
   @Put('update-info')
   @UseGuards(UserAuthGuard)
   @UseInterceptors(FileInterceptor('image', { dest: 'uploads/' }))
@@ -74,16 +84,6 @@ export class BikersController {
     return {
       success: true,
       data: await this.bikersService.getByIdOr404(bikerId),
-    };
-  }
-
-  @Delete(':bikerId')
-  @UseGuards(UserAuthGuard, IsAdminGuard)
-  async deleteBikerController(@Param('bikerId') bikerId: string) {
-    await this.bikersService.deleteBiker(bikerId);
-
-    return {
-      success: true,
     };
   }
 
