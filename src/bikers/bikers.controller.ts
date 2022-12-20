@@ -70,7 +70,7 @@ export class BikersController {
     };
   }
 
-  @Get('/admin')
+  @Get('/admin/all')
   @UseGuards(UserAuthGuard, IsAdminGuard)
   async getAllBikersController() {
     return {
