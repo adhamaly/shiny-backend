@@ -7,6 +7,8 @@ import { UserAuthorizedGuard } from '../user/guard/userAuthorized.guard';
 import { BikerLoginDTO } from '../bikers/dto/bikerLogin.dto';
 import { BikerLogoutDTO } from '../bikers/dto/bikerLogout.dto';
 import { BikerProfileOwnerGuard } from '../bikers/guard/bikerProfileOwner.guard';
+import { IsPhoneNumber } from 'class-validator';
+import { PhoneNumberDTO } from './dtos/PhoneValidator.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -59,6 +61,16 @@ export class AuthController {
     return {
       success: true,
       data: { ...(await this.authService.bikerLogin(bikerLoginDTO)) },
+    };
+  }
+
+  @Post('bikers/check-phone')
+  async checkPhoneForBikerController(@Body() phoneNumberDTO: PhoneNumberDTO) {
+    return {
+      success: true,
+      isExist: await this.authService.checkBikerPhoneExistence(
+        phoneNumberDTO.phone,
+      ),
     };
   }
 

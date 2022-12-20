@@ -39,6 +39,10 @@ export class BikersService {
     await this.bikersRepository.delete(id);
   }
 
+  async checkPhoneNumber(phone: string) {
+    return await this.bikersRepository.findByPhoneNumber(phone);
+  }
+
   async updateBiker(
     bikerId: string,
     adminId: string,

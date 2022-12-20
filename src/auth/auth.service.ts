@@ -94,6 +94,11 @@ export class AuthService {
     return await this.userService.isPhoneExist(phone);
   }
 
+  async checkBikerPhoneExistence(phone: string) {
+    const isExist = await this.bikersService.checkPhoneNumber(phone);
+    return isExist ? true : false;
+  }
+
   async adminLogin(adminLoginDTO: AdminLoginDTO) {
     // Get Admin
     const admin = await this.adminService.getAdminByUserNameOr404(

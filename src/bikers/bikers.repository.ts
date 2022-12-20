@@ -93,6 +93,12 @@ export class BikersRepository {
     return biker;
   }
 
+  async findByPhoneNumber(phone: string) {
+    return await this.bikerModel
+      .findOne({ phone: phone, isDeleted: false })
+      .exec();
+  }
+
   async findByUserNameOr404(userName: string) {
     const biker = await this.bikerModel
       .findOne({ userName: userName, isDeleted: false })
