@@ -81,17 +81,10 @@ export class PlansController {
   }
   @Get('/admin/details/:planId')
   @UseGuards(UserAuthGuard)
-  async getPlanByIdForAdminController(
-    @Param('planId') planId: string,
-    @Account() account: any,
-  ) {
+  async getPlanByIdForAdminController(@Param('planId') planId: string) {
     return {
       success: true,
-      data: await this.plansService.getPlanByIdForAdmin(
-        planId,
-        account.role,
-        account.id,
-      ),
+      data: await this.plansService.getPlanByIdForAdmin(planId),
     };
   }
   @Get('/guest/details/:planId')

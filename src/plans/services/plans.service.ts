@@ -181,14 +181,20 @@ export class PlansService {
   async getAllForAdmin(adminId: string, role: string) {
     switch (role) {
       case Roles.SuperAdmin:
-        return await this.plansRepository.findAllForAdmins(role);
+        const plansForSuperAdmin = await this.plansRepository.findAllForAdmins(
+          role,
+        );
+        plansForSuperAdmin.forEach((plan) => {
+          plan.cities = undefined;
+        });
+        return plansForSuperAdmin;
       case Roles.SubAdmin:
         const admin = await this.adminService.getById(adminId);
         const plans = await this.plansRepository.findAllForAdmins(
           role,
           admin.city,
         );
-        return plans.filter((plan: any) => plan.cities.length >= 1);
+        return this.plansFormaterForUser(plans);
       default:
         return [];
     }
@@ -210,28 +216,8 @@ export class PlansService {
     return await this.plansRepository.findOne(id);
   }
 
-  async getPlanByIdForAdmin(id: string, role: string, adminId: string) {
-    switch (role) {
-      case Roles.SuperAdmin:
-        return await this.plansRepository.findOneByIdOr404(id);
-      case Roles.SubAdmin:
-        const admin = await this.adminService.getById(adminId);
-        const plan = await this.plansRepository.findByIdOr404(
-          id,
-          role,
-          admin.city,
-        );
-
-        if (!plan['cities'].length)
-          throw new NotFoundResponse({
-            ar: 'لاتوجد هذه الباقة',
-            en: 'Plan Not Found',
-          });
-
-        return plan;
-      default:
-        return {};
-    }
+  async getPlanByIdForAdmin(id: string) {
+    return await this.plansRepository.findByIdOr404(id);
   }
   async updatePlan(id: string, updatePlanDTO: UpdatePlanDTO) {
     return await this.plansRepository.update(id, updatePlanDTO);

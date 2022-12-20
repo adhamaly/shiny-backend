@@ -118,7 +118,10 @@ export class WashingServicesService {
       case Roles.SuperAdmin:
         const washingServicesForSuperAdmin =
           await this.washingServicesRepository.findAllForAdmins(role);
-        return this.washingServicesFormater(washingServicesForSuperAdmin);
+        washingServicesForSuperAdmin.forEach((washingService) => {
+          washingService.cities = undefined;
+        });
+        return washingServicesForSuperAdmin;
       case Roles.SubAdmin:
         const admin = await this.adminService.getById(adminId);
         const washingServices =

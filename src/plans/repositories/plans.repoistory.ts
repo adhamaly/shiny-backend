@@ -122,7 +122,7 @@ export class PlansRepository {
 
     return plans;
   }
-  async findByIdOr404(id: string, role: string, city: City[]) {
+  async findByIdOr404(id: string) {
     const plan = await this.plansModel
       .aggregate([
         {
@@ -136,7 +136,6 @@ export class PlansRepository {
               {
                 $match: {
                   $expr: { $eq: ['$$planId', '$plan'] },
-                  ...(role === Roles.SubAdmin ? { city: { $in: city } } : {}),
                 },
               },
               {
