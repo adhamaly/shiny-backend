@@ -113,30 +113,12 @@ export class WashingServicesService {
     );
   }
 
-  async getAllWashingServicesForAdmin(
-    role: string,
-    adminId: string,
-    cities: string[],
-  ) {
-    if (cities.length) {
-      const formatedCities = [];
-      for (const city of cities) {
-        formatedCities.push(new mongoose.Types.ObjectId(city));
-      }
-      const washingServices =
-        await this.washingServicesRepository.findAllForAdmins(
-          role,
-          formatedCities,
-        );
-
-      return washingServices.filter(
-        (washingService: any) => washingService.cities.length >= 1,
-      );
-    }
-
+  async getAllWashingServicesForAdmin(role: string, adminId: string) {
     switch (role) {
       case Roles.SuperAdmin:
-        return await this.washingServicesRepository.findAllForAdmins(role);
+        const washingServicesForSuperAdmin =
+          await this.washingServicesRepository.findAllForAdmins(role);
+        return this.washingServicesFormater(washingServicesForSuperAdmin);
       case Roles.SubAdmin:
         const admin = await this.adminService.getById(adminId);
         const washingServices =
@@ -145,9 +127,7 @@ export class WashingServicesService {
             admin.city,
           );
 
-        return washingServices.filter(
-          (washingService: any) => washingService.cities.length >= 1,
-        );
+        return this.washingServicesFormater(washingServices);
       default:
         return [];
     }
@@ -198,7 +178,7 @@ export class WashingServicesService {
     );
 
     const formatedWashingServices =
-      this.washingServicesFormaterForUser(washingServices);
+      this.washingServicesFormater(washingServices);
 
     return {
       washingServices: formatedWashingServices,
@@ -234,7 +214,7 @@ export class WashingServicesService {
     );
 
     const formatedWashingServices =
-      this.washingServicesFormaterForUser(washingServices);
+      this.washingServicesFormater(washingServices);
 
     return {
       washingServices: formatedWashingServices,
@@ -244,7 +224,7 @@ export class WashingServicesService {
     };
   }
 
-  washingServicesFormaterForUser(servicesList: any) {
+  washingServicesFormater(servicesList: any) {
     const filtered = servicesList.filter(
       (washingService: any) => washingService.cities.length >= 1,
     );
@@ -255,33 +235,8 @@ export class WashingServicesService {
     return filtered;
   }
 
-  async getWashingServiceByIdForAdmin(
-    id: string,
-    role: string,
-    adminId: string,
-  ) {
-    switch (role) {
-      case Roles.SuperAdmin:
-        return await this.washingServicesRepository.findOneOr404(id);
-      case Roles.SubAdmin:
-        const admin = await this.adminService.getById(adminId);
-        const washingService =
-          await this.washingServicesRepository.findOneByIdOr404(
-            id,
-            role,
-            admin.city,
-          );
-
-        if (!washingService['cities'].length)
-          throw new NotFoundResponse({
-            ar: 'لاتوجد هذه الخدمة',
-            en: 'Washing Service Not Found',
-          });
-
-        return washingService;
-      default:
-        return {};
-    }
+  async getWashingServiceByIdForAdmin(id: string) {
+    return await this.washingServicesRepository.findOneByIdOr404(id);
   }
 
   async getWashingServiceById(id: string) {

@@ -74,16 +74,12 @@ export class WashingServicesController {
 
   @Get('admin/all')
   @UseGuards(UserAuthGuard)
-  async getAllWashingServicesForAdminController(
-    @Account() account: any,
-    @Query() queryObject: any,
-  ) {
+  async getAllWashingServicesForAdminController(@Account() account: any) {
     return {
       success: true,
       data: await this.washingServicesService.getAllWashingServicesForAdmin(
         account.role,
         account.id,
-        queryObject.cities?.length ? queryObject['cities'] : [],
       ),
     };
   }
@@ -103,14 +99,11 @@ export class WashingServicesController {
   @UseGuards(UserAuthGuard)
   async getByIdForAdminController(
     @Param('washingServiceId') washingServiceId: string,
-    @Account() account: any,
   ) {
     return {
       success: true,
       data: await this.washingServicesService.getWashingServiceByIdForAdmin(
         washingServiceId,
-        account.role,
-        account.id,
       ),
     };
   }

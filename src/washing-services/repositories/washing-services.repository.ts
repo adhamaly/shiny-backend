@@ -101,11 +101,7 @@ export class WashingServicesRepository {
               {
                 $match: {
                   $expr: { $eq: ['$$washingServiceId', '$washingService'] },
-                  ...(role === Roles.SubAdmin
-                    ? { city: { $in: city } }
-                    : role === Roles.SuperAdmin
-                    ? { ...(city?.length ? { city: { $in: city } } : {}) }
-                    : {}),
+                  ...(role === Roles.SubAdmin ? { city: { $in: city } } : {}),
                 },
               },
               {
@@ -140,7 +136,7 @@ export class WashingServicesRepository {
     return washingServices;
   }
 
-  async findOneByIdOr404(id: string, role: string, city: City[]) {
+  async findOneByIdOr404(id: string) {
     const washingService = await this.washingServicesModel
       .aggregate([
         {
@@ -154,7 +150,6 @@ export class WashingServicesRepository {
               {
                 $match: {
                   $expr: { $eq: ['$$washingServiceId', '$washingService'] },
-                  ...(role === Roles.SubAdmin ? { city: { $in: city } } : {}),
                 },
               },
               {
