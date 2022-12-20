@@ -138,6 +138,57 @@ export class BikersRepository {
       .exec();
   }
 
+  async updateBikerPublicInfo(
+    bikerId: string,
+    userName: string,
+    image: Express.Multer.File,
+  ) {
+    const biker = await this.findById(bikerId);
+    if (!biker)
+      throw new NotFoundResponse({
+        ar: 'لا يوجد هذا السائق',
+        en: 'Biker not found',
+      });
+
+    if (await this.isUserNameExistForAnotherBiker(bikerId, userName))
+      throw new MethodNotAllowedResponse({
+        ar: 'رقم البطاقة القومي مسجل من قبل',
+        en: 'National Id is already exist',
+      });
+    const updatedBiker = await this.bikerModel
+      .findByIdAndUpdate(
+        bikerId,
+        {
+          $set: {
+            userName: userName,
+          },
+        },
+        { new: true },
+      )
+      .exec();
+
+    if (image) {
+      if (updatedBiker.imagePath)
+        await this.firebaseService.deleteFileFromStorage(
+          updatedBiker.imagePath,
+        );
+
+      const { fileLink, filePath } = await this.firebaseService.uploadImage(
+        image,
+      );
+
+      updatedBiker.imageLink = fileLink;
+      updatedBiker.imagePath = filePath;
+      await updatedBiker.save();
+    }
+  }
+
+  async isUserNameExistForAnotherBiker(id: string, userName: string) {
+    return await this.bikerModel
+      .findOne({ _id: { $ne: id }, userName: userName, isDeleted: false })
+      .exec();
+  }
+
   async update(
     id: string,
     updateBikerDTO: UpdateBikerDTO,

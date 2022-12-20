@@ -47,6 +47,13 @@ export class BikersService {
     await this.bikersRepository.updateBikerPassword(bikerId, password);
   }
 
+  async updatePublicInfo(
+    bikerId: string,
+    userName: string,
+    image: Express.Multer.File,
+  ) {
+    await this.bikersRepository.updateBikerPublicInfo(bikerId, userName, image);
+  }
   async updateBiker(
     bikerId: string,
     adminId: string,

@@ -46,6 +46,20 @@ export class BikersController {
     };
   }
 
+  @Put('update-info')
+  @UseGuards(UserAuthGuard)
+  @UseInterceptors(FileInterceptor('image', { dest: 'uploads/' }))
+  async updateBikerPublicInfoController(
+    @Account() account: any,
+    @Body('userName') userName: string,
+    @UploadedFile() image: Express.Multer.File,
+  ) {
+    await this.bikersService.updatePublicInfo(account.id, userName, image);
+    return {
+      success: true,
+    };
+  }
+
   @Get('/admin')
   @UseGuards(UserAuthGuard, IsAdminGuard)
   async getAllBikersController() {
