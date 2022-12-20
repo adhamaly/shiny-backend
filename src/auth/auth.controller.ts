@@ -9,6 +9,7 @@ import { BikerLogoutDTO } from '../bikers/dto/bikerLogout.dto';
 import { BikerProfileOwnerGuard } from '../bikers/guard/bikerProfileOwner.guard';
 import { IsPhoneNumber } from 'class-validator';
 import { PhoneNumberDTO } from './dtos/PhoneValidator.dto';
+import { ResetPasswordDTO } from './dtos/resetPassword.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -66,11 +67,20 @@ export class AuthController {
 
   @Post('bikers/check-phone')
   async checkPhoneForBikerController(@Body() phoneNumberDTO: PhoneNumberDTO) {
+    const result = await this.authService.checkBikerPhoneExistence(
+      phoneNumberDTO.phone,
+    );
     return {
       success: true,
-      isExist: await this.authService.checkBikerPhoneExistence(
-        phoneNumberDTO.phone,
-      ),
+      ...result,
+    };
+  }
+
+  @Post('bikers/reset-password')
+  async resetPasswordController(@Body() resetPasswordDTO: ResetPasswordDTO) {
+    await this.authService.resetPasswordForBiker(resetPasswordDTO);
+    return {
+      success: true,
     };
   }
 

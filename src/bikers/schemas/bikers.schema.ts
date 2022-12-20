@@ -23,7 +23,7 @@ export class Biker {
   @Prop()
   imageLink: string;
 
-  @Prop({ type: [{ type: String }] })
+  @Prop({ type: [{ type: String }], select: false })
   fcmTokens: string[];
 
   @Prop({ default: false })

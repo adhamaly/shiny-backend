@@ -12,6 +12,7 @@ import { Roles } from 'src/admin/schemas/admin.schema';
 import { BikerLoginDTO } from '../bikers/dto/bikerLogin.dto';
 import { BikersService } from '../bikers/bikers.service';
 import { BikerLogoutDTO } from '../bikers/dto/bikerLogout.dto';
+import { ResetPasswordDTO } from './dtos/resetPassword.dto';
 
 @Injectable()
 export class AuthService {
@@ -95,8 +96,26 @@ export class AuthService {
   }
 
   async checkBikerPhoneExistence(phone: string) {
-    const isExist = await this.bikersService.checkPhoneNumber(phone);
-    return isExist ? true : false;
+    const biker = await this.bikersService.checkPhoneNumber(phone);
+    if (biker) {
+      const token = this.generateAccessToken(biker._id, 'biker', '10m');
+      return {
+        isExist: true,
+        token,
+      };
+    }
+
+    return {
+      isExist: false,
+    };
+  }
+
+  async resetPasswordForBiker(resetPasswordDTO: ResetPasswordDTO) {
+    const payload = this.decodeAccessToken(resetPasswordDTO.token);
+    await this.bikersService.updatePassword(
+      payload.id,
+      resetPasswordDTO.newPassword,
+    );
   }
 
   async adminLogin(adminLoginDTO: AdminLoginDTO) {
@@ -134,7 +153,7 @@ export class AuthService {
     };
   }
 
-  generateAccessToken(id: any, role: string) {
+  generateAccessToken(id: any, role: string, expiresIn?: string) {
     return this.jwtService.sign(
       {
         id: id,
@@ -142,7 +161,7 @@ export class AuthService {
       },
       {
         secret: process.env.ACCESS_TOKEN_SECRET,
-        expiresIn: '2h',
+        expiresIn: expiresIn ? expiresIn : '2h',
       },
     );
   }
@@ -158,6 +177,7 @@ export class AuthService {
       },
     );
   }
+
   async generateNewTokens(refresh_token: string) {
     if (!refresh_token)
       throw new NotFoundResponse({ ar: 'لا يوجد', en: 'not found' });
@@ -186,6 +206,21 @@ export class AuthService {
     };
   }
 
+  decodeAccessToken(token: string) {
+    try {
+      return this.jwtService.verify(token, {
+        secret: process.env.ACCESS_TOKEN_SECRET,
+      });
+    } catch {
+      throw new ForbiddenException({
+        success: false,
+        message: {
+          en: 'Not Authenticated',
+          ar: 'غير مصدق للدخول',
+        },
+      });
+    }
+  }
   decodeRefreshToken(refreshToken: string) {
     try {
       return this.jwtService.verify(refreshToken, {

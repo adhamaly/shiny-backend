@@ -20,7 +20,7 @@ export class BikersService {
       adminId,
       createBikerDTO.city,
     );
-    return await this.bikersRepository.create(adminId, createBikerDTO, image);
+    await this.bikersRepository.create(adminId, createBikerDTO, image);
   }
 
   async getAll() {
@@ -41,6 +41,10 @@ export class BikersService {
 
   async checkPhoneNumber(phone: string) {
     return await this.bikersRepository.findByPhoneNumber(phone);
+  }
+
+  async updatePassword(bikerId: string, password: string) {
+    await this.bikersRepository.updateBikerPassword(bikerId, password);
   }
 
   async updateBiker(

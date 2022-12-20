@@ -31,15 +31,10 @@ export class BikersController {
     @Body() createBikerDTO: CreateBikerDTO,
     @UploadedFile() image: Express.Multer.File,
   ) {
-    const createdBiker = await this.bikersService.createBiker(
-      account.id,
-      createBikerDTO,
-      image,
-    );
+    await this.bikersService.createBiker(account.id, createBikerDTO, image);
 
     return {
       success: true,
-      data: createdBiker,
     };
   }
   @Get('')

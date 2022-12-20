@@ -11,7 +11,7 @@ export class BikerCrudValidator {
     private userService: UserService,
   ) {}
 
-  async createValidator(phone: string, nationalId: string) {
+  async createValidator(phone: string, nationalId: string, userName: string) {
     if (await this.userService.isPhoneExist(phone))
       throw new MethodNotAllowedResponse({
         ar: 'الرقم مسجل من قبل',
@@ -29,22 +29,30 @@ export class BikerCrudValidator {
         ar: 'رقم البطاقة القومي مسجل من قبل',
         en: 'National Id is already exist',
       });
+
+    if (await this.isUserNameExist(userName))
+      throw new MethodNotAllowedResponse({
+        ar: 'اسم المستخدم مسجل من قبل',
+        en: 'User Name is already exist',
+      });
   }
 
   async isPhoneNumberExist(phone: string) {
-    return (await this.bikerModel
+    return await this.bikerModel
       .findOne({ phone: phone, isDeleted: false })
-      .exec())
-      ? true
-      : false;
+      .exec();
   }
 
   async isNationalIdExist(nationalId: string) {
-    return (await this.bikerModel
+    return await this.bikerModel
       .findOne({ nationalId: nationalId, isDeleted: false })
-      .exec())
-      ? true
-      : false;
+      .exec();
+  }
+
+  async isUserNameExist(userName: string) {
+    return await this.bikerModel
+      .findOne({ userName: userName, isDeleted: false })
+      .exec();
   }
 
   async updateBikerValidator(id: string, updateBikerDTO: UpdateBikerDTO) {
@@ -67,21 +75,29 @@ export class BikerCrudValidator {
         ar: 'رقم البطاقة القومي مسجل من قبل',
         en: 'National Id is already exist',
       });
+
+    if (await this.isUserNameExistForAnotherBiker(id, updateBikerDTO.userName))
+      throw new MethodNotAllowedResponse({
+        ar: 'رقم البطاقة القومي مسجل من قبل',
+        en: 'National Id is already exist',
+      });
   }
 
   async isPhoneNumberExistForAnotherBiker(id: string, phone: string) {
-    return (await this.bikerModel
+    return await this.bikerModel
       .findOne({ _id: { $ne: id }, phone: phone, isDeleted: false })
-      .exec())
-      ? true
-      : false;
+      .exec();
   }
 
   async isNationalIdExistForAnotherBiker(id: string, nationalId: string) {
-    return (await this.bikerModel
+    return await this.bikerModel
       .findOne({ _id: { $ne: id }, nationalId: nationalId, isDeleted: false })
-      .exec())
-      ? true
-      : false;
+      .exec();
+  }
+
+  async isUserNameExistForAnotherBiker(id: string, userName: string) {
+    return await this.bikerModel
+      .findOne({ _id: { $ne: id }, userName: userName, isDeleted: false })
+      .exec();
   }
 }

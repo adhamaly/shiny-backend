@@ -39,6 +39,7 @@ export class BikersRepository {
     await this.bikerCrudValidator.createValidator(
       createBikerDTO.phone,
       createBikerDTO.nationalId,
+      createBikerDTO.userName,
     );
 
     // hash password using bycrpt
@@ -64,9 +65,6 @@ export class BikersRepository {
     createdBiker.imageLink = fileLink;
     createdBiker.imagePath = filePath;
     await createdBiker.save();
-
-    createdBiker.password = undefined;
-    return createdBiker;
   }
 
   async findAll() {
@@ -126,6 +124,18 @@ export class BikersRepository {
     biker.nationalId = '-d ' + biker.nationalId;
 
     await biker.save();
+  }
+
+  async updateBikerPassword(bikerId: string, password: string) {
+    // hash password using bycrpt
+    const hashedPassword = await bcrypt.hash(
+      password,
+      Number(process.env.SALT_OF_ROUND),
+    );
+
+    await this.bikerModel
+      .updateOne({ _id: bikerId }, { $set: { password: hashedPassword } })
+      .exec();
   }
 
   async update(
