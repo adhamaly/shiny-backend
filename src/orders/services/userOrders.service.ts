@@ -60,6 +60,7 @@ export class UsersOrdersService {
     orderCreationDTO: OrderCreationDTO,
     location: Location,
   ) {
+    this.paymentTypeValidator(orderCreationDTO.paymentType);
     // Calculate totalDuration for washingServices
     const totalDuration =
       await this.washingServicesService.getTotalDurationForWashingServices(
@@ -79,6 +80,23 @@ export class UsersOrdersService {
     createdOrder.user = undefined;
 
     return createdOrder;
+  }
+
+  paymentTypeValidator(paymentType: string) {
+    if (!paymentType)
+      throw new MethodNotAllowedResponse({
+        ar: 'قم باختيار طريقة الدفع',
+        en: 'Choose Payment Type',
+      });
+
+    if (
+      paymentType !== PaymentTypes.CREDIT &&
+      paymentType !== PaymentTypes.WALLET
+    )
+      throw new MethodNotAllowedResponse({
+        ar: 'قم باختيار طريقة الدفع صالحة',
+        en: 'Choose Valid Payment Type',
+      });
   }
 
   async createSubscriptionOrder(
@@ -101,6 +119,12 @@ export class UsersOrdersService {
         en: 'You Have No Remaining Washes',
       });
 
+    const hasExtraServicesOrAddOns =
+      this.isOrderHasExtraServicesOrAddOns(orderCreationDTO);
+
+    if (hasExtraServicesOrAddOns)
+      this.paymentTypeValidator(orderCreationDTO.paymentType);
+
     const plan = await this.plansService.getPlanById(userSubscription.plan);
 
     // Calculate totalDuration for washingServices
@@ -111,9 +135,6 @@ export class UsersOrdersService {
           : []),
         ...plan.washingServices,
       ]);
-
-    const hasExtraServicesOrAddOns =
-      this.isOrderHasExtraServicesOrAddOns(orderCreationDTO);
 
     const createdOrder = await this.ordersRepository.create(
       user,
@@ -246,11 +267,7 @@ export class UsersOrdersService {
       OrderStatus.ACTIVE,
     );
 
-    if (!pendingOrder.paymentType)
-      throw new MethodNotAllowedResponse({
-        ar: 'لا يمكنك الدفع بدون تحديد طريقة الدفع ',
-        en: 'You could not pay without set payment type',
-      });
+    this.paymentTypeValidator(pendingOrder.paymentType);
 
     // TODO: Add Payment Service
 
@@ -274,7 +291,11 @@ export class UsersOrdersService {
 
     this.orderStatusValidator.isStatusValidForOrder(order, OrderStatus.ACTIVE);
 
-    if (order.discount || order.promoCode)
+    if (
+      order.discount ||
+      order.promoCode ||
+      order.paymentType === PaymentTypes.CREDIT
+    )
       throw new MethodNotAllowedResponse({
         ar: 'لا يمكنك الدفع بالمحفظة',
         en: 'You could not pay using wallet',
