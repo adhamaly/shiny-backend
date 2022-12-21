@@ -24,17 +24,10 @@ export class AppliedPromoCodesRepository {
     });
   }
   async isValidPromoCode(user: User, promoCode: PromoCode) {
-    const isAlreadyApplied = await this.appliedPromoCodeModel
-      .findOne({
-        user: user,
-        promoCode: promoCode,
-      })
-      .exec();
-
     const isExpired =
       promoCode.status === PromoCodeStatus.EXPIRED ? true : false;
 
-    if (isAlreadyApplied || isExpired)
+    if (isExpired)
       throw new MethodNotAllowedResponse({
         ar: 'برومو كود غير متاح',
         en: 'Promo Code is Not Available',
