@@ -24,17 +24,12 @@ export class UserOrdersController {
     @Account() account: any,
     @Body() orderCreationDTO: OrderCreationDTO,
   ) {
-    const result = await this.usersOrdersService.createOrder(
-      account.id,
-      orderCreationDTO,
-    );
     return {
       success: true,
-      status: result.status,
-      data:
-        result.status === 'ORDER_VIEW'
-          ? result.createdOrder
-          : { _id: result.createdOrder._id },
+      data: await this.usersOrdersService.createOrder(
+        account.id,
+        orderCreationDTO,
+      ),
     };
   }
 

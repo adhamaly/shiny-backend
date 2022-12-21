@@ -74,10 +74,11 @@ export class UsersOrdersService {
       OrderStatus.PENDING_USER_PAYMENT,
     );
 
-    return {
-      createdOrder,
-      status: 'SET_PAYMENT_TYPE',
-    };
+    await createdOrder.populate(this.ordersRepository.populatedPaths);
+
+    createdOrder.user = undefined;
+
+    return createdOrder;
   }
 
   async createSubscriptionOrder(
@@ -128,10 +129,7 @@ export class UsersOrdersService {
 
     createdOrder.user = undefined;
 
-    return {
-      createdOrder,
-      status: createdOrder.totalPrice ? 'SET_PAYMENT_TYPE' : 'ORDER_VIEW',
-    };
+    return createdOrder;
   }
 
   isOrderHasExtraServicesOrAddOns(orderCreationDTO: OrderCreationDTO) {

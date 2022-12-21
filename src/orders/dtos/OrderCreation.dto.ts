@@ -1,5 +1,6 @@
 import {
   IsArray,
+  IsIn,
   IsMongoId,
   IsNotEmpty,
   IsNotEmptyObject,
@@ -12,6 +13,7 @@ import { WashingService } from '../../washing-services/schemas/washing-services.
 import { AddOns } from '../../add-ons/schemas/add-ons.schema';
 import { Vehicle } from '../../vehicles/schemas/vehicles.schema';
 import { Subscription } from '../../subscriptions/schemas/subscriptions.schema';
+import { PaymentTypes } from '../schemas/orders.schema';
 
 class LocationDTO {
   @Matches(/(-\d+\.\d\d\d\d\d+|\d+.\d\d\d\d\d+)/i, {
@@ -73,4 +75,9 @@ export class OrderCreationDTO {
   @IsOptional()
   @IsMongoId()
   subscription?: Subscription;
+
+  @IsOptional()
+  @IsString()
+  @IsIn([PaymentTypes.CREDIT, PaymentTypes.WALLET])
+  paymentType?: string;
 }
