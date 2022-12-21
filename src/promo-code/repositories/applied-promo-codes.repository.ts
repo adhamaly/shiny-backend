@@ -17,13 +17,13 @@ export class AppliedPromoCodesRepository {
   ) {}
 
   async applyPromoCode(user: User, promoCode: PromoCode) {
-    await this.isValidPromoCode(user, promoCode);
+    await this.isValidPromoCode(promoCode);
     await this.appliedPromoCodeModel.create({
       user: user,
       promoCode: promoCode,
     });
   }
-  async isValidPromoCode(user: User, promoCode: PromoCode) {
+  async isValidPromoCode(promoCode: PromoCode, user?: User) {
     const isExpired =
       promoCode.status === PromoCodeStatus.EXPIRED ? true : false;
 
