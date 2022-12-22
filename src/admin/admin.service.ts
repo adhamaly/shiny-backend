@@ -30,7 +30,7 @@ export class AdminService {
   }
 
   async getByIdOr404(id: string) {
-    return await this.adminRepository.findByIdOr404(id);
+    return await this.adminRepository.findByIdOr404Populated(id);
   }
 
   async getAll(status: string, page: number, perPage: number) {
@@ -81,8 +81,13 @@ export class AdminService {
     await admin.save();
   }
 
+  async updateAdminCities(adminId: string, cities: City[]) {
+    const admin = await this.adminRepository.findByIdOr404(adminId);
+    admin.city = cities;
+    await admin.save();
+  }
   async CityPermissionForCreation(adminId: string, city: City) {
-    const admin = await this.getByIdOr404(adminId);
+    const admin = await this.adminRepository.findByIdOr404(adminId);
 
     let isCityIncluded = false;
     if (admin.city.includes(city)) {
@@ -98,7 +103,7 @@ export class AdminService {
   }
 
   async CitiesPermissionCreation(adminId: string, cities: City[]) {
-    const admin = await this.getByIdOr404(adminId);
+    const admin = await this.adminRepository.findByIdOr404(adminId);
 
     let hasPermission = false;
     for (const city of cities) {

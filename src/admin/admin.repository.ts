@@ -105,6 +105,19 @@ export class AdminRepository {
     return admin;
   }
 
+  async findByIdOr404Populated(id: string) {
+    const admin = await this.adminModel
+      .findById(id)
+      .populate(this.populatedPath)
+      .exec();
+    if (!admin)
+      throw new NotFoundResponse({
+        ar: 'لا يوجد هذا المشرف',
+        en: 'Admin Account Not Found',
+      });
+    return admin;
+  }
+
   async findAll(status: string, skip: number, limit: number) {
     const admins = await this.adminModel
       .find({
