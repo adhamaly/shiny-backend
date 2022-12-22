@@ -9,4 +9,8 @@ export class BikerLoginDTO {
   @IsString()
   @Length(8, 255)
   password: string;
+
+  @IsNotEmpty()
+  @IsString()
+  fcmToken: string;
 }
