@@ -4,6 +4,7 @@ import { AdminRepository } from './admin.repository';
 import { City } from '../city/schemas/city.schema';
 import { MethodNotAllowedResponse } from '../common/errors';
 import { PaginationService } from '../common/services/pagination/pagination.service';
+import { AdminStatus } from './schemas/admin.schema';
 
 @Injectable()
 export class AdminService {
@@ -50,6 +51,34 @@ export class AdminService {
       Number(page),
       Number(perPage),
     );
+  }
+
+  async suspendAdmin(adminId: string, reason: string) {
+    const admin = await this.adminRepository.findByIdOr404(adminId);
+
+    if (admin.status === AdminStatus.SUSPENDED)
+      throw new MethodNotAllowedResponse({
+        ar: 'حساب المشرف مغلق ',
+        en: 'Admin account is already suspended',
+      });
+
+    admin.status = AdminStatus.SUSPENDED;
+    admin.suspendReason = reason;
+    await admin.save();
+  }
+
+  async restoreAdmin(adminId: string) {
+    const admin = await this.adminRepository.findByIdOr404(adminId);
+
+    if (admin.status === AdminStatus.ACTIVE)
+      throw new MethodNotAllowedResponse({
+        ar: 'حساب المشرف متاح ',
+        en: 'Admin account is already active',
+      });
+
+    admin.status = AdminStatus.ACTIVE;
+    admin.suspendReason = '';
+    await admin.save();
   }
 
   async CityPermissionForCreation(adminId: string, city: City) {

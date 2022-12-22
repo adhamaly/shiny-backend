@@ -32,6 +32,9 @@ export class Admin {
   @Prop({ default: AdminStatus.ACTIVE })
   status: string;
 
+  @Prop({ default: '' })
+  suspendReason: string;
+
   @Prop({
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: cityModelName }],
   })

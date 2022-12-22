@@ -92,8 +92,7 @@ export class AdminRepository {
   }
 
   async findById(id: string) {
-    const admin = await this.adminModel.findById(id).exec();
-    return admin;
+    return await this.adminModel.findById(id).exec();
   }
 
   async findByIdOr404(id: string) {

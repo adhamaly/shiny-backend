@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { AdminService } from '../admin.service';
 import { CreateSubAdminDTO } from '../dto/admin.createSubAdmin.dto';
 import { UserAuthGuard } from '../../auth/guards/userAuthentication.guard';
@@ -13,6 +22,27 @@ export class AdminController {
   @UseGuards(UserAuthGuard, SuperAdminGuard)
   async createSubAdminController(@Body() createSubAdminDTO: CreateSubAdminDTO) {
     await this.adminService.createSubAdmin(createSubAdminDTO);
+    return {
+      success: true,
+    };
+  }
+
+  @Patch(':adminId/suspend')
+  @UseGuards(UserAuthGuard, SuperAdminGuard)
+  async suspendAdminController(
+    @Param('adminId') adminId: string,
+    @Body('reason') reason: string,
+  ) {
+    await this.adminService.suspendAdmin(adminId, reason);
+    return {
+      success: true,
+    };
+  }
+
+  @Patch(':adminId/restore')
+  @UseGuards(UserAuthGuard, SuperAdminGuard)
+  async restoreAdminController(@Param('adminId') adminId: string) {
+    await this.adminService.restoreAdmin(adminId);
     return {
       success: true,
     };
