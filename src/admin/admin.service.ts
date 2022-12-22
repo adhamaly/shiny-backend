@@ -3,13 +3,17 @@ import { CreateSubAdminDTO } from './dto/admin.createSubAdmin.dto';
 import { AdminRepository } from './admin.repository';
 import { City } from '../city/schemas/city.schema';
 import { MethodNotAllowedResponse } from '../common/errors';
+import { PaginationService } from '../common/services/pagination/pagination.service';
 
 @Injectable()
 export class AdminService {
-  constructor(private adminRepository: AdminRepository) {}
+  constructor(
+    private adminRepository: AdminRepository,
+    private paginationService: PaginationService,
+  ) {}
 
   async createSubAdmin(createSubAdminDTO: CreateSubAdminDTO) {
-    return await this.adminRepository.createSubAdmin(createSubAdminDTO);
+    await this.adminRepository.createSubAdmin(createSubAdminDTO);
   }
 
   async getAdminByUserNameOr404(userName: string) {
@@ -26,6 +30,26 @@ export class AdminService {
 
   async getByIdOr404(id: string) {
     return await this.adminRepository.findByIdOr404(id);
+  }
+
+  async getAll(status: string, page: number, perPage: number) {
+    const { skip, limit } = this.paginationService.getSkipAndLimit(
+      Number(page),
+      Number(perPage),
+    );
+
+    const { admins, count } = await this.adminRepository.findAll(
+      status,
+      skip,
+      limit,
+    );
+
+    return this.paginationService.paginate(
+      admins,
+      count,
+      Number(page),
+      Number(perPage),
+    );
   }
 
   async CityPermissionForCreation(adminId: string, city: City) {

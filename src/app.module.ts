@@ -15,6 +15,7 @@ import { AddOnsModule } from './add-ons/add-ons.module';
 import { ScheduleModule } from '@nestjs/schedule';
 import { OrdersModule } from './orders/orders.module';
 import { PromoCodeModule } from './promo-code/promo-code.module';
+import { PaginationModule } from './common/services/pagination/pagination.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { PromoCodeModule } from './promo-code/promo-code.module';
     AddOnsModule,
     OrdersModule,
     PromoCodeModule,
+    PaginationModule,
   ],
   controllers: [],
   providers: [],
