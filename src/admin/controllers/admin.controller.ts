@@ -13,6 +13,7 @@ import { CreateSubAdminDTO } from '../dto/admin.createSubAdmin.dto';
 import { UserAuthGuard } from '../../auth/guards/userAuthentication.guard';
 import { SuperAdminGuard } from '../../auth/guards';
 import { GetAdminsDTO } from '../dto';
+import { Account } from 'src/common/decorators/user.decorator';
 
 @Controller('admins')
 export class AdminController {
@@ -24,6 +25,15 @@ export class AdminController {
     await this.adminService.createSubAdmin(createSubAdminDTO);
     return {
       success: true,
+    };
+  }
+
+  @Get()
+  @UseGuards(UserAuthGuard)
+  async getAdminByIdController(@Account() account: any) {
+    return {
+      success: true,
+      data: await this.adminService.getByIdOr404(account.id),
     };
   }
 
