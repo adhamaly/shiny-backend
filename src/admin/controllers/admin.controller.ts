@@ -27,6 +27,15 @@ export class AdminController {
     };
   }
 
+  @Get(':adminId/details')
+  @UseGuards(UserAuthGuard, SuperAdminGuard)
+  async getAdminByController(@Param('adminId') adminId: string) {
+    return {
+      success: true,
+      data: await this.adminService.getByIdOr404(adminId),
+    };
+  }
+
   @Patch(':adminId/suspend')
   @UseGuards(UserAuthGuard, SuperAdminGuard)
   async suspendAdminController(
