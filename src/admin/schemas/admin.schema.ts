@@ -11,6 +11,10 @@ export enum Roles {
   Guest = 'guest',
   Biker = 'biker',
 }
+export enum AdminStatus {
+  ACTIVE = 'ACTIVE',
+  SUSPENDED = 'SUSPENDED',
+}
 @Schema({ timestamps: true })
 export class Admin {
   @Prop()
@@ -24,6 +28,12 @@ export class Admin {
 
   @Prop({ default: false })
   isSuperAdmin: boolean;
+
+  @Prop({ default: AdminStatus.ACTIVE })
+  status: string;
+
+  @Prop({ default: '' })
+  suspendReason: string;
 
   @Prop({
     type: [{ type: mongoose.Schema.Types.ObjectId, ref: cityModelName }],

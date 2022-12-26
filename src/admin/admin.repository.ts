@@ -6,9 +6,11 @@ import * as bcrypt from 'bcrypt';
 import { CreateSubAdminDTO } from './dto/admin.createSubAdmin.dto';
 import { MethodNotAllowedResponse } from '../common/errors/MethodNotAllowedResponse';
 import { NotFoundResponse } from '../common/errors/NotFoundResponse';
+import { cityModelName } from '../city/schemas/city.schema';
 
 @Injectable()
 export class AdminRepository {
+  populatedPath = [{ path: 'city', model: cityModelName, select: 'name' }];
   constructor(
     @InjectModel(adminModelName) private readonly adminModel: Model<AdminModel>,
   ) {}
@@ -32,16 +34,12 @@ export class AdminRepository {
       Number(process.env.SALT_OF_ROUND),
     );
 
-    const createdAdmin = await this.adminModel.create({
+    await this.adminModel.create({
       userName: createSubAdminDTO.userName,
       phone: createSubAdminDTO.phone,
       city: createSubAdminDTO.city,
       password: hashedPassword,
     });
-
-    createdAdmin.password = undefined;
-
-    return createdAdmin;
   }
 
   async findAdminByUserNameOr404(userName: string) {
@@ -94,8 +92,7 @@ export class AdminRepository {
   }
 
   async findById(id: string) {
-    const admin = await this.adminModel.findById(id).exec();
-    return admin;
+    return await this.adminModel.findById(id).exec();
   }
 
   async findByIdOr404(id: string) {
@@ -106,6 +103,40 @@ export class AdminRepository {
         en: 'Admin Account Not Found',
       });
     return admin;
+  }
+
+  async findByIdOr404Populated(id: string) {
+    const admin = await this.adminModel
+      .findById(id)
+      .populate(this.populatedPath)
+      .exec();
+    if (!admin)
+      throw new NotFoundResponse({
+        ar: 'لا يوجد هذا المشرف',
+        en: 'Admin Account Not Found',
+      });
+    return admin;
+  }
+
+  async findAll(status: string, skip: number, limit: number) {
+    const admins = await this.adminModel
+      .find({
+        isSuperAdmin: false,
+        ...(status ? { status: status } : {}),
+      })
+      .skip(skip)
+      .limit(limit)
+      .populate(this.populatedPath)
+      .exec();
+
+    const count = await this.adminModel
+      .count({
+        isSuperAdmin: false,
+        ...(status ? { status: status } : {}),
+      })
+      .exec();
+
+    return { admins, count };
   }
 
   async phoneIsAlreadyExist(phone: string) {

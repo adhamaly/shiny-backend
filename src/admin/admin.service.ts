@@ -3,13 +3,18 @@ import { CreateSubAdminDTO } from './dto/admin.createSubAdmin.dto';
 import { AdminRepository } from './admin.repository';
 import { City } from '../city/schemas/city.schema';
 import { MethodNotAllowedResponse } from '../common/errors';
+import { PaginationService } from '../common/services/pagination/pagination.service';
+import { AdminStatus } from './schemas/admin.schema';
 
 @Injectable()
 export class AdminService {
-  constructor(private adminRepository: AdminRepository) {}
+  constructor(
+    private adminRepository: AdminRepository,
+    private paginationService: PaginationService,
+  ) {}
 
   async createSubAdmin(createSubAdminDTO: CreateSubAdminDTO) {
-    return await this.adminRepository.createSubAdmin(createSubAdminDTO);
+    await this.adminRepository.createSubAdmin(createSubAdminDTO);
   }
 
   async getAdminByUserNameOr404(userName: string) {
@@ -25,11 +30,64 @@ export class AdminService {
   }
 
   async getByIdOr404(id: string) {
-    return await this.adminRepository.findByIdOr404(id);
+    return await this.adminRepository.findByIdOr404Populated(id);
   }
 
+  async getAll(status: string, page: number, perPage: number) {
+    const { skip, limit } = this.paginationService.getSkipAndLimit(
+      Number(page),
+      Number(perPage),
+    );
+
+    const { admins, count } = await this.adminRepository.findAll(
+      status,
+      skip,
+      limit,
+    );
+
+    return this.paginationService.paginate(
+      admins,
+      count,
+      Number(page),
+      Number(perPage),
+    );
+  }
+
+  async suspendAdmin(adminId: string, reason: string) {
+    const admin = await this.adminRepository.findByIdOr404(adminId);
+
+    if (admin.status === AdminStatus.SUSPENDED)
+      throw new MethodNotAllowedResponse({
+        ar: 'حساب المشرف مغلق ',
+        en: 'Admin account is already suspended',
+      });
+
+    admin.status = AdminStatus.SUSPENDED;
+    admin.suspendReason = reason;
+    await admin.save();
+  }
+
+  async restoreAdmin(adminId: string) {
+    const admin = await this.adminRepository.findByIdOr404(adminId);
+
+    if (admin.status === AdminStatus.ACTIVE)
+      throw new MethodNotAllowedResponse({
+        ar: 'حساب المشرف متاح ',
+        en: 'Admin account is already active',
+      });
+
+    admin.status = AdminStatus.ACTIVE;
+    admin.suspendReason = '';
+    await admin.save();
+  }
+
+  async updateAdminCities(adminId: string, cities: City[]) {
+    const admin = await this.adminRepository.findByIdOr404(adminId);
+    admin.city = cities;
+    await admin.save();
+  }
   async CityPermissionForCreation(adminId: string, city: City) {
-    const admin = await this.getByIdOr404(adminId);
+    const admin = await this.adminRepository.findByIdOr404(adminId);
 
     let isCityIncluded = false;
     if (admin.city.includes(city)) {
@@ -45,7 +103,7 @@ export class AdminService {
   }
 
   async CitiesPermissionCreation(adminId: string, cities: City[]) {
-    const admin = await this.getByIdOr404(adminId);
+    const admin = await this.adminRepository.findByIdOr404(adminId);
 
     let hasPermission = false;
     for (const city of cities) {
