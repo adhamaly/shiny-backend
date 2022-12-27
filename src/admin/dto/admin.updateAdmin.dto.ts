@@ -5,22 +5,12 @@ import {
   IsNotEmpty,
   IsPhoneNumber,
   IsString,
-  Length,
 } from 'class-validator';
 
-export class CreateSubAdminDTO {
-  @IsNotEmpty()
-  @IsString()
-  userName: string;
-
+export class UpdateAdminDTO {
   @IsNotEmpty()
   @IsPhoneNumber()
   phone: string;
-
-  @IsNotEmpty()
-  @IsString()
-  @Length(8, 255)
-  password: string;
 
   @IsNotEmpty()
   @IsString()

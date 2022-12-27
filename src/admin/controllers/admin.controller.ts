@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -15,6 +16,7 @@ import { SuperAdminGuard } from '../../auth/guards';
 import { GetAdminsDTO } from '../dto';
 import { Account } from 'src/common/decorators/user.decorator';
 import { City } from '../../city/schemas/city.schema';
+import { UpdateAdminDTO } from '../dto/admin.updateAdmin.dto';
 
 @Controller('admins')
 export class AdminController {
@@ -56,6 +58,15 @@ export class AdminController {
     };
   }
 
+  @Delete(':adminId')
+  @UseGuards(UserAuthGuard, SuperAdminGuard)
+  async deleteAdminByIdController(@Param('adminId') adminId: string) {
+    await this.adminService.deleteAdminById(adminId);
+    return {
+      success: true,
+    };
+  }
+
   @Get(':adminId/details')
   @UseGuards(UserAuthGuard, SuperAdminGuard)
   async getAdminByController(@Param('adminId') adminId: string) {
@@ -86,13 +97,13 @@ export class AdminController {
     };
   }
 
-  @Patch(':adminId/cities')
+  @Patch(':adminId/update-info')
   @UseGuards(UserAuthGuard, SuperAdminGuard)
   async updateAdminCities(
     @Param('adminId') adminId: string,
-    @Body('cities') cities: City[],
+    @Body() updateAdminDTO: UpdateAdminDTO,
   ) {
-    await this.adminService.updateAdminCities(adminId, cities);
+    await this.adminService.updateAdminById(adminId, updateAdminDTO);
     return {
       success: true,
     };

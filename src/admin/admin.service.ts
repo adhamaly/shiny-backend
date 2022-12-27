@@ -5,6 +5,7 @@ import { City } from '../city/schemas/city.schema';
 import { MethodNotAllowedResponse } from '../common/errors';
 import { PaginationService } from '../common/services/pagination/pagination.service';
 import { AdminStatus } from './schemas/admin.schema';
+import { UpdateAdminDTO } from './dto/admin.updateAdmin.dto';
 
 @Injectable()
 export class AdminService {
@@ -81,11 +82,18 @@ export class AdminService {
     await admin.save();
   }
 
-  async updateAdminCities(adminId: string, cities: City[]) {
-    const admin = await this.adminRepository.findByIdOr404(adminId);
-    admin.city = cities;
-    await admin.save();
+  async updateAdminById(adminId: string, updateAdminDTO: UpdateAdminDTO) {
+    await this.adminRepository.update(adminId, {
+      phone: updateAdminDTO.phone,
+      nationalId: updateAdminDTO.nationalId,
+      city: updateAdminDTO.city,
+    });
   }
+
+  async deleteAdminById(adminId: string) {
+    await this.adminRepository.delete(adminId);
+  }
+
   async CityPermissionForCreation(adminId: string, city: City) {
     const admin = await this.adminRepository.findByIdOr404(adminId);
 
