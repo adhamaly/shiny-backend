@@ -17,6 +17,7 @@ import { GetAdminsDTO } from '../dto';
 import { Account } from 'src/common/decorators/user.decorator';
 import { City } from '../../city/schemas/city.schema';
 import { UpdateAdminDTO } from '../dto/admin.updateAdmin.dto';
+import { UpdatePassword } from '../dto/updatePassword.dto';
 
 @Controller('admins')
 export class AdminController {
@@ -37,6 +38,21 @@ export class AdminController {
     return {
       success: true,
       data: await this.adminService.getByIdOr404(account.id),
+    };
+  }
+
+  @Patch('update-credentials')
+  @UseGuards(UserAuthGuard)
+  async updateCredentialsController(
+    @Account() account: any,
+    @Body() updatePassword: UpdatePassword,
+  ) {
+    await this.adminService.updateCredentials(
+      account.id,
+      updatePassword.password,
+    );
+    return {
+      success: true,
     };
   }
 

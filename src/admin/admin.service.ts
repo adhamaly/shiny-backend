@@ -6,6 +6,7 @@ import { MethodNotAllowedResponse } from '../common/errors';
 import { PaginationService } from '../common/services/pagination/pagination.service';
 import { AdminStatus } from './schemas/admin.schema';
 import { UpdateAdminDTO } from './dto/admin.updateAdmin.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AdminService {
@@ -15,7 +16,16 @@ export class AdminService {
   ) {}
 
   async createSubAdmin(createSubAdminDTO: CreateSubAdminDTO) {
-    await this.adminRepository.createSubAdmin(createSubAdminDTO);
+    // hash password using bycrpt
+    const hashedPassword = await bcrypt.hash(
+      createSubAdminDTO.password,
+      Number(process.env.SALT_OF_ROUND),
+    );
+
+    await this.adminRepository.createSubAdmin(
+      createSubAdminDTO,
+      hashedPassword,
+    );
   }
 
   async getAdminByUserNameOr404(userName: string) {
@@ -94,6 +104,18 @@ export class AdminService {
     await this.adminRepository.delete(adminId);
   }
 
+  async updateCredentials(adminId: string, password: string) {
+    // hash password using bycrpt
+    const hashedPassword = await bcrypt.hash(
+      password,
+      Number(process.env.SALT_OF_ROUND),
+    );
+
+    await this.adminRepository.update(adminId, {
+      password: hashedPassword,
+    });
+  }
+
   async CityPermissionForCreation(adminId: string, city: City) {
     const admin = await this.adminRepository.findByIdOr404(adminId);
 
@@ -126,5 +148,15 @@ export class AdminService {
           en: 'You have no permission to add in this city',
         });
     }
+  }
+
+  async injectSuperAdmin() {
+    // hash password using bycrpt
+    const hashedPassword = await bcrypt.hash(
+      '12345678',
+      Number(process.env.SALT_OF_ROUND),
+    );
+
+    await this.adminRepository.injectSuperAdmin(hashedPassword);
   }
 }

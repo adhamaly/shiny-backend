@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Admin, AdminModel, adminModelName } from './schemas/admin.schema';
 import { Model } from 'mongoose';
-import * as bcrypt from 'bcrypt';
 import { CreateSubAdminDTO } from './dto/admin.createSubAdmin.dto';
 import { MethodNotAllowedResponse } from '../common/errors/MethodNotAllowedResponse';
 import { NotFoundResponse } from '../common/errors/NotFoundResponse';
@@ -15,7 +14,10 @@ export class AdminRepository {
     @InjectModel(adminModelName) private readonly adminModel: Model<AdminModel>,
   ) {}
 
-  async createSubAdmin(createSubAdminDTO: CreateSubAdminDTO) {
+  async createSubAdmin(
+    createSubAdminDTO: CreateSubAdminDTO,
+    hashedPassword: string,
+  ) {
     if (await this.userNameIsAlreadyExits(createSubAdminDTO.userName))
       throw new MethodNotAllowedResponse({
         ar: 'اسم المستخدم مسجل من قبل',
@@ -33,12 +35,6 @@ export class AdminRepository {
         ar: 'الرقم القومي مسجل من قبل',
         en: 'National Id is already exist',
       });
-
-    // hash password using bycrpt
-    const hashedPassword = await bcrypt.hash(
-      createSubAdminDTO.password,
-      Number(process.env.SALT_OF_ROUND),
-    );
 
     await this.adminModel.create({
       userName: createSubAdminDTO.userName,
@@ -174,7 +170,7 @@ export class AdminRepository {
     await admin.save();
   }
 
-  async injectSuperAdmin() {
+  async injectSuperAdmin(hashedPassword: string) {
     const checkIfSuperIsExist = await this.adminModel
       .findOne({
         isSuperAdmin: true,
@@ -182,12 +178,6 @@ export class AdminRepository {
       .exec();
 
     if (checkIfSuperIsExist) return;
-
-    // hash password using bycrpt
-    const hashedPassword = await bcrypt.hash(
-      '12345678',
-      Number(process.env.SALT_OF_ROUND),
-    );
 
     await this.adminModel.create({
       userName: 'super admin',
