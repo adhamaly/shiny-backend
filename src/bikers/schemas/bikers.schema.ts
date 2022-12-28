@@ -5,7 +5,12 @@ import { Admin, adminModelName } from '../../admin/schemas/admin.schema';
 
 export type BikerModel = Biker & Document;
 export const bikerModelName = 'biker';
-
+export enum BikerStatus {
+  ACTIVE = 'ACTIVE',
+  ONLINE = 'ONLINE',
+  OFFLINE = 'OFFLINE',
+  SUSPENDED = 'SUSPENDED',
+}
 @Schema({ timestamps: true })
 export class Biker {
   @Prop()

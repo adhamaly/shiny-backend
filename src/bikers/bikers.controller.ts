@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Put,
   UploadedFile,
@@ -104,6 +105,24 @@ export class BikersController {
         updateBikerDTO,
         image,
       ),
+    };
+  }
+
+  @Patch(':bikerId/suspend')
+  @UseGuards(UserAuthGuard, IsAdminGuard)
+  async suspendBikerController(@Param('bikerId') bikerId: string) {
+    return {
+      success: true,
+      data: await this.bikersService.suspendBikerById(bikerId),
+    };
+  }
+
+  @Patch(':bikerId/restore')
+  @UseGuards(UserAuthGuard, IsAdminGuard)
+  async restoreBikerController(@Param('bikerId') bikerId: string) {
+    return {
+      success: true,
+      data: await this.bikersService.restoreBikerById(bikerId),
     };
   }
 }

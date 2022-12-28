@@ -71,4 +71,15 @@ export class BikersService {
       adminId,
     );
   }
+
+  async suspendBikerById(bikerId: string) {
+    const biker = await this.bikersRepository.findByIdOr404(bikerId);
+    biker.status = 'SUSPENDED';
+    await biker.save();
+  }
+  async restoreBikerById(bikerId: string) {
+    const biker = await this.bikersRepository.findByIdOr404(bikerId);
+    biker.status = 'ACTIVE';
+    await biker.save();
+  }
 }
