@@ -43,6 +43,12 @@ export class UsersOrdersService {
       this.locationObjectFormater(orderCreationDTO),
     );
 
+    if (!orderCreationDTO.paymentType)
+      throw new MethodNotAllowedResponse({
+        ar: 'قم باختيار طريقة الدفع صالحة',
+        en: 'Choose Valid Payment Type',
+      });
+
     switch (orderCreationDTO.type) {
       case OrderTypes.SERVICE_BOOKING:
         return await this.createServicesOrder(user, orderCreationDTO, location);
