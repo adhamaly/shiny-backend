@@ -247,7 +247,12 @@ export class UsersOrdersService {
 
     updatedOrder.user = undefined;
 
-    return updatedOrder;
+    return {
+      _id: updatedOrder._id,
+      discount: updatedOrder.discount,
+      totalPay: updatedOrder.totalPay,
+      totalPrice: updatedOrder.totalPrice,
+    };
   }
   getTotalPayAfterPromoCode(promoCode: PromoCode, order: Order) {
     const totalPay = order.totalPay;
