@@ -33,24 +33,13 @@ export class UserOrdersController {
     };
   }
 
-  @Patch('set-payment-type')
-  @UseGuards(UserAuthGuard)
-  async setPaymentTypeController(
-    @Body() paymentTypeUpdateDTO: PaymentTypeUpdateDTO,
-  ) {
-    return {
-      success: true,
-      data: await this.usersOrdersService.setPaymentType(paymentTypeUpdateDTO),
-    };
-  }
-
   @Patch('pay-order')
   @UseGuards(UserAuthGuard)
   async setOrderActiveController(
     @Account() account: any,
     @Body('order') order: string,
   ) {
-    await this.usersOrdersService.payOrder(order);
+    await this.usersOrdersService.payOrder(account.id, order);
     return {
       success: true,
     };
@@ -82,17 +71,6 @@ export class UserOrdersController {
     };
   }
 
-  @Patch('use-wallet')
-  @UseGuards(UserAuthGuard)
-  async useWalletForOrderController(
-    @Account() account: any,
-    @Body('order') order: string,
-  ) {
-    return {
-      success: true,
-      data: await this.usersOrdersService.useWallet(account.id, order),
-    };
-  }
   @Get('all')
   @UseGuards(UserAuthGuard)
   async getAllUserOrdersController(

@@ -78,6 +78,6 @@ export class OrderCreationDTO {
 
   @IsOptional()
   @IsString()
-  @IsIn([PaymentTypes.CREDIT, PaymentTypes.WALLET])
+  @IsIn([PaymentTypes.CREDIT, PaymentTypes.WALLET, PaymentTypes.SUBSCRIBED])
   paymentType?: string;
 }

@@ -46,6 +46,7 @@ export enum OrderTypes {
 export enum PaymentTypes {
   WALLET = 'WALLET',
   CREDIT = 'CREDIT',
+  SUBSCRIBED = 'SUBSCRIBED',
 }
 
 /*

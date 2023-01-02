@@ -181,29 +181,6 @@ export class UsersOrdersService {
     return await this.ordersRepository.findOrderByIdPopulatedOr404(orderId);
   }
 
-  async setPaymentType(paymentTypeUpdateDTO: PaymentTypeUpdateDTO) {
-    const order = await this.ordersRepository.findOrderByIdOr404(
-      paymentTypeUpdateDTO.order,
-    );
-
-    if (order.status === OrderStatus.PENDING_USER_REVIEW)
-      throw new MethodNotAllowedResponse({
-        ar: 'لا يوجد دفع في حالة اشتراكك في احدي باقتنا',
-        en: 'There Is No Payment',
-      });
-
-    // update Payment Type
-    order.paymentType = paymentTypeUpdateDTO.paymentType;
-    await order.save();
-
-    // Populate order
-    await order.populate(this.ordersRepository.populatedPaths);
-
-    order.user = undefined;
-
-    return order;
-  }
-
   async cancelOrderByUser(orderId: string) {
     const order = await this.ordersRepository.findOrderByIdOr404(orderId);
 
@@ -262,7 +239,7 @@ export class UsersOrdersService {
 
     return { totalPayAfterDiscount, discountAmount };
   }
-  async payOrder(orderId: string) {
+  async payOrder(userId: string, orderId: string) {
     const pendingOrder = await this.ordersRepository.findOrderByIdOr404(
       orderId,
     );
@@ -273,6 +250,35 @@ export class UsersOrdersService {
     );
 
     this.paymentTypeValidator(pendingOrder.paymentType);
+
+    switch (pendingOrder.paymentType) {
+      case PaymentTypes.CREDIT:
+        await this.payCredit(orderId);
+        return;
+
+      case PaymentTypes.WALLET:
+        await this.payWallet(userId, orderId);
+        return;
+
+      case PaymentTypes.SUBSCRIBED:
+        await this.paySubscribedOrder(orderId);
+        return;
+
+      default:
+        return;
+    }
+  }
+
+  async payCredit(orderId: string) {
+    const pendingOrder = await this.ordersRepository.findOrderByIdOr404(
+      orderId,
+    );
+
+    if (pendingOrder.paymentType !== PaymentTypes.CREDIT)
+      throw new MethodNotAllowedResponse({
+        ar: 'لا يمكنك الدفع ',
+        en: 'You could not pay',
+      });
 
     // TODO: Add Payment Service
 
@@ -290,16 +296,14 @@ export class UsersOrdersService {
       status: OrderStatus.ACTIVE,
     });
   }
-  async useWallet(userId: string, orderId: string) {
+  async payWallet(userId: string, orderId: string) {
     const order = await this.ordersRepository.findOrderByIdOr404(orderId);
     const user = await this.userService.getUserById(userId);
-
-    this.orderStatusValidator.isStatusValidForOrder(order, OrderStatus.ACTIVE);
 
     if (
       order.discount ||
       order.promoCode ||
-      order.paymentType === PaymentTypes.CREDIT
+      order.paymentType !== PaymentTypes.WALLET
     )
       throw new MethodNotAllowedResponse({
         ar: 'لا يمكنك الدفع بالمحفظة',
@@ -325,6 +329,27 @@ export class UsersOrdersService {
     // Decrement wallet from user
     await this.userService.payWithWallet(userId, order.totalPrice);
 
+    await this.ordersRepository.update(orderId, {
+      status: OrderStatus.ACTIVE,
+    });
+  }
+
+  async paySubscribedOrder(orderId: string) {
+    const pendingOrder = await this.ordersRepository.findOrderByIdOr404(
+      orderId,
+    );
+
+    if (pendingOrder.paymentType !== PaymentTypes.SUBSCRIBED)
+      throw new MethodNotAllowedResponse({
+        ar: 'لا يمكنك الدفع ',
+        en: 'You could not pay',
+      });
+
+    await this.subscriptionsService.decrementUserRemainigWashes(
+      pendingOrder.subscription,
+    );
+
+    // pay order
     await this.ordersRepository.update(orderId, {
       status: OrderStatus.ACTIVE,
     });
