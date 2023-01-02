@@ -73,10 +73,10 @@ export class BikersController {
 
   @Get('/admin/all')
   @UseGuards(UserAuthGuard, IsAdminGuard)
-  async getAllBikersController() {
+  async getAllBikersController(@Account() account: any) {
     return {
       success: true,
-      data: await this.bikersService.getAll(),
+      data: await this.bikersService.getAll(account.id, account.role),
     };
   }
   @Get(':bikerId')

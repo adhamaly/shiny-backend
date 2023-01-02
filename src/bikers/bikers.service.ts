@@ -23,8 +23,9 @@ export class BikersService {
     await this.bikersRepository.create(adminId, createBikerDTO, image);
   }
 
-  async getAll() {
-    return await this.bikersRepository.findAll();
+  async getAll(adminId: string, role: string) {
+    const admin = await this.adminService.getById(adminId);
+    return await this.bikersRepository.findAll(role, admin.city);
   }
 
   async getByIdOr404(id: string) {

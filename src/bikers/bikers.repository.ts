@@ -8,8 +8,8 @@ import { BikerCrudValidator } from './bikersCrud.validator';
 import * as bcrypt from 'bcrypt';
 import { FirebaseService } from '../common/services/firebase/firebase.service';
 import { NotFoundResponse } from '../common/errors/NotFoundResponse';
-import { adminModelName } from '../admin/schemas/admin.schema';
-import { cityModelName } from '../city/schemas/city.schema';
+import { adminModelName, Roles } from '../admin/schemas/admin.schema';
+import { cityModelName, City } from '../city/schemas/city.schema';
 
 @Injectable()
 export class BikersRepository {
@@ -67,11 +67,14 @@ export class BikersRepository {
     await createdBiker.save();
   }
 
-  async findAll() {
+  async findAll(role: string, cities: City[]) {
     //TODO: Add Pagination for bikers List
 
     return await this.bikerModel
-      .find({ isDeleted: false })
+      .find({
+        isDeleted: false,
+        ...(role === Roles.SuperAdmin ? {} : { city: { $in: cities } }),
+      })
       .populate(this.populatedPaths)
       .exec();
   }
