@@ -136,4 +136,10 @@ export class UserService {
     userDocument.walletBalance = userDocument.walletBalance - amount;
     await userDocument.save();
   }
+
+  async pointsEarningUpdate(userId: string, points: number) {
+    const user = await this.userRepository.findUserById(userId);
+    user.points = user.points + points;
+    await user.save();
+  }
 }

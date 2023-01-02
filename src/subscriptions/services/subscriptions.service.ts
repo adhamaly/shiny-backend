@@ -38,6 +38,8 @@ export class SubscriptionsService {
     const expiryDate = this.calculateExpiryDate(plan.duration);
 
     await this.subscriptionsRepository.create(user, plan, expiryDate);
+
+    await this.userService.pointsEarningUpdate(userId, plan.pointsToPay);
   }
 
   calculateExpiryDate(duration: number) {
