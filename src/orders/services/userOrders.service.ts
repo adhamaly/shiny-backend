@@ -91,7 +91,8 @@ export class UsersOrdersService {
 
     if (
       paymentType !== PaymentTypes.CREDIT &&
-      paymentType !== PaymentTypes.WALLET
+      paymentType !== PaymentTypes.WALLET &&
+      paymentType !== PaymentTypes.SUBSCRIBED
     )
       throw new MethodNotAllowedResponse({
         ar: 'قم باختيار طريقة الدفع صالحة',
