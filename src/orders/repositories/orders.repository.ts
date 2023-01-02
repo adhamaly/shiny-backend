@@ -86,7 +86,9 @@ export class OrdersRepository {
     return await this.ordersModel
       .find({
         user: user,
-        status: status,
+        ...(status === OrderStatus.ACTIVE
+          ? { status: OrderStatus.ACTIVE }
+          : { status: { $ne: OrderStatus.ACTIVE } }),
       })
       .populate(this.populatedPaths)
       .exec();
