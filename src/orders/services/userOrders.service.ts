@@ -177,7 +177,7 @@ export class UsersOrdersService {
     };
   }
 
-  async getAllUserOrders(userId: string, status?: OrderStatus) {
+  async getAllUserOrders(userId: string, status?: string) {
     // Get User
     const user = await this.userService.getUserById(userId);
 

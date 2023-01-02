@@ -75,7 +75,7 @@ export class UserOrdersController {
   @UseGuards(UserAuthGuard)
   async getAllUserOrdersController(
     @Account() account: any,
-    @Query('status') status: OrderStatus,
+    @Query('status') status: string,
   ) {
     return {
       success: true,

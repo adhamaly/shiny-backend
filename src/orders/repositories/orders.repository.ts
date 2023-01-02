@@ -82,7 +82,7 @@ export class OrdersRepository {
     return createdOrder;
   }
 
-  async findAllUserOrders(user: User, status?: OrderStatus) {
+  async findAllUserOrders(user: User, status?: string) {
     return await this.ordersModel
       .find({
         user: user,
