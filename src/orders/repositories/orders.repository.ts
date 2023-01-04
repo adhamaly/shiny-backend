@@ -82,17 +82,78 @@ export class OrdersRepository {
     return createdOrder;
   }
 
-  async findAllUserOrders(user: User, status?: string) {
-    return await this.ordersModel
+  async findAllUserOrders(
+    user: User,
+    status: string,
+    skip: number,
+    limit: number,
+  ) {
+    const orders = await this.ordersModel
       .find({
         user: user,
         ...(status === OrderStatus.ACTIVE
-          ? { status: OrderStatus.ACTIVE }
-          : { status: { $ne: OrderStatus.ACTIVE } }),
+          ? {
+              status: {
+                $in: [
+                  OrderStatus.ACTIVE,
+                  OrderStatus.ACCEPTED_BY_BIKER,
+                  OrderStatus.WAITING_FOR_BIKER,
+                  OrderStatus.BIKER_ON_THE_WAY,
+                  OrderStatus.BIKER_ARRIVED,
+                  OrderStatus.ON_WASHING,
+                ],
+              },
+            }
+          : {
+              status: {
+                $in: [
+                  OrderStatus.PENDING_USER_PAYMENT,
+                  OrderStatus.PENDING_USER_REVIEW,
+                  OrderStatus.CANCELLED_BY_BIKER,
+                  OrderStatus.CANCELLED_BY_USER,
+                  OrderStatus.COMPLETED,
+                ],
+              },
+            }),
       })
+      .skip(skip)
+      .limit(limit)
       .populate(this.populatedPaths)
       .exec();
+
+    const count = await this.ordersModel
+      .count({
+        user: user,
+        ...(status === OrderStatus.ACTIVE
+          ? {
+              status: {
+                $in: [
+                  OrderStatus.ACTIVE,
+                  OrderStatus.ACCEPTED_BY_BIKER,
+                  OrderStatus.WAITING_FOR_BIKER,
+                  OrderStatus.BIKER_ON_THE_WAY,
+                  OrderStatus.BIKER_ARRIVED,
+                  OrderStatus.ON_WASHING,
+                ],
+              },
+            }
+          : {
+              status: {
+                $in: [
+                  OrderStatus.PENDING_USER_PAYMENT,
+                  OrderStatus.PENDING_USER_REVIEW,
+                  OrderStatus.CANCELLED_BY_BIKER,
+                  OrderStatus.CANCELLED_BY_USER,
+                  OrderStatus.COMPLETED,
+                ],
+              },
+            }),
+      })
+      .exec();
+
+    return { orders, count };
   }
+
   async findOrderByIdOr404(id: string) {
     const order = await this.ordersModel.findById(id).exec();
     if (!order)

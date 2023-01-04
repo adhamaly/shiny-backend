@@ -11,6 +11,7 @@ import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 import { PlansModule } from '../plans/plans.module';
 import { OrderStatusValidator } from './validators/orderStatusValidator';
 import { PromoCodeModule } from '../promo-code/promo-code.module';
+import { PaginationModule } from '../common/services/pagination/pagination.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { PromoCodeModule } from '../promo-code/promo-code.module';
     SubscriptionsModule,
     PlansModule,
     PromoCodeModule,
+    PaginationModule,
   ],
   providers: [OrdersRepository, UsersOrdersService, OrderStatusValidator],
   controllers: [UserOrdersController],

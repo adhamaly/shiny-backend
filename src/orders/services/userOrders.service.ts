@@ -19,6 +19,8 @@ import { OrderStatusValidator } from '../validators/orderStatusValidator';
 import { MethodNotAllowedResponse } from '../../common/errors/MethodNotAllowedResponse';
 import { PromoCodesService } from '../../promo-code/services/promo-code.service';
 import { PromoCode } from '../../promo-code/schemas/promo-code.schema';
+import { GetOrdersDTO } from '../dtos/getOrders.dto';
+import { PaginationService } from '../../common/services/pagination/pagination.service';
 
 @Injectable()
 export class UsersOrdersService {
@@ -31,6 +33,7 @@ export class UsersOrdersService {
     private plansService: PlansService,
     private orderStatusValidator: OrderStatusValidator,
     private PromoCodesService: PromoCodesService,
+    private paginationService: PaginationService,
   ) {}
 
   async createOrder(userId: string, orderCreationDTO: OrderCreationDTO) {
@@ -177,11 +180,27 @@ export class UsersOrdersService {
     };
   }
 
-  async getAllUserOrders(userId: string, status?: string) {
+  async getAllUserOrders(userId: string, getOrdersDTO: GetOrdersDTO) {
     // Get User
     const user = await this.userService.getUserById(userId);
 
-    return await this.ordersRepository.findAllUserOrders(user, status);
+    const { skip, limit } = this.paginationService.getSkipAndLimit(
+      Number(getOrdersDTO.page),
+      Number(getOrdersDTO.perPage),
+    );
+    const { orders, count } = await this.ordersRepository.findAllUserOrders(
+      user,
+      getOrdersDTO.status,
+      skip,
+      limit,
+    );
+
+    return this.paginationService.paginate(
+      orders,
+      count,
+      Number(getOrdersDTO.page),
+      Number(getOrdersDTO.perPage),
+    );
   }
 
   async getOrderById(orderId: string) {

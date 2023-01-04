@@ -13,6 +13,7 @@ import { OrderCreationDTO, PaymentTypeUpdateDTO } from '../dtos';
 import { UsersOrdersService } from '../services/userOrders.service';
 import { UserAuthGuard } from '../../auth/guards/userAuthentication.guard';
 import { OrderStatus, OrderTypes } from '../schemas/orders.schema';
+import { GetOrdersDTO } from '../dtos/getOrders.dto';
 
 @Controller('orders/user')
 export class UserOrdersController {
@@ -75,11 +76,17 @@ export class UserOrdersController {
   @UseGuards(UserAuthGuard)
   async getAllUserOrdersController(
     @Account() account: any,
-    @Query('status') status: string,
+    @Query() getOrdersDTO: GetOrdersDTO,
   ) {
+    const ordersResult = await this.usersOrdersService.getAllUserOrders(
+      account.id,
+      getOrdersDTO,
+    );
     return {
       success: true,
-      data: await this.usersOrdersService.getAllUserOrders(account.id, status),
+      totalPages: ordersResult.paginationData.totalPages,
+      totalItems: ordersResult.paginationData.totalItems,
+      data: ordersResult.dataList,
     };
   }
 
