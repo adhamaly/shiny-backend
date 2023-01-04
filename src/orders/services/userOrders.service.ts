@@ -40,17 +40,30 @@ export class UsersOrdersService {
     // Get User
     const user = await this.userService.getUserById(userId);
 
-    // Set order location
-    const location = await this.locationsService.createOrderLocationOrGetIt(
-      user,
-      this.locationObjectFormater(orderCreationDTO),
-    );
-
     if (!orderCreationDTO.paymentType)
       throw new MethodNotAllowedResponse({
         ar: 'قم باختيار طريقة الدفع صالحة',
         en: 'Choose Valid Payment Type',
       });
+
+    if (orderCreationDTO.paymentType === PaymentTypes.WALLET) {
+      // check Wallet For user
+      const IsUserWalletBalanceValid = this.userService.checkWalletBalanceValid(
+        user,
+        orderCreationDTO.totalPrice,
+      );
+      if (!IsUserWalletBalanceValid)
+        throw new MethodNotAllowedResponse({
+          ar: 'لا تحتوي محفظتك الإلكترونية علي هذا المبلغ',
+          en: 'Your Wallet Balance Is Not Valid',
+        });
+    }
+
+    // Set order location
+    const location = await this.locationsService.createOrderLocationOrGetIt(
+      user,
+      this.locationObjectFormater(orderCreationDTO),
+    );
 
     switch (orderCreationDTO.type) {
       case OrderTypes.SERVICE_BOOKING:
