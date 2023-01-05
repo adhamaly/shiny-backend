@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { AddOnsService } from '../services/add-ons.service';
 import { UserAuthGuard } from '../../auth/guards/userAuthentication.guard';
 import { IsAdminGuard } from '../../admin/guard/isAdmin.guard';
@@ -57,6 +65,24 @@ export class AddOnsController {
       success: true,
       message: result.message,
       data: result.addOnses,
+    };
+  }
+
+  @Get('admin/all')
+  @UseGuards(UserAuthGuard)
+  async getAllAddOnsesForAdminController(@Account() account: any) {
+    return {
+      success: true,
+      data: await this.addOnsService.getAllForAdmin(account.role, account.id),
+    };
+  }
+
+  @Get('admin/details/:addOnsId')
+  @UseGuards(UserAuthGuard)
+  async getByIdForAdmin(@Param('addOnsId') addOnsId: string) {
+    return {
+      success: true,
+      data: await this.addOnsService.getByIdOr404(addOnsId),
     };
   }
 }

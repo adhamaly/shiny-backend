@@ -186,4 +186,28 @@ export class AddOnsService {
     });
     return filtered;
   }
+
+  async getAllForAdmin(role: string, adminId: string) {
+    switch (role) {
+      case Roles.SuperAdmin:
+        const addOnsesForSuperAdmin =
+          await this.addOnsRepository.findAllForAdmins(role);
+        addOnsesForSuperAdmin.forEach((addOns) => {
+          addOns.cities = undefined;
+        });
+        return addOnsesForSuperAdmin;
+      case Roles.SubAdmin:
+        const admin = await this.adminService.getById(adminId);
+        const addOnsesForSubAdmin =
+          await this.addOnsRepository.findAllForAdmins(role, admin.city);
+
+        return this.addOnsFormaterForUser(addOnsesForSubAdmin);
+      default:
+        return [];
+    }
+  }
+
+  async getByIdOr404(id: string) {
+    return await this.addOnsRepository.findByIdOr404(id);
+  }
 }
