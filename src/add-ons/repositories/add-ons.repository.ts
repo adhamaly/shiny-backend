@@ -167,4 +167,17 @@ export class AddOnsRepository {
 
     return addOns[0];
   }
+
+  async update(id: string, updatedFields: any) {
+    const addOnsIsExist = await this.addOnsModel.findById(id).exec();
+    if (!addOnsIsExist)
+      throw new NotFoundResponse({
+        ar: 'لا توجد',
+        en: 'Not Found',
+      });
+
+    await this.addOnsModel
+      .findByIdAndUpdate(id, { $set: updatedFields })
+      .exec();
+  }
 }

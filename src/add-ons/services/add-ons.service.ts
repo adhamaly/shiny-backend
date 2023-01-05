@@ -12,6 +12,9 @@ import { QueryParamsDTO } from '../dtos/add-ons-queryParams.dto';
 import { UserService } from '../../user/user.service';
 import { NearestCityCalculator } from '../../city/nearestCityCalculator.service';
 import { ServiceIcon } from '../../services-icons/schemas/services-icons.schema';
+import { UpdateAddOnsDTO } from '../dtos/updateAddOns.dto';
+import { City } from '../../city/schemas/city.schema';
+import { AddOns } from '../schemas/add-ons.schema';
 
 @Injectable()
 export class AddOnsService {
@@ -209,5 +212,51 @@ export class AddOnsService {
 
   async getByIdOr404(id: string) {
     return await this.addOnsRepository.findByIdOr404(id);
+  }
+
+  async updateAddOns(id: string, updateAddOnsDTO: UpdateAddOnsDTO) {
+    const updatedFields = {
+      name: updateAddOnsDTO.name,
+      price: updateAddOnsDTO.price,
+      icon: updateAddOnsDTO.icon,
+    };
+
+    await this.addOnsRepository.update(id, updatedFields);
+  }
+
+  async addToNewCity(addOns: AddOns, city: City) {
+    await this.addOnsCitiesRepository.insertOne(addOns, city);
+  }
+  async deleteOneFromCity(addOns: AddOns, city: City) {
+    return await this.addOnsCitiesRepository.deleteOne(addOns, city);
+  }
+  async archiveOneFromCity(addOns: AddOns, city: City) {
+    const addOnsDocument = await this.addOnsCitiesRepository.findOne(
+      addOns,
+      city,
+    );
+    if (!addOnsDocument)
+      throw new NotFoundResponse({
+        ar: 'لا توجد',
+        en: 'Not Found',
+      });
+
+    addOnsDocument.isArchived = true;
+    await addOnsDocument.save();
+  }
+
+  async activateOneFromCity(addOns: AddOns, city: City) {
+    const addOnsDocument = await this.addOnsCitiesRepository.findOne(
+      addOns,
+      city,
+    );
+    if (!addOnsDocument)
+      throw new NotFoundResponse({
+        ar: 'لا توجد',
+        en: 'Not Found',
+      });
+
+    addOnsDocument.isArchived = false;
+    await addOnsDocument.save();
   }
 }

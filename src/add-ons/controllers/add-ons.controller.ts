@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
+  Put,
   Query,
   UseGuards,
 } from '@nestjs/common';
@@ -13,6 +15,8 @@ import { IsAdminGuard } from '../../admin/guard/isAdmin.guard';
 import { CreateAddOnsDTO } from '../dtos/createAddOns.dto';
 import { Account } from '../../common/decorators/user.decorator';
 import { QueryParamsDTO } from '../dtos/add-ons-queryParams.dto';
+import { UpdateAddOnsDTO } from '../dtos/updateAddOns.dto';
+import { AddToNewCityDTO } from '../dtos/addToNewCity.dto';
 
 @Controller('add-ons')
 export class AddOnsController {
@@ -69,7 +73,7 @@ export class AddOnsController {
   }
 
   @Get('admin/all')
-  @UseGuards(UserAuthGuard)
+  @UseGuards(UserAuthGuard, IsAdminGuard)
   async getAllAddOnsesForAdminController(@Account() account: any) {
     return {
       success: true,
@@ -78,11 +82,79 @@ export class AddOnsController {
   }
 
   @Get('admin/details/:addOnsId')
-  @UseGuards(UserAuthGuard)
+  @UseGuards(UserAuthGuard, IsAdminGuard)
   async getByIdForAdmin(@Param('addOnsId') addOnsId: string) {
     return {
       success: true,
       data: await this.addOnsService.getByIdOr404(addOnsId),
+    };
+  }
+  @Put(':addOnsId')
+  @UseGuards(UserAuthGuard, IsAdminGuard)
+  async updateController(
+    @Param('addOnsId') addOnsId: string,
+    @Body() updateAddOnsDTO: UpdateAddOnsDTO,
+  ) {
+    await this.addOnsService.updateAddOns(addOnsId, updateAddOnsDTO);
+    return {
+      success: true,
+    };
+  }
+
+  @Post('/add-ons-cities')
+  @UseGuards(UserAuthGuard, IsAdminGuard)
+  async addAddOnsToNewCityController(@Body() addToNewCityDTO: AddToNewCityDTO) {
+    await this.addOnsService.addToNewCity(
+      addToNewCityDTO.addOns,
+      addToNewCityDTO.city,
+    );
+
+    return {
+      success: true,
+    };
+  }
+  @Delete('/add-ons-cities')
+  @UseGuards(UserAuthGuard, IsAdminGuard)
+  async deleteAddOnsFromCityController(
+    @Body() addToNewCityDTO: AddToNewCityDTO,
+  ) {
+    await this.addOnsService.deleteOneFromCity(
+      addToNewCityDTO.addOns,
+      addToNewCityDTO.city,
+    );
+
+    return {
+      success: true,
+    };
+  }
+
+  @Put('/add-ons-cities/archive')
+  @UseGuards(UserAuthGuard, IsAdminGuard)
+  async archiveAddOnsFromCityController(
+    @Body() addToNewCityDTO: AddToNewCityDTO,
+  ) {
+    await this.addOnsService.archiveOneFromCity(
+      addToNewCityDTO.addOns,
+      addToNewCityDTO.city,
+    );
+
+    return {
+      success: true,
+    };
+  }
+
+  @Put('/add-ons-cities/activate')
+  @UseGuards(UserAuthGuard, IsAdminGuard)
+  async activateAddOnsFromCityController(
+    @Body() addToNewCityDTO: AddToNewCityDTO,
+  ) {
+    await this.addOnsService.activateOneFromCity(
+      addToNewCityDTO.addOns,
+      addToNewCityDTO.city,
+    );
+
+    return {
+      success: true,
     };
   }
 }
