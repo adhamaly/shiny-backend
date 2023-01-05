@@ -26,6 +26,10 @@ export class PromoCodesService {
     return await this.promoCodesRepository.findAllForUser(status, userId);
   }
 
+  async getAllForAdmin(status: string) {
+    return await this.promoCodesRepository.findAll({ status: status });
+  }
+
   calculateExpiryDate(duration: number) {
     const expiryDate = new Date();
     expiryDate.setDate(expiryDate.getDate() + duration);

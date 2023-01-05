@@ -4,6 +4,7 @@ import { UserAuthGuard } from '../../auth/guards/userAuthentication.guard';
 import { IsAdminGuard } from '../../admin/guard/isAdmin.guard';
 import { CreatePromoCodeDTO } from '../dtos/createPromoCode.dto';
 import { Account } from 'src/common/decorators/user.decorator';
+import { GetPromoCodesDTO } from '../dtos/getAll.dto';
 
 @Controller('promo-codes')
 export class PromoCodesController {
@@ -29,6 +30,17 @@ export class PromoCodesController {
     return {
       success: true,
       data: await this.promoCodesService.getAllForUser(status, account.id),
+    };
+  }
+
+  @Get('admin')
+  @UseGuards(UserAuthGuard)
+  async getAllForAdminController(@Query() getPromoCodesDTO: GetPromoCodesDTO) {
+    return {
+      success: true,
+      data: await this.promoCodesService.getAllForAdmin(
+        getPromoCodesDTO.status,
+      ),
     };
   }
 }
