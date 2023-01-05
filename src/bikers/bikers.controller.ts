@@ -72,7 +72,7 @@ export class BikersController {
     };
   }
 
-  @Put('update-credentials')
+  @Patch('update-credentials')
   @UseGuards(UserAuthGuard)
   async updateBikerCredentialsController(
     @Account() account: any,
