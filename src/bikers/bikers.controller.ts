@@ -19,6 +19,7 @@ import { IsAdminGuard } from '../admin/guard/isAdmin.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateBikerDTO } from './dto/createBiker.dto';
 import { UpdateBikerDTO } from './dto/updateBiker.dto';
+import { UpdatePasswordDTO } from './dto/updatePassword.dto';
 
 @Controller('bikers')
 export class BikersController {
@@ -66,6 +67,18 @@ export class BikersController {
     @UploadedFile() image: Express.Multer.File,
   ) {
     await this.bikersService.updatePublicInfo(account.id, userName, image);
+    return {
+      success: true,
+    };
+  }
+
+  @Put('update-credentials')
+  @UseGuards(UserAuthGuard)
+  async updateBikerCredentialsController(
+    @Account() account: any,
+    @Body() updatePasswordDTO: UpdatePasswordDTO,
+  ) {
+    await this.bikersService.updateCredentials(account.id, updatePasswordDTO);
     return {
       success: true,
     };

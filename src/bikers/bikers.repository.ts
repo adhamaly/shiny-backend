@@ -5,7 +5,6 @@ import { CreateBikerDTO, UpdateBikerDTO } from './dto';
 import { Biker, BikerModel, bikerModelName } from './schemas/bikers.schema';
 import { MethodNotAllowedResponse } from '../common/errors/MethodNotAllowedResponse';
 import { BikerCrudValidator } from './bikersCrud.validator';
-import * as bcrypt from 'bcrypt';
 import { FirebaseService } from '../common/services/firebase/firebase.service';
 import { NotFoundResponse } from '../common/errors/NotFoundResponse';
 import { adminModelName, Roles } from '../admin/schemas/admin.schema';
@@ -28,6 +27,7 @@ export class BikersRepository {
     adminId: string,
     createBikerDTO: CreateBikerDTO,
     image: Express.Multer.File,
+    hashedPassword: string,
   ) {
     if (!image)
       throw new MethodNotAllowedResponse({
@@ -40,12 +40,6 @@ export class BikersRepository {
       createBikerDTO.phone,
       createBikerDTO.nationalId,
       createBikerDTO.userName,
-    );
-
-    // hash password using bycrpt
-    const hashedPassword = await bcrypt.hash(
-      createBikerDTO.password,
-      Number(process.env.SALT_OF_ROUND),
     );
 
     const createdBiker = await this.bikerModel.create({
@@ -83,6 +77,20 @@ export class BikersRepository {
     const biker = await this.bikerModel
       .findOne({ _id: id, isDeleted: false })
       .populate(this.populatedPaths)
+      .exec();
+
+    if (!biker)
+      throw new NotFoundResponse({
+        ar: 'لا يوجد هذا السائق',
+        en: 'Biker not found',
+      });
+
+    return biker;
+  }
+  async findByIdWithPasswordOr404(id: string) {
+    const biker = await this.bikerModel
+      .findOne({ _id: id, isDeleted: false })
+      .select('+password')
       .exec();
 
     if (!biker)
@@ -131,13 +139,7 @@ export class BikersRepository {
     await biker.save();
   }
 
-  async updateBikerPassword(bikerId: string, password: string) {
-    // hash password using bycrpt
-    const hashedPassword = await bcrypt.hash(
-      password,
-      Number(process.env.SALT_OF_ROUND),
-    );
-
+  async updateBikerPassword(bikerId: string, hashedPassword: string) {
     await this.bikerModel
       .updateOne({ _id: bikerId }, { $set: { password: hashedPassword } })
       .exec();

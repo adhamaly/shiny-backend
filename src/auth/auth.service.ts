@@ -113,7 +113,7 @@ export class AuthService {
 
   async resetPasswordForBiker(resetPasswordDTO: ResetPasswordDTO) {
     const payload = this.decodeAccessToken(resetPasswordDTO.token);
-    await this.bikersService.updatePassword(
+    await this.bikersService.resetPassword(
       payload.id,
       resetPasswordDTO.newPassword,
     );

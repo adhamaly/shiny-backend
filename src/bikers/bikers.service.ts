@@ -1,8 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, MethodNotAllowedException } from '@nestjs/common';
 import { BikersRepository } from './bikers.repository';
 import { CreateBikerDTO } from './dto';
 import { UpdateBikerDTO } from './dto/updateBiker.dto';
 import { AdminService } from '../admin/admin.service';
+import { UpdatePasswordDTO } from './dto/updatePassword.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class BikersService {
@@ -20,7 +22,18 @@ export class BikersService {
       adminId,
       createBikerDTO.city,
     );
-    await this.bikersRepository.create(adminId, createBikerDTO, image);
+    // hash password using bycrpt
+    const hashedPassword = await bcrypt.hash(
+      createBikerDTO.password,
+      Number(process.env.SALT_OF_ROUND),
+    );
+
+    await this.bikersRepository.create(
+      adminId,
+      createBikerDTO,
+      image,
+      hashedPassword,
+    );
   }
 
   async getAll(adminId: string, role: string) {
@@ -44,8 +57,40 @@ export class BikersService {
     return await this.bikersRepository.findByPhoneNumber(phone);
   }
 
-  async updatePassword(bikerId: string, password: string) {
-    await this.bikersRepository.updateBikerPassword(bikerId, password);
+  async resetPassword(bikerId: string, password: string) {
+    // hash password using bycrpt
+    const hashedPassword = await bcrypt.hash(
+      password,
+      Number(process.env.SALT_OF_ROUND),
+    );
+    await this.bikersRepository.updateBikerPassword(bikerId, hashedPassword);
+  }
+
+  async updateCredentials(
+    bikerId: string,
+    updatePasswordDTO: UpdatePasswordDTO,
+  ) {
+    const biker = await this.bikersRepository.findByIdWithPasswordOr404(
+      bikerId,
+    );
+    // Decrypt biker password and Compare
+    const isMatch = await bcrypt.compare(
+      updatePasswordDTO.oldPassword,
+      biker.password,
+    );
+    if (!isMatch)
+      throw new MethodNotAllowedException({
+        ar: 'بيانات المستخدم غير صالحة',
+        en: 'Invalid Biker credentials ',
+      });
+
+    // hash password using bycrpt
+    const hashedPassword = await bcrypt.hash(
+      updatePasswordDTO.newPassword,
+      Number(process.env.SALT_OF_ROUND),
+    );
+
+    await this.bikersRepository.updateBikerPassword(bikerId, hashedPassword);
   }
 
   async updatePublicInfo(
