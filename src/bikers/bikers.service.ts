@@ -1,10 +1,11 @@
-import { Injectable, MethodNotAllowedException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { BikersRepository } from './bikers.repository';
 import { CreateBikerDTO } from './dto';
 import { UpdateBikerDTO } from './dto/updateBiker.dto';
 import { AdminService } from '../admin/admin.service';
 import { UpdatePasswordDTO } from './dto/updatePassword.dto';
 import * as bcrypt from 'bcrypt';
+import { MethodNotAllowedResponse } from '../common/errors/MethodNotAllowedResponse';
 
 @Injectable()
 export class BikersService {
@@ -79,7 +80,7 @@ export class BikersService {
       biker.password,
     );
     if (!isMatch)
-      throw new MethodNotAllowedException({
+      throw new MethodNotAllowedResponse({
         ar: 'بيانات المستخدم غير صالحة',
         en: 'Invalid Biker credentials ',
       });
