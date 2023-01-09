@@ -20,6 +20,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateBikerDTO } from './dto/createBiker.dto';
 import { UpdateBikerDTO } from './dto/updateBiker.dto';
 import { UpdatePasswordDTO } from './dto/updatePassword.dto';
+import { BikerStatus } from './schemas/bikers.schema';
 
 @Controller('bikers')
 export class BikersController {
@@ -79,6 +80,18 @@ export class BikersController {
     @Body() updatePasswordDTO: UpdatePasswordDTO,
   ) {
     await this.bikersService.updateCredentials(account.id, updatePasswordDTO);
+    return {
+      success: true,
+    };
+  }
+
+  @Patch('update-status')
+  @UseGuards(UserAuthGuard)
+  async updateStatusController(
+    @Account() account: any,
+    @Body('status') status: string,
+  ) {
+    await this.bikersService.updateBikerStatus(account.id, status);
     return {
       success: true,
     };

@@ -6,6 +6,7 @@ import { AdminService } from '../admin/admin.service';
 import { UpdatePasswordDTO } from './dto/updatePassword.dto';
 import * as bcrypt from 'bcrypt';
 import { MethodNotAllowedResponse } from '../common/errors/MethodNotAllowedResponse';
+import { BikerStatus } from './schemas/bikers.schema';
 
 @Injectable()
 export class BikersService {
@@ -119,6 +120,11 @@ export class BikersService {
     );
   }
 
+  async updateBikerStatus(bikerId: string, status: string) {
+    const biker = await this.bikersRepository.findByIdOr404(bikerId);
+    biker.status = status;
+    await biker.save();
+  }
   async suspendBikerById(bikerId: string) {
     const biker = await this.bikersRepository.findByIdOr404(bikerId);
     biker.status = 'SUSPENDED';
