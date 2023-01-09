@@ -13,6 +13,7 @@ import { BikerLoginDTO } from '../bikers/dto/bikerLogin.dto';
 import { BikersService } from '../bikers/bikers.service';
 import { BikerLogoutDTO } from '../bikers/dto/bikerLogout.dto';
 import { ResetPasswordDTO } from './dtos/resetPassword.dto';
+import { Socket } from 'socket.io';
 
 @Injectable()
 export class AuthService {
@@ -187,7 +188,7 @@ export class AuthService {
     const payload = this.decodeRefreshToken(refresh_token);
 
     // Check CLientUser Existence
-    const clientProfile = await this.checkClientUserExistence(
+    const clientProfile = await this.getUserByIdAndRole(
       payload.id,
       payload.role,
     );
@@ -238,7 +239,7 @@ export class AuthService {
     }
   }
 
-  async checkClientUserExistence(clientId: string, role: string) {
+  async getUserByIdAndRole(clientId: string, role: string) {
     if (role === Roles.SuperAdmin || role === Roles.SubAdmin) {
       const adminProfile = await this.adminService.getByIdOr404(clientId);
       return adminProfile;
@@ -252,6 +253,27 @@ export class AuthService {
     if (role === 'biker') {
       const bikerProfile = await this.bikersService.getByIdOr404(clientId);
       return bikerProfile;
+    }
+  }
+  authenticateSocketUser(socket: Socket) {
+    try {
+      const token = socket.handshake.headers.authorization;
+      const payload = this.jwtService.verify(token, {
+        secret: process.env.ACCESS_TOKEN_SECRET,
+      });
+      return { id: payload.id, role: payload.role };
+    } catch {
+      socket.emit('Error', new UnAuthorizedResponse({ ar: '', en: '' }));
+      socket.disconnect();
+    }
+  }
+  async updateUserSocketId(userId: string, role: string, socketId: string) {
+    if (role === 'user') {
+      await this.userService.updateUserSocketId(userId, socketId);
+    }
+
+    if (role === 'biker') {
+      await this.bikersService.updateBikerSocketId(userId, socketId);
     }
   }
 }

@@ -28,6 +28,9 @@ export class Biker {
   @Prop()
   imageLink: string;
 
+  @Prop()
+  socketId: string;
+
   @Prop({ type: [{ type: String }], select: false })
   fcmTokens: string[];
 
