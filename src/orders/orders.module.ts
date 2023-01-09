@@ -15,6 +15,8 @@ import { PaginationModule } from '../common/services/pagination/pagination.modul
 import { OrderGateway } from './gateway/order.gateway';
 import { AuthModule } from '../auth/auth.module';
 import { BikersModule } from '../bikers/bikers.module';
+import { BikerOrdersService } from './services/bikerOrders.service';
+import { BikerOrdersController } from './controllers/bikerOrders.controller';
 
 @Module({
   imports: [
@@ -36,7 +38,8 @@ import { BikersModule } from '../bikers/bikers.module';
     UsersOrdersService,
     OrderStatusValidator,
     OrderGateway,
+    BikerOrdersService,
   ],
-  controllers: [UserOrdersController],
+  controllers: [UserOrdersController, BikerOrdersController],
 })
 export class OrdersModule {}

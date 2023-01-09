@@ -11,6 +11,8 @@ import { UnAuthorizedResponse } from '../../common/errors/UnAuthorizedResponse';
 import { UsersOrdersService } from '../services/userOrders.service';
 import { BikersService } from '../../bikers/bikers.service';
 import { LocationsService } from '../../locations/services/locations.service';
+import { UserService } from '../../user/user.service';
+import { User } from '../../user/schemas/user.schema';
 
 @WebSocketGateway()
 export class OrderGateway
@@ -21,6 +23,7 @@ export class OrderGateway
     @Inject(forwardRef(() => UsersOrdersService))
     private usersOrdersService: UsersOrdersService,
     private bikersService: BikersService,
+    private userService: UserService,
   ) {}
   @WebSocketServer()
   server: Server;
@@ -58,7 +61,9 @@ export class OrderGateway
   }
 
   async emitOrderToAllOnlineBikers(order: string) {
-    const publishedOrder = await this.usersOrdersService.getOrderById(order);
+    const publishedOrder = await this.usersOrdersService.getOrderByIdPopulated(
+      order,
+    );
     // Get All Online Bikers
     const onlineBikers =
       await this.bikersService.getAllOnlineBikersForOrderLocation(
@@ -70,5 +75,13 @@ export class OrderGateway
         .to(biker.socketId)
         .emit('order:published', publishedOrder);
     }
+  }
+
+  async orderAcceptedByBikerHandler(order: string, user: User) {
+    const listenerUser = await this.userService.getUser(user);
+    const acceptedOrder = await this.usersOrdersService.getOrderByIdPopulated(
+      order,
+    );
+    this.server.to(listenerUser.socketId).emit('order:accepted', acceptedOrder);
   }
 }

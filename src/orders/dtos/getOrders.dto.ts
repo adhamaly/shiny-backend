@@ -13,6 +13,6 @@ export class GetOrdersDTO {
   perPage: number;
 
   @IsString()
-  @IsIn(['ACTIVE', 'HISTORY'])
+  @IsIn(['ACTIVE', 'HISTORY', 'PENDING', 'COMPLETED'])
   status: string;
 }

@@ -19,6 +19,7 @@ import { Order } from '../schemas/orders.schema';
 import { promoCodeModelName } from '../../promo-code/schemas/promo-code.schema';
 import { NotFoundResponse } from '../../common/errors/NotFoundResponse';
 import { servicesIconModelName } from '../../services-icons/schemas/services-icons.schema';
+import { bikerModelName } from '../../bikers/schemas/bikers.schema';
 
 @Injectable()
 export class OrdersRepository {
@@ -63,6 +64,11 @@ export class OrdersRepository {
       path: 'user',
       model: userModelName,
       select: 'userName',
+    },
+    {
+      path: 'biker',
+      model: bikerModelName,
+      select: 'name phone imageLink imagePath',
     },
   ];
 

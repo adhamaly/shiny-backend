@@ -219,8 +219,12 @@ export class UsersOrdersService {
     );
   }
 
-  async getOrderById(orderId: string) {
+  async getOrderByIdPopulated(orderId: string) {
     return await this.ordersRepository.findOrderByIdPopulatedOr404(orderId);
+  }
+
+  async getOrderById(orderId: string) {
+    return await this.ordersRepository.findOrderByIdOr404(orderId);
   }
 
   async cancelOrderByUser(orderId: string) {
