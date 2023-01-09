@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable, forwardRef } from '@nestjs/common';
 import { OrdersRepository } from '../repositories/orders.repository';
 import { UserService } from '../../user/user.service';
 import { LocationsService } from '../../locations/services/locations.service';
@@ -21,6 +21,7 @@ import { PromoCodesService } from '../../promo-code/services/promo-code.service'
 import { PromoCode } from '../../promo-code/schemas/promo-code.schema';
 import { GetOrdersDTO } from '../dtos/getOrders.dto';
 import { PaginationService } from '../../common/services/pagination/pagination.service';
+import { OrderGateway } from '../gateway/order.gateway';
 
 @Injectable()
 export class UsersOrdersService {
@@ -34,6 +35,8 @@ export class UsersOrdersService {
     private orderStatusValidator: OrderStatusValidator,
     private PromoCodesService: PromoCodesService,
     private paginationService: PaginationService,
+    @Inject(forwardRef(() => OrderGateway))
+    private orderGateway: OrderGateway,
   ) {}
 
   async createOrder(userId: string, orderCreationDTO: OrderCreationDTO) {
@@ -371,6 +374,8 @@ export class UsersOrdersService {
     await this.ordersRepository.update(orderId, {
       status: OrderStatus.ACTIVE,
     });
+
+    await this.orderGateway.emitOrderToAllOnlineBikers(orderId);
   }
 
   async paySubscribedOrder(orderId: string) {
@@ -392,6 +397,8 @@ export class UsersOrdersService {
     await this.ordersRepository.update(orderId, {
       status: OrderStatus.ACTIVE,
     });
+
+    await this.orderGateway.emitOrderToAllOnlineBikers(orderId);
   }
   getTotalPayAfterWallet(order: Order, walletAmount: number) {
     return order.totalPay - walletAmount;

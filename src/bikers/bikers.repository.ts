@@ -78,11 +78,12 @@ export class BikersRepository {
       .exec();
   }
 
-  async findAllWithStatus(status: BikerStatus) {
+  async findAllWithStatus(status: BikerStatus, city: City) {
     return await this.bikerModel
       .find({
         isDeleted: false,
         status: status,
+        city: city,
       })
       .exec();
   }

@@ -7,6 +7,7 @@ import { UpdatePasswordDTO } from './dto/updatePassword.dto';
 import * as bcrypt from 'bcrypt';
 import { MethodNotAllowedResponse } from '../common/errors/MethodNotAllowedResponse';
 import { BikerStatus } from './schemas/bikers.schema';
+import { City } from '../city/schemas/city.schema';
 
 @Injectable()
 export class BikersService {
@@ -135,7 +136,10 @@ export class BikersService {
     biker.socketId = socketId;
     await biker.save();
   }
-  async getAllOnlineBikers() {
-    return await this.bikersRepository.findAllWithStatus(BikerStatus.ONLINE);
+  async getAllOnlineBikersForOrderLocation(city: City) {
+    return await this.bikersRepository.findAllWithStatus(
+      BikerStatus.ONLINE,
+      city,
+    );
   }
 }

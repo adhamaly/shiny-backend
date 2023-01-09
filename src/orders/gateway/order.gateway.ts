@@ -1,10 +1,7 @@
-import { Logger, OnModuleInit } from '@nestjs/common';
+import { Inject, Logger, OnModuleInit, forwardRef } from '@nestjs/common';
 import {
-  ConnectedSocket,
-  MessageBody,
   OnGatewayConnection,
   OnGatewayDisconnect,
-  SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
@@ -13,6 +10,7 @@ import { AuthService } from '../../auth/auth.service';
 import { UnAuthorizedResponse } from '../../common/errors/UnAuthorizedResponse';
 import { UsersOrdersService } from '../services/userOrders.service';
 import { BikersService } from '../../bikers/bikers.service';
+import { LocationsService } from '../../locations/services/locations.service';
 
 @WebSocketGateway()
 export class OrderGateway
@@ -20,6 +18,7 @@ export class OrderGateway
 {
   constructor(
     private authService: AuthService,
+    @Inject(forwardRef(() => UsersOrdersService))
     private usersOrdersService: UsersOrdersService,
     private bikersService: BikersService,
   ) {}
@@ -28,7 +27,7 @@ export class OrderGateway
   private logger: Logger = new Logger('OrderGateway');
 
   onModuleInit() {
-    this.logger.log('Initialized');
+    this.logger.log('WebSocket Initialized ...');
   }
 
   handleDisconnect(socket: Socket) {
@@ -58,22 +57,13 @@ export class OrderGateway
     socket.disconnect();
   }
 
-  @SubscribeMessage('order:place')
-  async placeOrderHandler(
-    @ConnectedSocket() socket: Socket,
-    @MessageBody() body: any,
-  ) {
-    console.log(body.order);
-    // Call PayOrder
-    await this.usersOrdersService.payOrder(
-      socket.data.user._id.toString(),
-      body.order,
-    );
-    const publishedOrder = await this.usersOrdersService.getOrderById(
-      body.order,
-    );
+  async emitOrderToAllOnlineBikers(order: string) {
+    const publishedOrder = await this.usersOrdersService.getOrderById(order);
     // Get All Online Bikers
-    const onlineBikers = await this.bikersService.getAllOnlineBikers();
+    const onlineBikers =
+      await this.bikersService.getAllOnlineBikersForOrderLocation(
+        publishedOrder.location.city,
+      );
     // Send Order to All of them
     for (const biker of onlineBikers) {
       await this.server
