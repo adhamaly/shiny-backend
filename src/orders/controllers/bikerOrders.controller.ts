@@ -8,14 +8,23 @@ import { GetOrdersDTO } from '../dtos/getOrders.dto';
 export class BikerOrdersController {
   constructor(private bikerOrdersService: BikerOrdersService) {}
 
-  @Get('')
-  @UseGuards(UserAuthGuard)
-  async getOrdersByStatusController(
-    @Account() account: any,
-    @Query() getOrdersDTO: GetOrdersDTO,
-  ) {
-    /* TODO document why this async method 'getOrdersByStatusController' is empty */
-  }
+  // @Get('')
+  // @UseGuards(UserAuthGuard)
+  // async getOrdersByStatusController(
+  //   @Account() account: any,
+  //   @Query() getOrdersDTO: GetOrdersDTO,
+  // ) {
+  //   /* TODO document why this async method 'getOrdersByStatusController' is empty */
+  //   const result = await this.bikerOrdersService.getAllBikerOrders(
+  //     account.id,
+  //     getOrdersDTO,
+  //   );
+  //   return {
+  //     success: true,
+  //     totalPages: result.paginationData.totalPages,
+  //     data: result.dataList,
+  //   };
+  // }
 
   @Patch('accept-order')
   @UseGuards(UserAuthGuard)
@@ -25,5 +34,8 @@ export class BikerOrdersController {
   ) {
     /* TODO document why this async method 'acceptOrderController' is empty */
     await this.bikerOrdersService.acceptOrderByBiker(account.id, order);
+    return {
+      success: true,
+    };
   }
 }

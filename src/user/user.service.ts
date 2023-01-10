@@ -128,8 +128,8 @@ export class UserService {
   async getUserById(id: string) {
     return await this.userRepository.findUserById(id);
   }
-  async getUser(user: User) {
-    return await this.userRepository.findUser(user);
+  async getUser(userId: any) {
+    return await this.userRepository.findUser(userId);
   }
   async updateUserSocketId(id: string, socketId: string) {
     const user = await this.userRepository.findUserByIdOr404(id);

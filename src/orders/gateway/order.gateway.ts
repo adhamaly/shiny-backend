@@ -71,14 +71,12 @@ export class OrderGateway
       );
     // Send Order to All of them
     for (const biker of onlineBikers) {
-      await this.server
-        .to(biker.socketId)
-        .emit('order:published', publishedOrder);
+      this.server.to(biker.socketId).emit('order:published', publishedOrder);
     }
   }
 
-  async orderAcceptedByBikerHandler(order: string, user: User) {
-    const listenerUser = await this.userService.getUser(user);
+  async orderAcceptedByBikerHandler(order: string, userId: any) {
+    const listenerUser = await this.userService.getUser(userId);
     const acceptedOrder = await this.usersOrdersService.getOrderByIdPopulated(
       order,
     );

@@ -257,7 +257,7 @@ export class AuthService {
   }
   authenticateSocketUser(socket: Socket) {
     try {
-      const token = socket.handshake.headers.authorization;
+      const token = socket.handshake.headers['authorization'].split(' ')[1];
       const payload = this.jwtService.verify(token, {
         secret: process.env.ACCESS_TOKEN_SECRET,
       });

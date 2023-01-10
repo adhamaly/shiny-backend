@@ -48,6 +48,10 @@ export class BikersService {
     return await this.bikersRepository.findByIdOr404(id);
   }
 
+  async getById(id: string) {
+    return await this.bikersRepository.findById(id);
+  }
+
   async getBikerByUserNameOr404(userName: string) {
     return await this.bikersRepository.findByUserNameOr404(userName);
   }
