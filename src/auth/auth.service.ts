@@ -263,7 +263,6 @@ export class AuthService {
       });
       return { id: payload.id, role: payload.role };
     } catch {
-      socket.emit('Error', new UnAuthorizedResponse({ ar: '', en: '' }));
       socket.disconnect();
     }
   }

@@ -28,7 +28,10 @@ export class BikerOrdersService {
       status: OrderStatus.ACCEPTED_BY_BIKER,
     });
 
-    await this.orderGateway.orderAcceptedByBikerHandler(orderId, order.user);
+    await this.orderGateway.orderAcceptedByBikerEventHandler(
+      orderId,
+      order.user,
+    );
     // TODO: Send Notification to all bikers using fcmTokens
   }
   async orderOnTheWay(bikerId: string, orderId: string) {
@@ -38,11 +41,10 @@ export class BikerOrdersService {
       OrderStatus.BIKER_ON_THE_WAY,
     );
     await this.ordersRepository.update(orderId, {
-      biker: bikerId,
       status: OrderStatus.BIKER_ON_THE_WAY,
     });
     // TODO: Emit order to user using socket streaming
-    await this.orderGateway.orderOnTheWayByBikerHandler(orderId, order.user);
+    await this.orderGateway.orderOnTheWayEventHandler(orderId, order.user);
     // TODO: Send Notification to the user of order
   }
 
@@ -53,11 +55,10 @@ export class BikerOrdersService {
       OrderStatus.BIKER_ARRIVED,
     );
     await this.ordersRepository.update(orderId, {
-      biker: bikerId,
       status: OrderStatus.BIKER_ARRIVED,
     });
     // TODO: Emit order to user using socket streaming
-
+    await this.orderGateway.bikerArrivedEventHandler(orderId, order.user);
     // TODO: Send Notification to the user of order
   }
   async orderOnWashing(bikerId: string, orderId: string) {
@@ -67,11 +68,10 @@ export class BikerOrdersService {
       OrderStatus.ON_WASHING,
     );
     await this.ordersRepository.update(orderId, {
-      biker: bikerId,
       status: OrderStatus.ON_WASHING,
     });
     // TODO: Emit order to user using socket streaming
-
+    await this.orderGateway.orderOnWashingEventHandler(orderId, order.user);
     // TODO: Send Notification to the user of order
   }
 
@@ -82,11 +82,10 @@ export class BikerOrdersService {
       OrderStatus.COMPLETED,
     );
     await this.ordersRepository.update(orderId, {
-      biker: bikerId,
       status: OrderStatus.COMPLETED,
     });
     // TODO: Emit order to user using socket streaming
-
+    await this.orderGateway.orderCompletedEventHandler(orderId, order.user);
     // TODO: Send Notification to the user of order
   }
 

@@ -379,7 +379,7 @@ export class UsersOrdersService {
       status: OrderStatus.ACTIVE,
     });
 
-    await this.orderGateway.emitOrderToAllOnlineBikers(orderId);
+    await this.orderGateway.orderPublishedEventHandler(orderId);
   }
 
   async paySubscribedOrder(orderId: string) {
@@ -402,7 +402,7 @@ export class UsersOrdersService {
       status: OrderStatus.ACTIVE,
     });
 
-    await this.orderGateway.emitOrderToAllOnlineBikers(orderId);
+    await this.orderGateway.orderPublishedEventHandler(orderId);
   }
   getTotalPayAfterWallet(order: Order, walletAmount: number) {
     return order.totalPay - walletAmount;
