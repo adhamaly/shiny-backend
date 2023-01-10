@@ -29,6 +29,65 @@ export class BikerOrdersService {
     });
 
     await this.orderGateway.orderAcceptedByBikerHandler(orderId, order.user);
+    // TODO: Send Notification to all bikers using fcmTokens
+  }
+  async orderOnTheWay(bikerId: string, orderId: string) {
+    const order = await this.ordersRepository.findOrderByIdOr404(orderId);
+    this.orderStatusValidator.isStatusValidForOrder(
+      order,
+      OrderStatus.BIKER_ON_THE_WAY,
+    );
+    await this.ordersRepository.update(orderId, {
+      biker: bikerId,
+      status: OrderStatus.BIKER_ON_THE_WAY,
+    });
+    // TODO: Emit order to user using socket streaming
+    await this.orderGateway.orderOnTheWayByBikerHandler(orderId, order.user);
+    // TODO: Send Notification to the user of order
+  }
+
+  async bikerArrived(bikerId: string, orderId: string) {
+    const order = await this.ordersRepository.findOrderByIdOr404(orderId);
+    this.orderStatusValidator.isStatusValidForOrder(
+      order,
+      OrderStatus.BIKER_ARRIVED,
+    );
+    await this.ordersRepository.update(orderId, {
+      biker: bikerId,
+      status: OrderStatus.BIKER_ARRIVED,
+    });
+    // TODO: Emit order to user using socket streaming
+
+    // TODO: Send Notification to the user of order
+  }
+  async orderOnWashing(bikerId: string, orderId: string) {
+    const order = await this.ordersRepository.findOrderByIdOr404(orderId);
+    this.orderStatusValidator.isStatusValidForOrder(
+      order,
+      OrderStatus.ON_WASHING,
+    );
+    await this.ordersRepository.update(orderId, {
+      biker: bikerId,
+      status: OrderStatus.ON_WASHING,
+    });
+    // TODO: Emit order to user using socket streaming
+
+    // TODO: Send Notification to the user of order
+  }
+
+  async orderCompleted(bikerId: string, orderId: string) {
+    const order = await this.ordersRepository.findOrderByIdOr404(orderId);
+    this.orderStatusValidator.isStatusValidForOrder(
+      order,
+      OrderStatus.COMPLETED,
+    );
+    await this.ordersRepository.update(orderId, {
+      biker: bikerId,
+      status: OrderStatus.COMPLETED,
+    });
+    // TODO: Emit order to user using socket streaming
+
+    // TODO: Send Notification to the user of order
   }
 
   // async getAllBikerOrders(bikerId: string, getOrdersDTO: GetOrdersDTO) {

@@ -82,4 +82,13 @@ export class OrderGateway
     );
     this.server.to(listenerUser.socketId).emit('order:accepted', acceptedOrder);
   }
+  async orderOnTheWayByBikerHandler(order: string, userId: any) {
+    const listenerUser = await this.userService.getUser(userId);
+    const onTheWayOrder = await this.usersOrdersService.getOrderByIdPopulated(
+      order,
+    );
+    this.server
+      .to(listenerUser.socketId)
+      .emit('order:on-the-way', onTheWayOrder);
+  }
 }

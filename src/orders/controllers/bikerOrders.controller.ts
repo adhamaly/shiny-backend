@@ -38,4 +38,48 @@ export class BikerOrdersController {
       success: true,
     };
   }
+  @Patch('on-the-way')
+  @UseGuards(UserAuthGuard)
+  async orderOnTheWayController(
+    @Account() account: any,
+    @Body('order') order: string,
+  ) {
+    /* TODO document why this async method 'bikerOnTheWayController' is empty */
+    return {
+      success: true,
+    };
+  }
+  @Patch('arrived')
+  @UseGuards(UserAuthGuard)
+  async bikerArrivedController(
+    @Account() account: any,
+    @Body('order') order: string,
+  ) {
+    /* TODO document why this async method 'bikerArrivedController' is empty */
+    return {
+      success: true,
+    };
+  }
+  @Patch('on-washing')
+  @UseGuards(UserAuthGuard)
+  async orderOnWashingController(
+    @Account() account: any,
+    @Body('order') order: string,
+  ) {
+    /* TODO document why this async method 'bikerOnWashingController' is empty */
+    return {
+      success: true,
+    };
+  }
+  @Patch('completed')
+  @UseGuards(UserAuthGuard)
+  async orderCompletedController(
+    @Account() account: any,
+    @Body('order') order: string,
+  ) {
+    /* TODO document why this async method 'bikerCompleteOrderController' is empty */
+    return {
+      success: true,
+    };
+  }
 }
