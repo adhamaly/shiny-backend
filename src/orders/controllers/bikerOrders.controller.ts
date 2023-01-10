@@ -45,6 +45,7 @@ export class BikerOrdersController {
     @Body('order') order: string,
   ) {
     /* TODO document why this async method 'bikerOnTheWayController' is empty */
+    await this.bikerOrdersService.orderOnTheWay(account.id, order);
     return {
       success: true,
     };
@@ -56,6 +57,8 @@ export class BikerOrdersController {
     @Body('order') order: string,
   ) {
     /* TODO document why this async method 'bikerArrivedController' is empty */
+    await this.bikerOrdersService.bikerArrived(account.id, order);
+
     return {
       success: true,
     };
@@ -67,6 +70,8 @@ export class BikerOrdersController {
     @Body('order') order: string,
   ) {
     /* TODO document why this async method 'bikerOnWashingController' is empty */
+    await this.bikerOrdersService.orderOnWashing(account.id, order);
+
     return {
       success: true,
     };
@@ -78,6 +83,8 @@ export class BikerOrdersController {
     @Body('order') order: string,
   ) {
     /* TODO document why this async method 'bikerCompleteOrderController' is empty */
+    await this.bikerOrdersService.orderCompleted(account.id, order);
+
     return {
       success: true,
     };

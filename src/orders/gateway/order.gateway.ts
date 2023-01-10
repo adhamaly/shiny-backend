@@ -60,7 +60,7 @@ export class OrderGateway
     socket.disconnect();
   }
 
-  async emitOrderToAllOnlineBikers(order: string) {
+  async orderPublishedEventHandler(order: string) {
     const publishedOrder = await this.usersOrdersService.getOrderByIdPopulated(
       order,
     );
@@ -75,14 +75,14 @@ export class OrderGateway
     }
   }
 
-  async orderAcceptedByBikerHandler(order: string, userId: any) {
+  async orderAcceptedByBikerEventHandler(order: string, userId: any) {
     const listenerUser = await this.userService.getUser(userId);
     const acceptedOrder = await this.usersOrdersService.getOrderByIdPopulated(
       order,
     );
     this.server.to(listenerUser.socketId).emit('order:accepted', acceptedOrder);
   }
-  async orderOnTheWayByBikerHandler(order: string, userId: any) {
+  async orderOnTheWayEventHandler(order: string, userId: any) {
     const listenerUser = await this.userService.getUser(userId);
     const onTheWayOrder = await this.usersOrdersService.getOrderByIdPopulated(
       order,
@@ -90,5 +90,30 @@ export class OrderGateway
     this.server
       .to(listenerUser.socketId)
       .emit('order:on-the-way', onTheWayOrder);
+  }
+  async bikerArrivedEventHandler(order: string, userId: any) {
+    const listenerUser = await this.userService.getUser(userId);
+    const arrivedOrder = await this.usersOrdersService.getOrderByIdPopulated(
+      order,
+    );
+    this.server.to(listenerUser.socketId).emit('order:arrived', arrivedOrder);
+  }
+  async orderOnWashingEventHandler(order: string, userId: any) {
+    const listenerUser = await this.userService.getUser(userId);
+    const onWashingOrder = await this.usersOrdersService.getOrderByIdPopulated(
+      order,
+    );
+    this.server
+      .to(listenerUser.socketId)
+      .emit('order:on-washing', onWashingOrder);
+  }
+  async orderCompletedEventHandler(order: string, userId: any) {
+    const listenerUser = await this.userService.getUser(userId);
+    const completedOrder = await this.usersOrdersService.getOrderByIdPopulated(
+      order,
+    );
+    this.server
+      .to(listenerUser.socketId)
+      .emit('order:completed', completedOrder);
   }
 }
