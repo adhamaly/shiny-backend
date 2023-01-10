@@ -56,7 +56,6 @@ export class OrderGateway
     );
   }
   private disconnect(socket: Socket) {
-    socket.emit('Error', new UnAuthorizedResponse({ ar: '', en: '' }));
     socket.disconnect();
   }
 
