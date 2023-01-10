@@ -6,7 +6,7 @@ import {
   OrdersModel,
   OrderStatus,
 } from '../schemas/orders.schema';
-import { User } from '../../user/schemas/user.schema';
+import { User, userModelName } from '../../user/schemas/user.schema';
 import { OrderCreationDTO } from '../dtos/OrderCreation.dto';
 import {
   Location,
@@ -18,17 +18,29 @@ import { vehicleModelName } from '../../vehicles/schemas/vehicles.schema';
 import { Order } from '../schemas/orders.schema';
 import { promoCodeModelName } from '../../promo-code/schemas/promo-code.schema';
 import { NotFoundResponse } from '../../common/errors/NotFoundResponse';
+import { servicesIconModelName } from '../../services-icons/schemas/services-icons.schema';
+import { bikerModelName } from '../../bikers/schemas/bikers.schema';
 
 @Injectable()
 export class OrdersRepository {
   populatedPaths = [
     {
       path: 'washingServices',
+      populate: {
+        path: 'icon',
+        select: 'iconPath iconLink',
+        model: servicesIconModelName,
+      },
       model: WashingServicesModelName,
-      select: 'name price',
+      select: 'name price description duration pointsToPay',
     },
     {
       path: 'addOns',
+      populate: {
+        path: 'icon',
+        select: 'iconPath iconLink',
+        model: servicesIconModelName,
+      },
       model: addOnsModelName,
       select: 'name price',
     },
@@ -41,12 +53,22 @@ export class OrdersRepository {
       path: 'location',
       model: locationModelName,
       select:
-        'latitude longitude streetName subAdministrativeArea isSaved savedName',
+        'latitude longitude streetName subAdministrativeArea isSaved savedName city',
     },
     {
       path: 'promoCode',
       model: promoCodeModelName,
       select: 'code',
+    },
+    {
+      path: 'user',
+      model: userModelName,
+      select: 'userName',
+    },
+    {
+      path: 'biker',
+      model: bikerModelName,
+      select: 'name phone imageLink imagePath',
     },
   ];
 

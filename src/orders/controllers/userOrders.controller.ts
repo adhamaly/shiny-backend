@@ -95,7 +95,7 @@ export class UserOrdersController {
   async getOrderByIdController(@Param('orderId') orderId: string) {
     return {
       success: true,
-      data: await this.usersOrdersService.getOrderById(orderId),
+      data: await this.usersOrdersService.getOrderByIdPopulated(orderId),
     };
   }
 }

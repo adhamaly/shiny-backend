@@ -26,6 +26,9 @@ export class User {
   imageLink: string;
 
   @Prop()
+  socketId: string;
+
+  @Prop()
   createdAt: Date;
 
   @Prop()

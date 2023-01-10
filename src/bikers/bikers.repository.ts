@@ -2,7 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
 import { CreateBikerDTO, UpdateBikerDTO } from './dto';
-import { Biker, BikerModel, bikerModelName } from './schemas/bikers.schema';
+import {
+  Biker,
+  BikerModel,
+  BikerStatus,
+  bikerModelName,
+} from './schemas/bikers.schema';
 import { MethodNotAllowedResponse } from '../common/errors/MethodNotAllowedResponse';
 import { BikerCrudValidator } from './bikersCrud.validator';
 import { FirebaseService } from '../common/services/firebase/firebase.service';
@@ -70,6 +75,16 @@ export class BikersRepository {
         ...(role === Roles.SuperAdmin ? {} : { city: { $in: cities } }),
       })
       .populate(this.populatedPaths)
+      .exec();
+  }
+
+  async findAllWithStatus(status: BikerStatus, city: City) {
+    return await this.bikerModel
+      .find({
+        isDeleted: false,
+        status: status,
+        city: city,
+      })
       .exec();
   }
 

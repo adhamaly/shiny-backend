@@ -112,6 +112,12 @@ export class UserRepository {
     return userDocument;
   }
 
+  async findUser(userId: any) {
+    return await this.userModel
+      .findOne({ _id: userId, isDeleted: false })
+      .exec();
+  }
+
   async checkPhoneExistence(phone: string) {
     const userDocument = await this.userModel
       .findOne({

@@ -128,6 +128,15 @@ export class UserService {
   async getUserById(id: string) {
     return await this.userRepository.findUserById(id);
   }
+  async getUser(userId: any) {
+    return await this.userRepository.findUser(userId);
+  }
+  async updateUserSocketId(id: string, socketId: string) {
+    const user = await this.userRepository.findUserByIdOr404(id);
+
+    user.socketId = socketId;
+    await user.save();
+  }
   checkWalletBalanceValid(user: User, orderTotalPrice: number) {
     return user.walletBalance >= orderTotalPrice ? true : false;
   }
