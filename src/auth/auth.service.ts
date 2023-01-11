@@ -14,6 +14,7 @@ import { BikersService } from '../bikers/bikers.service';
 import { BikerLogoutDTO } from '../bikers/dto/bikerLogout.dto';
 import { ResetPasswordDTO } from './dtos/resetPassword.dto';
 import { Socket } from 'socket.io';
+import { ForbiddenResponse } from '../common/errors/ForbiddenResponse';
 
 @Injectable()
 export class AuthService {
@@ -256,6 +257,11 @@ export class AuthService {
     }
   }
   authenticateSocketUser(socket: Socket) {
+    if (!socket.handshake.headers['authorization'].split(' ')[1])
+      throw new ForbiddenResponse({
+        en: 'Not Authenticated',
+        ar: 'غير مصدق للدخول',
+      });
     try {
       const token = socket.handshake.headers['authorization'].split(' ')[1];
       const payload = this.jwtService.verify(token, {
@@ -265,12 +271,9 @@ export class AuthService {
     } catch {
       socket.disconnect();
 
-      throw new ForbiddenException({
-        success: false,
-        message: {
-          en: 'Not Authenticated',
-          ar: 'غير مصدق للدخول',
-        },
+      throw new ForbiddenResponse({
+        en: 'Not Authenticated',
+        ar: 'غير مصدق للدخول',
       });
     }
   }
