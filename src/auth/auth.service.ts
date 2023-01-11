@@ -264,6 +264,14 @@ export class AuthService {
       return { id: payload.id, role: payload.role };
     } catch {
       socket.disconnect();
+
+      throw new ForbiddenException({
+        success: false,
+        message: {
+          en: 'Not Authenticated',
+          ar: 'غير مصدق للدخول',
+        },
+      });
     }
   }
   async updateUserSocketId(userId: string, role: string, socketId: string) {
