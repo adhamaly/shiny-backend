@@ -79,7 +79,8 @@ export class OrderGateway
     const acceptedOrder = await this.usersOrdersService.getOrderByIdPopulated(
       order,
     );
-    this.server.to(listenerUser.socketId).emit('order:accepted', acceptedOrder);
+    const formatedOrder = { ...acceptedOrder.toObject(), user: undefined };
+    this.server.to(listenerUser.socketId).emit('order:accepted', formatedOrder);
   }
   async orderOnTheWayEventHandler(order: string, userId: any) {
     const listenerUser = await this.userService.getUser(userId);

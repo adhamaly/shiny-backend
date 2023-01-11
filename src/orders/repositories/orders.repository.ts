@@ -68,7 +68,7 @@ export class OrdersRepository {
     {
       path: 'biker',
       model: bikerModelName,
-      select: 'name phone imageLink imagePath',
+      select: 'userName phone imageLink imagePath',
     },
   ];
 
