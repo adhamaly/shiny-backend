@@ -221,4 +221,11 @@ export class OrdersRepository {
   async findManyQuery(QueryObject: any) {
     return await this.ordersModel.find(QueryObject).exec();
   }
+
+  async findManyQueryPopulated(QueryObject: any) {
+    return await this.ordersModel
+      .find(QueryObject)
+      .populate(this.populatedPaths)
+      .exec();
+  }
 }
