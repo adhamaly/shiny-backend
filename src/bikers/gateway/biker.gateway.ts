@@ -89,7 +89,7 @@ export class BikerGateway
       const listenerUser = await this.userService.getUser(order.user);
 
       // emit to this socket bikerLocation
-      socket.broadcast.to(listenerUser.socketId).emit('biker:move', body);
+      this.server.to(listenerUser.socketId).emit('biker:move', body);
     }
   }
 }
