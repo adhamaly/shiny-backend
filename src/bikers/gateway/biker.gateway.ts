@@ -65,8 +65,8 @@ export class BikerGateway
     @MessageBody() body: any,
     @ConnectedSocket() socket: Socket,
   ) {
-    console.log(body);
-    console.log(socket.data.user);
+    console.log('Biker Location : ', body);
+    console.log('Biker : ', socket.data.user);
     // Get Order for trackerUser
     const order = await this.usersOrdersService.getOrderByQuery({
       _id: body.order,
