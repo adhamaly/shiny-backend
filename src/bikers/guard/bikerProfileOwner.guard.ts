@@ -1,6 +1,6 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { ForbiddenResponse } from '../../common/errors/ForbiddenResponse';
-import { BikersService } from '../bikers.service';
+import { BikersService } from '../services/bikers.service';
 
 @Injectable()
 export class BikerProfileOwnerGuard implements CanActivate {

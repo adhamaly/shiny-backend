@@ -1,19 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import mongoose, { Model } from 'mongoose';
-import { CreateBikerDTO, UpdateBikerDTO } from './dto';
+import { CreateBikerDTO, UpdateBikerDTO } from '../dto';
 import {
   Biker,
   BikerModel,
   BikerStatus,
   bikerModelName,
-} from './schemas/bikers.schema';
-import { MethodNotAllowedResponse } from '../common/errors/MethodNotAllowedResponse';
-import { BikerCrudValidator } from './bikersCrud.validator';
-import { FirebaseService } from '../common/services/firebase/firebase.service';
-import { NotFoundResponse } from '../common/errors/NotFoundResponse';
-import { adminModelName, Roles } from '../admin/schemas/admin.schema';
-import { cityModelName, City } from '../city/schemas/city.schema';
+} from '../schemas/bikers.schema';
+import { MethodNotAllowedResponse } from '../../common/errors/MethodNotAllowedResponse';
+import { BikerCrudValidator } from '../services/bikersCrud.validator';
+import { FirebaseService } from '../../common/services/firebase/firebase.service';
+import { NotFoundResponse } from '../../common/errors/NotFoundResponse';
+import { adminModelName, Roles } from '../../admin/schemas/admin.schema';
+import { cityModelName, City } from '../../city/schemas/city.schema';
 
 @Injectable()
 export class BikersRepository {
@@ -262,5 +262,25 @@ export class BikersRepository {
 
   async findById(id: string) {
     return await this.bikerModel.findOne({ _id: id, isDeleted: false }).exec();
+  }
+  async updateLocation(
+    bikerId: string,
+    location: {
+      latitude: number;
+      longitude: number;
+      streetName: string;
+      subAdministrativeArea: string;
+    },
+  ) {
+    await this.bikerModel
+      .findByIdAndUpdate(bikerId, {
+        $set: {
+          latitude: location.latitude,
+          longitude: location.longitude,
+          streetName: location.streetName,
+          subAdministrativeArea: location.subAdministrativeArea,
+        },
+      })
+      .exec();
   }
 }

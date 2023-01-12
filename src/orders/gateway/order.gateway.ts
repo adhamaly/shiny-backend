@@ -9,7 +9,7 @@ import { Server, Socket } from 'socket.io';
 import { AuthService } from '../../auth/auth.service';
 import { UnAuthorizedResponse } from '../../common/errors/UnAuthorizedResponse';
 import { UsersOrdersService } from '../services/userOrders.service';
-import { BikersService } from '../../bikers/bikers.service';
+import { BikersService } from '../../bikers/services/bikers.service';
 import { LocationsService } from '../../locations/services/locations.service';
 import { UserService } from '../../user/user.service';
 import { User } from '../../user/schemas/user.schema';

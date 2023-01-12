@@ -1,13 +1,16 @@
-import { Module } from '@nestjs/common';
-import { BikersService } from './bikers.service';
-import { BikersController } from './bikers.controller';
+import { Module, forwardRef } from '@nestjs/common';
+import { BikersService } from './services/bikers.service';
+import { BikersController } from './controllers/bikers.controller';
 import { UserModule } from '../user/user.module';
-import { BikerCrudValidator } from './bikersCrud.validator';
+import { BikerCrudValidator } from './services/bikersCrud.validator';
 import { FirebaseModule } from '../common/services/firebase/firebase.module';
-import { BikersRepository } from './bikers.repository';
+import { BikersRepository } from './repositories/bikers.repository';
 import { Biker, bikerModelName, BikersSchema } from './schemas/bikers.schema';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AdminModule } from '../admin/admin.module';
+import { BikerGateway } from './gateway/biker.gateway';
+import { OrdersModule } from '../orders/orders.module';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
@@ -15,8 +18,15 @@ import { AdminModule } from '../admin/admin.module';
     UserModule,
     FirebaseModule,
     AdminModule,
+    OrdersModule,
+    forwardRef(() => AuthModule),
   ],
-  providers: [BikersService, BikerCrudValidator, BikersRepository],
+  providers: [
+    BikersService,
+    BikerCrudValidator,
+    BikersRepository,
+    BikerGateway,
+  ],
   controllers: [BikersController],
   exports: [BikersService],
 })

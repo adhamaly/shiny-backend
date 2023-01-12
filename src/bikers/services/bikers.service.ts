@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { BikersRepository } from './bikers.repository';
-import { CreateBikerDTO } from './dto';
-import { UpdateBikerDTO } from './dto/updateBiker.dto';
-import { AdminService } from '../admin/admin.service';
-import { UpdatePasswordDTO } from './dto/updatePassword.dto';
+import { BikersRepository } from '../repositories/bikers.repository';
+import { CreateBikerDTO } from '../dto';
+import { UpdateBikerDTO } from '../dto/updateBiker.dto';
+import { AdminService } from '../../admin/admin.service';
+import { UpdatePasswordDTO } from '../dto/updatePassword.dto';
 import * as bcrypt from 'bcrypt';
-import { MethodNotAllowedResponse } from '../common/errors/MethodNotAllowedResponse';
-import { BikerStatus } from './schemas/bikers.schema';
-import { City } from '../city/schemas/city.schema';
+import { MethodNotAllowedResponse } from '../../common/errors/MethodNotAllowedResponse';
+import { BikerStatus } from '../schemas/bikers.schema';
+import { City } from '../../city/schemas/city.schema';
 
 @Injectable()
 export class BikersService {
@@ -150,5 +150,16 @@ export class BikersService {
       BikerStatus.ONLINE,
       city,
     );
+  }
+  async updateBikerLocation(
+    bikerId: string,
+    location: {
+      latitude: number;
+      longitude: number;
+      streetName: string;
+      subAdministrativeArea: string;
+    },
+  ) {
+    await this.bikersRepository.updateLocation(bikerId, location);
   }
 }

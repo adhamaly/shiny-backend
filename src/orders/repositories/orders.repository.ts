@@ -213,4 +213,12 @@ export class OrdersRepository {
       )
       .exec();
   }
+
+  async findOneQuery(QueryObject: any) {
+    return await this.ordersModel.findOne(QueryObject).exec();
+  }
+
+  async findManyQuery(QueryObject: any) {
+    return await this.ordersModel.find(QueryObject).exec();
+  }
 }

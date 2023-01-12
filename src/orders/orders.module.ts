@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ordersModelName, OrdersSchema } from './schemas/orders.schema';
 import { UserModule } from '../user/user.module';
@@ -30,8 +30,8 @@ import { BikerOrdersController } from './controllers/bikerOrders.controller';
     PlansModule,
     PromoCodeModule,
     PaginationModule,
-    AuthModule,
-    BikersModule,
+    forwardRef(() => AuthModule),
+    forwardRef(() => BikersModule),
   ],
   providers: [
     OrdersRepository,
@@ -41,5 +41,6 @@ import { BikerOrdersController } from './controllers/bikerOrders.controller';
     BikerOrdersService,
   ],
   controllers: [UserOrdersController, BikerOrdersController],
+  exports: [UsersOrdersService],
 })
 export class OrdersModule {}

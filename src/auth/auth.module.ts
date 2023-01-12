@@ -1,4 +1,4 @@
-import { Global, Module } from '@nestjs/common';
+import { Global, Module, forwardRef } from '@nestjs/common';
 import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
@@ -8,7 +8,12 @@ import { BikersModule } from '../bikers/bikers.module';
 
 @Global()
 @Module({
-  imports: [UserModule, AdminModule, BikersModule, JwtModule.register({})],
+  imports: [
+    UserModule,
+    AdminModule,
+    forwardRef(() => BikersModule),
+    JwtModule.register({}),
+  ],
   controllers: [AuthController],
   providers: [AuthService, JwtService],
   exports: [AuthService, JwtModule],

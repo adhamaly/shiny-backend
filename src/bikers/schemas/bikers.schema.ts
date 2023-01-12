@@ -43,6 +43,12 @@ export class Biker {
   @Prop()
   longitude: number;
 
+  @Prop()
+  streetName: string;
+
+  @Prop()
+  subAdministrativeArea: string;
+
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: cityModelName })
   city: City;
 

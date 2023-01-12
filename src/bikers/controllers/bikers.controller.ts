@@ -11,16 +11,16 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { Account } from '../common/decorators/user.decorator';
-import { BikersService } from './bikers.service';
-import { UserAuthGuard } from '../auth/guards';
-import { BikerProfileOwnerGuard } from './guard/bikerProfileOwner.guard';
-import { IsAdminGuard } from '../admin/guard/isAdmin.guard';
+import { Account } from '../../common/decorators/user.decorator';
+import { BikersService } from '../services/bikers.service';
+import { UserAuthGuard } from '../../auth/guards';
+import { BikerProfileOwnerGuard } from '../guard/bikerProfileOwner.guard';
+import { IsAdminGuard } from '../../admin/guard/isAdmin.guard';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { CreateBikerDTO } from './dto/createBiker.dto';
-import { UpdateBikerDTO } from './dto/updateBiker.dto';
-import { UpdatePasswordDTO } from './dto/updatePassword.dto';
-import { BikerStatus } from './schemas/bikers.schema';
+import { CreateBikerDTO } from '../dto/createBiker.dto';
+import { UpdateBikerDTO } from '../dto/updateBiker.dto';
+import { UpdatePasswordDTO } from '../dto/updatePassword.dto';
+import { BikerStatus } from '../schemas/bikers.schema';
 
 @Controller('bikers')
 export class BikersController {

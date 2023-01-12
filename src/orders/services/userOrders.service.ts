@@ -407,4 +407,11 @@ export class UsersOrdersService {
   getTotalPayAfterWallet(order: Order, walletAmount: number) {
     return order.totalPay - walletAmount;
   }
+
+  async getOrderByQuery(query: any) {
+    return await this.ordersRepository.findOneQuery(query);
+  }
+  async getOrdersByQuery(query: any) {
+    return await this.ordersRepository.findManyQuery(query);
+  }
 }

@@ -5,7 +5,7 @@ import { OrderStatus } from '../schemas/orders.schema';
 import { OrderStatusValidator } from '../validators/orderStatusValidator';
 import { GetOrdersDTO } from '../dtos/getOrders.dto';
 import { PaginationService } from '../../common/services/pagination/pagination.service';
-import { BikersService } from '../../bikers/bikers.service';
+import { BikersService } from '../../bikers/services/bikers.service';
 
 @Injectable()
 export class BikerOrdersService {
@@ -13,8 +13,6 @@ export class BikerOrdersService {
     private ordersRepository: OrdersRepository,
     private orderGateway: OrderGateway,
     private orderStatusValidator: OrderStatusValidator,
-    private paginationService: PaginationService,
-    private bikersService: BikersService,
   ) {}
 
   async acceptOrderByBiker(bikerId: string, orderId: string) {

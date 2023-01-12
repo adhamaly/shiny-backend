@@ -1,9 +1,9 @@
 import { InjectModel } from '@nestjs/mongoose';
-import { Biker, BikerModel, bikerModelName } from './schemas/bikers.schema';
+import { Biker, BikerModel, bikerModelName } from '../schemas/bikers.schema';
 import { Model } from 'mongoose';
-import { UserService } from '../user/user.service';
-import { MethodNotAllowedResponse } from '../common/errors/MethodNotAllowedResponse';
-import { UpdateBikerDTO } from './dto/updateBiker.dto';
+import { UserService } from '../../user/user.service';
+import { MethodNotAllowedResponse } from '../../common/errors/MethodNotAllowedResponse';
+import { UpdateBikerDTO } from '../dto/updateBiker.dto';
 
 export class BikerCrudValidator {
   constructor(

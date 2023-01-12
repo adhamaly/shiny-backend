@@ -10,7 +10,7 @@ import { NotFoundResponse } from '../common/errors';
 import { UserLogoutDTO } from '../user/dto/userLogout.dto';
 import { Roles } from 'src/admin/schemas/admin.schema';
 import { BikerLoginDTO } from '../bikers/dto/bikerLogin.dto';
-import { BikersService } from '../bikers/bikers.service';
+import { BikersService } from '../bikers/services/bikers.service';
 import { BikerLogoutDTO } from '../bikers/dto/bikerLogout.dto';
 import { ResetPasswordDTO } from './dtos/resetPassword.dto';
 import { Socket } from 'socket.io';
