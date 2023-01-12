@@ -43,17 +43,18 @@ export class OrderGateway
       userPayload.id,
       userPayload.role,
     );
-    if (!user) {
-      return this.disconnect(socket);
+    if (user) {
+      // Inject user into socket
+      socket.data.user = user;
+      // Update SocketId
+      await this.authService.updateUserSocketId(
+        userPayload.id,
+        userPayload.role,
+        socket.id,
+      );
+    } else {
+      this.disconnect(socket);
     }
-    // Inject user into socket
-    socket.data.user = user;
-    // Update SocketId
-    await this.authService.updateUserSocketId(
-      userPayload.id,
-      userPayload.role,
-      socket.id,
-    );
   }
   private disconnect(socket: Socket) {
     socket.disconnect();
