@@ -20,6 +20,7 @@ import { promoCodeModelName } from '../../promo-code/schemas/promo-code.schema';
 import { NotFoundResponse } from '../../common/errors/NotFoundResponse';
 import { servicesIconModelName } from '../../services-icons/schemas/services-icons.schema';
 import { bikerModelName } from '../../bikers/schemas/bikers.schema';
+import { City } from '../../city/schemas/city.schema';
 
 @Injectable()
 export class OrdersRepository {
@@ -176,9 +177,14 @@ export class OrdersRepository {
     return { orders, count };
   }
 
-  ordersStatusFiltersForBiker(status: string) {
+  ordersStatusFiltersForBiker(
+    bikerId: string,
+    status: string,
+    locations: Location[],
+  ) {
     if (status === OrderStatus.ACTIVE) {
       return {
+        biker: bikerId,
         status: {
           $in: [
             OrderStatus.ACCEPTED_BY_BIKER,
@@ -193,11 +199,13 @@ export class OrdersRepository {
     if (status === 'PENDING') {
       return {
         status: OrderStatus.ACTIVE,
+        location: { $in: locations },
       };
     }
 
     if (status === OrderStatus.COMPLETED) {
       return {
+        biker: bikerId,
         status: OrderStatus.COMPLETED,
       };
     }
@@ -207,11 +215,11 @@ export class OrdersRepository {
     status: string,
     skip: number,
     limit: number,
+    locations: Location[],
   ) {
     const orders = await this.ordersModel
       .find({
-        biker: bikerId,
-        ...this.ordersStatusFiltersForBiker(status),
+        ...this.ordersStatusFiltersForBiker(bikerId, status, locations),
       })
       .skip(skip)
       .limit(limit)
@@ -221,8 +229,7 @@ export class OrdersRepository {
 
     const count = await this.ordersModel
       .count({
-        biker: bikerId,
-        ...this.ordersStatusFiltersForBiker(status),
+        ...this.ordersStatusFiltersForBiker(bikerId, status, locations),
       })
       .exec();
 

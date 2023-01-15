@@ -6,6 +6,7 @@ import { OrderStatusValidator } from '../validators/orderStatusValidator';
 import { GetOrdersDTO } from '../dtos/getOrders.dto';
 import { PaginationService } from '../../common/services/pagination/pagination.service';
 import { BikersService } from '../../bikers/services/bikers.service';
+import { LocationsService } from '../../locations/services/locations.service';
 
 @Injectable()
 export class BikerOrdersService {
@@ -14,6 +15,8 @@ export class BikerOrdersService {
     private orderGateway: OrderGateway,
     private orderStatusValidator: OrderStatusValidator,
     private paginationService: PaginationService,
+    private bikersService: BikersService,
+    private locationsService: LocationsService,
   ) {}
 
   async acceptOrderByBiker(bikerId: string, orderId: string) {
@@ -88,10 +91,16 @@ export class BikerOrdersService {
     // TODO: Send Notification to the user of order
   }
 
+  //FIXME: Check locations valid for query
   async getAllBikerOrders(bikerId: string, getOrdersDTO: GetOrdersDTO) {
+    const biker = await this.bikersService.getById(bikerId);
     const { skip, limit } = this.paginationService.getSkipAndLimit(
       Number(getOrdersDTO.page),
       Number(getOrdersDTO.perPage),
+    );
+
+    const locations = await this.locationsService.getAllLocationsInCity(
+      biker.city,
     );
 
     const { orders, count } = await this.ordersRepository.findAllBikerOrders(
@@ -99,6 +108,7 @@ export class BikerOrdersService {
       getOrdersDTO.status,
       skip,
       limit,
+      locations,
     );
 
     return this.paginationService.paginate(

@@ -121,4 +121,10 @@ export class LocationsService {
 
     return newLocation;
   }
+
+  async getAllLocationsInCity(city: City) {
+    return await this.locationsRepository.findManyQuery({
+      city: city,
+    });
+  }
 }

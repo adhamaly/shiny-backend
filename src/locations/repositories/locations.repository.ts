@@ -96,4 +96,8 @@ export class LocationsRepository {
       )
       .exec();
   }
+
+  async findManyQuery(queryFilter: any) {
+    return await this.locationsModel.find(queryFilter).exec();
+  }
 }
