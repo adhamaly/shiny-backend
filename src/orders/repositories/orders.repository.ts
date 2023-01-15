@@ -63,7 +63,7 @@ export class OrdersRepository {
     {
       path: 'user',
       model: userModelName,
-      select: 'userName',
+      select: 'userName imageLink',
     },
     {
       path: 'biker',
