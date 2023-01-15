@@ -176,6 +176,59 @@ export class OrdersRepository {
     return { orders, count };
   }
 
+  ordersStatusFiltersForBiker(status: string) {
+    if (status === OrderStatus.ACTIVE) {
+      return {
+        status: {
+          $in: [
+            OrderStatus.ACCEPTED_BY_BIKER,
+            OrderStatus.WAITING_FOR_BIKER,
+            OrderStatus.BIKER_ON_THE_WAY,
+            OrderStatus.BIKER_ARRIVED,
+            OrderStatus.ON_WASHING,
+          ],
+        },
+      };
+    }
+    if (status === 'PENDING') {
+      return {
+        status: OrderStatus.ACTIVE,
+      };
+    }
+
+    if (status === OrderStatus.COMPLETED) {
+      return {
+        status: OrderStatus.COMPLETED,
+      };
+    }
+  }
+  async findAllBikerOrders(
+    bikerId: string,
+    status: string,
+    skip: number,
+    limit: number,
+  ) {
+    const orders = await this.ordersModel
+      .find({
+        biker: bikerId,
+        ...this.ordersStatusFiltersForBiker(status),
+      })
+      .skip(skip)
+      .limit(limit)
+      .populate(this.populatedPaths)
+      .select({ biker: 0 })
+      .exec();
+
+    const count = await this.ordersModel
+      .count({
+        biker: bikerId,
+        ...this.ordersStatusFiltersForBiker(status),
+      })
+      .exec();
+
+    return { orders, count };
+  }
+
   async findOrderByIdOr404(id: string) {
     const order = await this.ordersModel.findById(id).exec();
     if (!order)

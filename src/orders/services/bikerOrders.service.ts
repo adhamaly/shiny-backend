@@ -13,6 +13,7 @@ export class BikerOrdersService {
     private ordersRepository: OrdersRepository,
     private orderGateway: OrderGateway,
     private orderStatusValidator: OrderStatusValidator,
+    private paginationService: PaginationService,
   ) {}
 
   async acceptOrderByBiker(bikerId: string, orderId: string) {
@@ -87,25 +88,24 @@ export class BikerOrdersService {
     // TODO: Send Notification to the user of order
   }
 
-  // async getAllBikerOrders(bikerId: string, getOrdersDTO: GetOrdersDTO) {
-  //   const biker = await this.bikersService.getById(bikerId);
-  //   const { skip, limit } = this.paginationService.getSkipAndLimit(
-  //     Number(getOrdersDTO.page),
-  //     Number(getOrdersDTO.perPage),
-  //   );
-  //   const { orders, count } = await this.ordersRepository.findAllBikerOrders(
-  //     bikerId,
-  //     biker.city,
-  //     getOrdersDTO.status,
-  //     skip,
-  //     limit,
-  //   );
+  async getAllBikerOrders(bikerId: string, getOrdersDTO: GetOrdersDTO) {
+    const { skip, limit } = this.paginationService.getSkipAndLimit(
+      Number(getOrdersDTO.page),
+      Number(getOrdersDTO.perPage),
+    );
 
-  //   return this.paginationService.paginate(
-  //     orders,
-  //     count,
-  //     Number(getOrdersDTO.page),
-  //     Number(getOrdersDTO.perPage),
-  //   );
-  // }
+    const { orders, count } = await this.ordersRepository.findAllBikerOrders(
+      bikerId,
+      getOrdersDTO.status,
+      skip,
+      limit,
+    );
+
+    return this.paginationService.paginate(
+      orders,
+      count,
+      Number(getOrdersDTO.page),
+      Number(getOrdersDTO.perPage),
+    );
+  }
 }

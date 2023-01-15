@@ -12,7 +12,7 @@ export class GetOrdersDTO {
   @IsInt({ message: 'perPage must be an integer' })
   perPage: number;
 
+  @IsNotEmpty()
   @IsString()
-  @IsIn(['ACTIVE', 'HISTORY', 'PENDING', 'COMPLETED'])
   status: string;
 }
