@@ -12,7 +12,10 @@ import {
   Location,
   locationModelName,
 } from '../../locations/schemas/location.schema';
-import { WashingServicesModelName } from '../../washing-services/schemas/washing-services.schema';
+import {
+  WashingServicesModelName,
+  WashingService,
+} from '../../washing-services/schemas/washing-services.schema';
 import { addOnsModelName } from '../../add-ons/schemas/add-ons.schema';
 import { vehicleModelName } from '../../vehicles/schemas/vehicles.schema';
 import { Order } from '../schemas/orders.schema';
@@ -84,10 +87,11 @@ export class OrdersRepository {
     location: Location,
     totalDuration: number,
     orderStatus: OrderStatus,
+    washingServices: WashingService[],
   ) {
     const createdOrder = await this.ordersModel.create({
       user: user,
-      washingServices: orderCreationDTO.washingServices,
+      washingServices: washingServices,
       addOns: orderCreationDTO.addOns,
       vehicle: orderCreationDTO.vehicle,
       location: location,

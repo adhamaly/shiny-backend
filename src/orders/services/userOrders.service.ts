@@ -98,6 +98,7 @@ export class UsersOrdersService {
       location,
       totalDuration,
       OrderStatus.PENDING_USER_PAYMENT,
+      orderCreationDTO.washingServices,
     );
 
     await createdOrder.populate(this.ordersRepository.populatedPaths);
@@ -170,6 +171,12 @@ export class UsersOrdersService {
       hasExtraServicesOrAddOns
         ? OrderStatus.PENDING_USER_PAYMENT
         : OrderStatus.PENDING_USER_REVIEW,
+      [
+        ...(orderCreationDTO.washingServices
+          ? orderCreationDTO.washingServices
+          : []),
+        ...plan.washingServices,
+      ],
     );
 
     await createdOrder.populate(this.ordersRepository.populatedPaths);
