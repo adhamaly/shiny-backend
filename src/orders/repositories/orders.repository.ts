@@ -67,7 +67,7 @@ export class OrdersRepository {
     {
       path: 'user',
       model: userModelName,
-      select: 'userName imageLink',
+      select: 'userName phone imageLink',
     },
     {
       path: 'biker',
@@ -227,6 +227,7 @@ export class OrdersRepository {
       })
       .skip(skip)
       .limit(limit)
+      .sort({ updatedAt: -1 })
       .populate(this.populatedPaths)
       .select({ biker: 0 })
       .exec();

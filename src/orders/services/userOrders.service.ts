@@ -39,6 +39,7 @@ export class UsersOrdersService {
     private orderGateway: OrderGateway,
   ) {}
 
+  //FIXME: Check order creation for order with subscription plan only
   async createOrder(userId: string, orderCreationDTO: OrderCreationDTO) {
     // Get User
     const user = await this.userService.getUserById(userId);
