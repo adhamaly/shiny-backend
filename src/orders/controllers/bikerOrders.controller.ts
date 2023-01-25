@@ -3,6 +3,7 @@ import { BikerOrdersService } from '../services/bikerOrders.service';
 import { UserAuthGuard } from '../../auth/guards/userAuthentication.guard';
 import { Account } from 'src/common/decorators/user.decorator';
 import { GetOrdersDTO } from '../dtos/getOrders.dto';
+import { AcceptOrderDTO } from '../dtos/acceptOrder.dto';
 
 @Controller('orders/biker')
 export class BikerOrdersController {
@@ -30,10 +31,13 @@ export class BikerOrdersController {
   @UseGuards(UserAuthGuard)
   async acceptOrderController(
     @Account() account: any,
-    @Body('order') order: string,
+    @Body() acceptOrderDTO: AcceptOrderDTO,
   ) {
     /* TODO document why this async method 'acceptOrderController' is empty */
-    await this.bikerOrdersService.acceptOrderByBiker(account.id, order);
+    await this.bikerOrdersService.acceptOrderByBiker(
+      account.id,
+      acceptOrderDTO,
+    );
     return {
       success: true,
     };

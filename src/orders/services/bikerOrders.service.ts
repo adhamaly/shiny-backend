@@ -7,6 +7,7 @@ import { GetOrdersDTO } from '../dtos/getOrders.dto';
 import { PaginationService } from '../../common/services/pagination/pagination.service';
 import { BikersService } from '../../bikers/services/bikers.service';
 import { LocationsService } from '../../locations/services/locations.service';
+import { AcceptOrderDTO } from '../dtos/acceptOrder.dto';
 
 @Injectable()
 export class BikerOrdersService {
@@ -19,19 +20,30 @@ export class BikerOrdersService {
     private locationsService: LocationsService,
   ) {}
 
-  async acceptOrderByBiker(bikerId: string, orderId: string) {
-    const order = await this.ordersRepository.findOrderByIdOr404(orderId);
+  async acceptOrderByBiker(bikerId: string, acceptOrderDTO: AcceptOrderDTO) {
+    const order = await this.ordersRepository.findOrderByIdOr404(
+      acceptOrderDTO.order,
+    );
+
     this.orderStatusValidator.isStatusValidForOrder(
       order,
       OrderStatus.ACCEPTED_BY_BIKER,
     );
-    await this.ordersRepository.update(orderId, {
+
+    await this.bikersService.updateBikerLocation(bikerId, {
+      latitude: Number(acceptOrderDTO.latitude),
+      longitude: Number(acceptOrderDTO.longitude),
+      subAdministrativeArea: acceptOrderDTO.subAdministrativeArea,
+      streetName: acceptOrderDTO.streetName,
+    });
+
+    await this.ordersRepository.update(acceptOrderDTO.order, {
       biker: bikerId,
       status: OrderStatus.ACCEPTED_BY_BIKER,
     });
 
     await this.orderGateway.orderAcceptedByBikerEventHandler(
-      orderId,
+      acceptOrderDTO.order,
       order.user,
     );
     // TODO: Send Notification to all bikers using fcmTokens

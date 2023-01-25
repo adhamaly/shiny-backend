@@ -72,7 +72,7 @@ export class OrdersRepository {
     {
       path: 'biker',
       model: bikerModelName,
-      select: 'userName phone imageLink imagePath',
+      select: 'userName phone imageLink imagePath latitude longitude',
     },
   ];
 
