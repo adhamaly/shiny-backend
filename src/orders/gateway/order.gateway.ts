@@ -40,6 +40,7 @@ export class OrderGateway
   }
   async handleConnection(socket: Socket, ...args: any[]) {
     const userPayload = this.authService.authenticateSocketUser(socket);
+    if (!userPayload?.id) return;
     const user = await this.authService.getUserByIdAndRole(
       userPayload.id,
       userPayload.role,
@@ -70,6 +71,8 @@ export class OrderGateway
       await this.bikersService.getAllOnlineBikersForOrderLocation(
         publishedOrder.location.city,
       );
+    console.log(onlineBikers);
+
     // Send Order to All of them
     for (const biker of onlineBikers) {
       this.server.to(biker.socketId).emit('order:published', publishedOrder);

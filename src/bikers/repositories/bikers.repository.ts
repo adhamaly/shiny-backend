@@ -272,15 +272,19 @@ export class BikersRepository {
       subAdministrativeArea: string;
     },
   ) {
-    await this.bikerModel
-      .findByIdAndUpdate(bikerId, {
-        $set: {
-          latitude: location.latitude,
-          longitude: location.longitude,
-          streetName: location.streetName,
-          subAdministrativeArea: location.subAdministrativeArea,
+    return await this.bikerModel
+      .findByIdAndUpdate(
+        bikerId,
+        {
+          $set: {
+            latitude: location.latitude,
+            longitude: location.longitude,
+            streetName: location.streetName,
+            subAdministrativeArea: location.subAdministrativeArea,
+          },
         },
-      })
+        { new: true },
+      )
       .exec();
   }
 }

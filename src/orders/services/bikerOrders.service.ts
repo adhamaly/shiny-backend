@@ -8,6 +8,8 @@ import { PaginationService } from '../../common/services/pagination/pagination.s
 import { BikersService } from '../../bikers/services/bikers.service';
 import { LocationsService } from '../../locations/services/locations.service';
 import { AcceptOrderDTO } from '../dtos/acceptOrder.dto';
+import { UserService } from '../../user/user.service';
+import { NotificationsService } from '../../notifications/services/notifications.service';
 
 @Injectable()
 export class BikerOrdersService {
@@ -18,6 +20,8 @@ export class BikerOrdersService {
     private paginationService: PaginationService,
     private bikersService: BikersService,
     private locationsService: LocationsService,
+    private userService: UserService,
+    private notificationsService: NotificationsService,
   ) {}
 
   async acceptOrderByBiker(bikerId: string, acceptOrderDTO: AcceptOrderDTO) {
@@ -25,12 +29,14 @@ export class BikerOrdersService {
       acceptOrderDTO.order,
     );
 
+    const userOfOrder = await this.userService.getUser(order.user);
+
     this.orderStatusValidator.isStatusValidForOrder(
       order,
       OrderStatus.ACCEPTED_BY_BIKER,
     );
 
-    await this.bikersService.updateBikerLocation(bikerId, {
+    const biker = await this.bikersService.updateBikerLocation(bikerId, {
       latitude: Number(acceptOrderDTO.latitude),
       longitude: Number(acceptOrderDTO.longitude),
       subAdministrativeArea: acceptOrderDTO.subAdministrativeArea,
@@ -46,8 +52,18 @@ export class BikerOrdersService {
       acceptOrderDTO.order,
       order.user,
     );
+
     // TODO: Send Notification to all bikers using fcmTokens
+
+    await this.notificationsService.sendOrderAcceptedByBikerNotificaiton(
+      userOfOrder._id,
+      userOfOrder.language || 'en',
+      userOfOrder.fcmTokens,
+      biker.userName,
+      acceptOrderDTO.order,
+    );
   }
+
   async orderOnTheWay(bikerId: string, orderId: string) {
     const order = await this.ordersRepository.findOrderByIdOr404(orderId);
     this.orderStatusValidator.isStatusValidForOrder(

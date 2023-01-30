@@ -160,6 +160,6 @@ export class BikersService {
       subAdministrativeArea: string;
     },
   ) {
-    await this.bikersRepository.updateLocation(bikerId, location);
+    return await this.bikersRepository.updateLocation(bikerId, location);
   }
 }

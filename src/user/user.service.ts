@@ -111,7 +111,6 @@ export class UserService {
 
   async getUserByPhoneOr404(phone: string) {
     const userDocument = await this.userRepository.findUserByPhoneOr404(phone);
-
     return userDocument;
   }
   async getUserByIdOr404(id: string) {
@@ -149,6 +148,16 @@ export class UserService {
   async pointsEarningUpdate(userId: string, points: number) {
     const user = await this.userRepository.findUserById(userId);
     user.points = user.points + points;
+    await user.save();
+  }
+  async removeInvalidFcmToken(userId: string, fcmToken: string) {
+    const user = await this.userRepository.findUser(userId);
+    const updatedUserFcmTokens = user.fcmTokens.filter((fcmTokenItem) => {
+      return fcmTokenItem !== fcmToken;
+    });
+    console.log('valid fcmTokens :' + updatedUserFcmTokens);
+
+    user.fcmTokens = updatedUserFcmTokens;
     await user.save();
   }
 }

@@ -34,7 +34,7 @@ export class User {
   @Prop()
   updatedAt: Date;
 
-  @Prop({ type: [{ type: String }] })
+  @Prop({ type: [{ type: String }], select: false })
   fcmTokens: string[];
 
   @Prop({ default: false })

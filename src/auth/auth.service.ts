@@ -18,7 +18,6 @@ import { ForbiddenResponse } from '../common/errors/ForbiddenResponse';
 
 @Injectable()
 export class AuthService {
-  private saltOfRounds = Number(process.env.SALT_OF_ROUND);
   constructor(
     private jwtService: JwtService,
     private userService: UserService,
@@ -46,6 +45,10 @@ export class AuthService {
       userLoginDTO.phone,
     );
 
+    if (!userDocument.fcmTokens?.includes(userLoginDTO.fcmToken)) {
+      userDocument.fcmTokens.push(userLoginDTO.fcmToken);
+      await userDocument.save();
+    }
     // Generate Tokens
     const accessToken = this.generateAccessToken(userDocument._id, 'user');
     const refreshToken = this.generateRefreshToken(userDocument._id, 'user');
@@ -270,11 +273,6 @@ export class AuthService {
       return { id: payload.id, role: payload.role };
     } catch {
       socket.disconnect();
-
-      throw new ForbiddenResponse({
-        en: 'Not Authenticated',
-        ar: 'غير مصدق للدخول',
-      });
     }
   }
   async updateUserSocketId(userId: string, role: string, socketId: string) {
