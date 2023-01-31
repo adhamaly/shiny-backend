@@ -6,9 +6,8 @@ import { AdminService } from '../../admin/admin.service';
 import { UpdatePasswordDTO } from '../dto/updatePassword.dto';
 import * as bcrypt from 'bcrypt';
 import { MethodNotAllowedResponse } from '../../common/errors/MethodNotAllowedResponse';
-import { BikerStatus } from '../schemas/bikers.schema';
+import { BikerStatus, BikerModel } from '../schemas/bikers.schema';
 import { City } from '../../city/schemas/city.schema';
-
 @Injectable()
 export class BikersService {
   constructor(

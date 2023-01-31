@@ -350,6 +350,7 @@ export class UsersOrdersService {
       status: OrderStatus.ACTIVE,
     });
   }
+  //TODO: Use Transactions to update user+subscription+order
   async payWallet(userId: string, orderId: string) {
     const order = await this.ordersRepository.findOrderByIdOr404(orderId);
     const user = await this.userService.getUserById(userId);
@@ -390,6 +391,7 @@ export class UsersOrdersService {
     await this.orderGateway.orderPublishedEventHandler(orderId);
   }
 
+  //TODO: Use Transactions to update subscription+order
   async paySubscribedOrder(orderId: string) {
     const pendingOrder = await this.ordersRepository.findOrderByIdOr404(
       orderId,
