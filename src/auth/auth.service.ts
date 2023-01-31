@@ -268,13 +268,8 @@ export class AuthService {
         secret: process.env.ACCESS_TOKEN_SECRET,
       });
       return { id: payload.id, role: payload.role };
-    } catch {
-      socket.disconnect();
-
-      throw new ForbiddenResponse({
-        en: 'Not Authenticated',
-        ar: 'غير مصدق للدخول',
-      });
+    } catch (error) {
+      console.log('Not Authenticated User');
     }
   }
   async updateUserSocketId(userId: string, role: string, socketId: string) {
