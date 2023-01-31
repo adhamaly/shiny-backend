@@ -11,6 +11,8 @@ import {
 } from '../schemas/notifications.schema';
 import { Model } from 'mongoose';
 import { UserService } from '../../user/user.service';
+import { NotifcationsPaginationsDTO } from '../dtos/notificationsPaginations.dto';
+import { PaginationService } from '../../common/services/pagination/pagination.service';
 
 @Injectable()
 export class NotificationsService {
@@ -19,6 +21,7 @@ export class NotificationsService {
     private readonly notificationsModel: Model<NotificationsModel>,
     private fcmService: FCMService,
     private userService: UserService,
+    private paginationService: PaginationService,
   ) {}
 
   async sendOrderAcceptedByBikerNotificaiton(
@@ -67,13 +70,36 @@ export class NotificationsService {
       .exec();
   }
 
-  async getAllNotificationsForReceiver(receiverId: string) {
-    return await this.notificationsModel
+  async getAllNotificationsForReceiver(
+    receiverId: string,
+    notifcationsPaginationsDTO: NotifcationsPaginationsDTO,
+  ) {
+    const { skip, limit } = this.paginationService.getSkipAndLimit(
+      Number(notifcationsPaginationsDTO.page),
+      Number(notifcationsPaginationsDTO.perPage),
+    );
+
+    const notifications = await this.notificationsModel
       .find({
         receiver: receiverId,
       })
+      .skip(skip)
+      .limit(limit)
       .sort({ updatedAt: -1 })
       .exec();
+
+    const count = await this.notificationsModel
+      .count({
+        receiver: receiverId,
+      })
+      .exec();
+
+    return this.paginationService.paginate(
+      notifications,
+      count,
+      Number(notifcationsPaginationsDTO.page),
+      Number(notifcationsPaginationsDTO.perPage),
+    );
   }
   async checkFcmResponse(response: any, receiverId: string, tokens: string[]) {
     // if response includes token error

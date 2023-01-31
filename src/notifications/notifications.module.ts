@@ -4,6 +4,7 @@ import { NotificationsService } from './services/notifications.service';
 import { NotificationsController } from './controllers/notifications.controller';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from '../user/user.module';
+import { PaginationModule } from '../common/services/pagination/pagination.module';
 import {
   notificationsModelName,
   NotificationsSchema,
@@ -16,6 +17,7 @@ import {
     ]),
     FirebaseModule,
     UserModule,
+    PaginationModule,
   ],
   controllers: [NotificationsController],
   providers: [NotificationsService],
