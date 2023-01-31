@@ -34,7 +34,7 @@ export class NotificationsController {
     };
   }
 
-  @Patch('set-read')
+  @Patch('/:notificationId/set-read')
   @UseGuards(UserAuthGuard)
   async setNotificationRead(@Param('notificationId') notificationId: string) {
     await this.notificationsService.setNotificationIsRead(notificationId);
