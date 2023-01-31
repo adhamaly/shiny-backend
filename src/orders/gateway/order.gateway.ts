@@ -40,6 +40,10 @@ export class OrderGateway
   }
   async handleConnection(socket: Socket, ...args: any[]) {
     const userPayload = this.authService.authenticateSocketUser(socket);
+    if (!userPayload) {
+      this.disconnect(socket);
+      return;
+    }
     const user = await this.authService.getUserByIdAndRole(
       userPayload.id,
       userPayload.role,
