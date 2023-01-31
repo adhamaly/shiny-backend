@@ -56,7 +56,7 @@ export class BikerOrdersService {
     // TODO: Send Notification to all bikers using fcmTokens
 
     await this.notificationsService.sendOrderAcceptedByBikerNotificaiton(
-      userOfOrder._id,
+      userOfOrder._id.toString(),
       userOfOrder.language || 'en',
       userOfOrder.fcmTokens,
       biker.userName,
