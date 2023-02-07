@@ -145,6 +145,7 @@ export class OrdersRepository {
       })
       .skip(skip)
       .limit(limit)
+      .sort({ createdAt: -1 })
       .populate(this.populatedPaths)
       .exec();
 
