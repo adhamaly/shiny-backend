@@ -56,6 +56,7 @@ export class BikerOrdersService {
     );
     await this.ordersRepository.update(orderId, {
       status: OrderStatus.BIKER_ON_THE_WAY,
+      OnTheWayAt: new Date(),
     });
     // TODO: Emit order to user using socket streaming
     await this.orderGateway.orderOnTheWayEventHandler(orderId, order.user);
@@ -83,6 +84,7 @@ export class BikerOrdersService {
     );
     await this.ordersRepository.update(orderId, {
       status: OrderStatus.ON_WASHING,
+      onWashingAt: new Date(),
     });
     // TODO: Emit order to user using socket streaming
     await this.orderGateway.orderOnWashingEventHandler(orderId, order.user);
@@ -97,6 +99,7 @@ export class BikerOrdersService {
     );
     await this.ordersRepository.update(orderId, {
       status: OrderStatus.COMPLETED,
+      endTime: new Date().toISOString(),
     });
     // TODO: Emit order to user using socket streaming
     await this.orderGateway.orderCompletedEventHandler(orderId, order.user);

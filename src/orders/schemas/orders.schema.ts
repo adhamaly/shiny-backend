@@ -120,6 +120,12 @@ export class Order {
 
   @Prop()
   updatedAt: Date;
+
+  @Prop()
+  OnTheWayAt: Date;
+
+  @Prop()
+  onWashingAt: Date;
 }
 
 export const OrdersSchema = SchemaFactory.createForClass(Order);
