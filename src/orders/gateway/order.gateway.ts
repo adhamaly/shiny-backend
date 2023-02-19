@@ -65,6 +65,20 @@ export class OrderGateway
     socket.disconnect();
   }
 
+  orderFormaterForUser(event: string, order: any) {
+    return {
+      success: true,
+      _id: order._id,
+      status: order.status,
+      ...(event === 'order:accepted'
+        ? { biker: { ...order.toObject().biker, rating: 3.6 } }
+        : {}),
+      ...(event === 'order:arrived'
+        ? { duration: order.totalDuration }
+        : { time: order.updatedAt }),
+    };
+  }
+
   async orderPublishedEventHandler(order: string) {
     const publishedOrder = await this.usersOrdersService.getOrderByIdPopulated(
       order,
@@ -80,52 +94,15 @@ export class OrderGateway
     }
   }
 
-  orderAcceptedFormaterForUser(order: any) {
-    return {
-      success: true,
-      _id: order._id,
-      status: order.status,
-      biker: { ...order.toObject().biker, rating: 3.6 },
-    };
-  }
-  orderOntheWayFormaterForUser(order: any) {
-    return {
-      success: true,
-      _id: order._id,
-      status: order.status,
-      OnTheWayAt: order.OnTheWayAt,
-    };
-  }
-  orderArrivedFormaterForUser(order: any) {
-    return {
-      success: true,
-      _id: order._id,
-      status: order.status,
-      totalDuration: order.totalDuration,
-    };
-  }
-  orderOnWashingFormaterForUser(order: any) {
-    return {
-      success: true,
-      _id: order._id,
-      status: order.status,
-      onWashingAt: order.onWashingAt,
-    };
-  }
-  orderCompletedFormaterForUser(order: any) {
-    return {
-      success: true,
-      _id: order._id,
-      status: order.status,
-      endTime: order.endTime,
-    };
-  }
   async orderAcceptedByBikerEventHandler(order: string, userId: any) {
     const listenerUser = await this.userService.getUser(userId);
     const acceptedOrder = await this.usersOrdersService.getOrderByIdPopulated(
       order,
     );
-    const formatedOrder = this.orderAcceptedFormaterForUser(acceptedOrder);
+    const formatedOrder = this.orderFormaterForUser(
+      'order:accepted',
+      acceptedOrder,
+    );
     this.server.to(listenerUser.socketId).emit('order:accepted', formatedOrder);
   }
   async orderOnTheWayEventHandler(order: string, userId: any) {
@@ -133,7 +110,10 @@ export class OrderGateway
     const onTheWayOrder = await this.usersOrdersService.getOrderByIdPopulated(
       order,
     );
-    const formatedOrder = this.orderOntheWayFormaterForUser(onTheWayOrder);
+    const formatedOrder = this.orderFormaterForUser(
+      'order:on-the-way',
+      onTheWayOrder,
+    );
 
     this.server
       .to(listenerUser.socketId)
@@ -144,7 +124,10 @@ export class OrderGateway
     const arrivedOrder = await this.usersOrdersService.getOrderByIdPopulated(
       order,
     );
-    const formatedOrder = this.orderArrivedFormaterForUser(arrivedOrder);
+    const formatedOrder = this.orderFormaterForUser(
+      'order:arrived',
+      arrivedOrder,
+    );
 
     this.server.to(listenerUser.socketId).emit('order:arrived', formatedOrder);
   }
@@ -153,7 +136,10 @@ export class OrderGateway
     const onWashingOrder = await this.usersOrdersService.getOrderByIdPopulated(
       order,
     );
-    const formatedOrder = this.orderOnWashingFormaterForUser(onWashingOrder);
+    const formatedOrder = this.orderFormaterForUser(
+      'order:on-washing',
+      onWashingOrder,
+    );
     this.server
       .to(listenerUser.socketId)
       .emit('order:on-washing', formatedOrder);
@@ -163,7 +149,10 @@ export class OrderGateway
     const completedOrder = await this.usersOrdersService.getOrderByIdPopulated(
       order,
     );
-    const formatedOrder = this.orderCompletedFormaterForUser(completedOrder);
+    const formatedOrder = this.orderFormaterForUser(
+      'order:completed',
+      completedOrder,
+    );
     this.server
       .to(listenerUser.socketId)
       .emit('order:completed', formatedOrder);
