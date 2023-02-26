@@ -41,7 +41,7 @@ export class NotificationsService {
     //   topic: FcmTopics.PROMO_CODE_CREATED,
     // });
 
-    await this.saveTopicBasedNotification(newPromoCodeMsg);
+    await this.saveTopicBasedNotification('PROMO_CODE_BASED', newPromoCodeMsg);
   }
   async sendOrderAcceptedByBikerNotificaiton(
     userId: string,
@@ -206,13 +206,13 @@ export class NotificationsService {
     });
   }
 
-  async saveTopicBasedNotification(message: Notification) {
+  async saveTopicBasedNotification(type: string, message: Notification) {
     await this.notificationsModel.create({
       'message.arTitle': message.ar.title,
       'message.arBody': message.ar.body,
       'message.enTitle': message.en.title,
       'message.enBody': message.en.body,
-      type: 'TOPIC_BASED',
+      type: type,
     });
   }
   async setNotificationIsRead(notificationId: string) {
@@ -243,7 +243,7 @@ export class NotificationsService {
         ...(role === 'user'
           ? {
               $or: [
-                { 
+                {
                   $and: [
                     { createdAt: { $gte: userCreatedDate.toISOString() } },
                     { type: 'TOPIC_BASED' },
