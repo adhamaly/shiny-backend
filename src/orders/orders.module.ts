@@ -18,6 +18,7 @@ import { BikersModule } from '../bikers/bikers.module';
 import { BikerOrdersService } from './services/bikerOrders.service';
 import { BikerOrdersController } from './controllers/bikerOrders.controller';
 import { NotificationsModule } from '../notifications/notifications.module';
+import { AdminModule } from 'src/admin/admin.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { NotificationsModule } from '../notifications/notifications.module';
     forwardRef(() => AuthModule),
     forwardRef(() => BikersModule),
     NotificationsModule,
+    AdminModule,
   ],
   providers: [
     OrdersRepository,

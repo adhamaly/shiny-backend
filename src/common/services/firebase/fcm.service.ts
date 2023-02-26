@@ -35,7 +35,6 @@ export class FCMService {
         // push message to user's tokens
         const response = await FirebaseApp.messaging().sendMulticast(message);
         // Check tokens
-        // if (response) await this.checkFcmTokens(response, message);
 
         return response;
       } catch (error) {
@@ -47,9 +46,16 @@ export class FCMService {
     try {
       // push message to user's tokens
       const response = await FirebaseApp.messaging().send(message);
-      // Check tokens
-      // if (response) await this.checkFcmTokens(response, message);
 
+      return response;
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  async pushNotificationToTopics(message: any) {
+    try {
+      const response = await FirebaseApp.messaging().send(message);
       return response;
     } catch (error) {
       console.log(error);

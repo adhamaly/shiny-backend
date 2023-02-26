@@ -16,14 +16,14 @@ export class OrderStatusValidator {
     ],
     [OrderStatus.ACTIVE]: [
       OrderStatus.ACCEPTED_BY_BIKER,
-      OrderStatus.WAITING_FOR_BIKER,
+      OrderStatus.WAITING_FOR_BIKER_BY_ADMIN,
     ],
     [OrderStatus.CANCELLED_BY_USER]: [],
     [OrderStatus.ACCEPTED_BY_BIKER]: [
       OrderStatus.BIKER_ON_THE_WAY,
       OrderStatus.CANCELLED_BY_BIKER,
     ],
-    [OrderStatus.WAITING_FOR_BIKER]: [OrderStatus.ACCEPTED_BY_BIKER],
+    [OrderStatus.WAITING_FOR_BIKER_BY_ADMIN]: [OrderStatus.ACCEPTED_BY_BIKER],
     [OrderStatus.BIKER_ON_THE_WAY]: [OrderStatus.BIKER_ARRIVED],
     [OrderStatus.CANCELLED_BY_BIKER]: [],
     [OrderStatus.BIKER_ARRIVED]: [OrderStatus.ON_WASHING],

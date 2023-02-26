@@ -170,6 +170,10 @@ export class AdminRepository {
     await admin.save();
   }
 
+  async findAllWithQuery(query: any) {
+    return await this.adminModel.find(query).exec();
+  }
+
   async injectSuperAdmin(hashedPassword: string) {
     const checkIfSuperIsExist = await this.adminModel
       .findOne({

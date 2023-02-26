@@ -162,4 +162,15 @@ export class BikersService {
   ) {
     return await this.bikersRepository.updateLocation(bikerId, location);
   }
+
+  async removeInvalidFcmToken(bikerId: string, fcmToken: string) {
+    const biker = await this.bikersRepository.findById(bikerId);
+    const validFcmTokens = biker.fcmTokens.filter((fcmTokenItem) => {
+      return fcmTokenItem !== fcmToken;
+    });
+    console.log('valid fcmTokens :' + validFcmTokens);
+
+    biker.fcmTokens = validFcmTokens;
+    await biker.save();
+  }
 }

@@ -46,6 +46,9 @@ export class Admin {
   })
   city: City[];
 
+  @Prop({ default: 'ar' })
+  lang: string;
+
   @Prop()
   createdAt: Date;
 

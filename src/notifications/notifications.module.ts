@@ -9,6 +9,7 @@ import {
   notificationsModelName,
   NotificationsSchema,
 } from './schemas/notifications.schema';
+import { BikersModule } from 'src/bikers/bikers.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import {
     FirebaseModule,
     UserModule,
     PaginationModule,
+    BikersModule,
   ],
   controllers: [NotificationsController],
   providers: [NotificationsService],

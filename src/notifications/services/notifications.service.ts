@@ -9,10 +9,12 @@ import {
   notificationsModelName,
   NotificationsModel,
 } from '../schemas/notifications.schema';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { UserService } from '../../user/user.service';
 import { NotifcationsPaginationsDTO } from '../dtos/notificationsPaginations.dto';
 import { PaginationService } from '../../common/services/pagination/pagination.service';
+import { BikersService } from 'src/bikers/services/bikers.service';
+import { FcmTopics } from 'src/common/enums/topics.enum';
 
 @Injectable()
 export class NotificationsService {
@@ -21,9 +23,29 @@ export class NotificationsService {
     private readonly notificationsModel: Model<NotificationsModel>,
     private fcmService: FCMService,
     private userService: UserService,
+    private bikerService: BikersService,
     private paginationService: PaginationService,
   ) {}
 
+  async sendNewPromoCodeCreatedNotification(
+    promoCode: string,
+    discountPercentage: number,
+  ) {
+    console.log(promoCode);
+
+    const newPromoCodeMsg = NotificationsMessages.newPromoCodePublished(
+      promoCode,
+      discountPercentage,
+    );
+    console.log('Here ...');
+
+    // await this.fcmService.pushNotificationToTopics({
+    //   notification: newPromoCodeMsg['en'],
+    //   topic: FcmTopics.PROMO_CODE_CREATED,
+    // });
+
+    await this.saveTopicBasedNotification(newPromoCodeMsg);
+  }
   async sendOrderAcceptedByBikerNotificaiton(
     userId: string,
     userLang: string,
@@ -31,8 +53,6 @@ export class NotificationsService {
     bikerName: string,
     orderId: string,
   ) {
-    // TODO:
-
     const orderAcceptedByBikerMessage =
       NotificationsMessages.orderAcceptedByBikerMessage(
         bikerName,
@@ -47,19 +67,155 @@ export class NotificationsService {
     });
     await this.saveNotification(userId, orderAcceptedByBikerMessage);
 
-    await this.checkFcmResponse(fcmResponse, userId, userFcmTokens);
+    await this.checkFcmResponse(fcmResponse, userId, userFcmTokens, 'user');
+  }
+
+  async sendBikerOnTheWayNotificaiton(
+    userId: string,
+    userLang: string,
+    userFcmTokens: string[],
+    orderId: string,
+  ) {
+    const bikerOnTheWayMessage = NotificationsMessages.bikerOntheWayMessage(
+      orderId,
+      userId,
+    );
+
+    const fcmResponse = await this.fcmService.pushNotificationToDeviceGroup({
+      notification: bikerOnTheWayMessage[userLang || 'en'],
+      data: bikerOnTheWayMessage.data,
+      tokens: userFcmTokens,
+    });
+    await this.saveNotification(userId, bikerOnTheWayMessage);
+
+    await this.checkFcmResponse(fcmResponse, userId, userFcmTokens, 'user');
+  }
+
+  async sendBikerArrivedNotification(
+    receiverId: string,
+    userLang: string,
+    userFcmTokens: string[],
+    orderId: string,
+  ) {
+    const bikerArrivedMessage = NotificationsMessages.bikerArrivedMessage(
+      orderId,
+      receiverId,
+    );
+
+    const fcmResponse = await this.fcmService.pushNotificationToDeviceGroup({
+      notification: bikerArrivedMessage[userLang || 'en'],
+      data: bikerArrivedMessage.data,
+      tokens: userFcmTokens,
+    });
+    await this.saveNotification(receiverId, bikerArrivedMessage);
+
+    await this.checkFcmResponse(fcmResponse, receiverId, userFcmTokens, 'user');
+  }
+
+  async sendOrderCompletedNotification(
+    receiverId: string,
+    userLang: string,
+    userFcmTokens: string[],
+    orderId: string,
+  ) {
+    const orderCompletedMsg = NotificationsMessages.orderCompletedMessage(
+      orderId,
+      receiverId,
+    );
+
+    const fcmResponse = await this.fcmService.pushNotificationToDeviceGroup({
+      notification: orderCompletedMsg[userLang || 'en'],
+      data: orderCompletedMsg.data,
+      tokens: userFcmTokens,
+    });
+    await this.saveNotification(receiverId, orderCompletedMsg);
+
+    await this.checkFcmResponse(fcmResponse, receiverId, userFcmTokens, 'user');
+  }
+
+  async sendOrderUnderReviewNotification(
+    receiverId: string,
+    userLang: string,
+    userFcmTokens: string[],
+    orderId: string,
+  ) {
+    const orderUnderReviewMsg = NotificationsMessages.orderUnderReviewMessage(
+      orderId,
+      receiverId,
+    );
+
+    const fcmResponse = await this.fcmService.pushNotificationToDeviceGroup({
+      notification: orderUnderReviewMsg[userLang || 'en'],
+      data: orderUnderReviewMsg.data,
+      tokens: userFcmTokens,
+    });
+    await this.saveNotification(receiverId, orderUnderReviewMsg);
+
+    await this.checkFcmResponse(fcmResponse, receiverId, userFcmTokens, 'user');
+  }
+
+  async sendAdminAssignedOrderToBikerNotification(
+    receiverId: string,
+    userLang: string,
+    userFcmTokens: string[],
+    orderId: string,
+    adminUserName: string,
+  ) {
+    const assignOrderToBikerByAdminMsg =
+      NotificationsMessages.assignOrderToBikerByAdminMessage(
+        orderId,
+        receiverId,
+        adminUserName,
+      );
+
+    const fcmResponse = await this.fcmService.pushNotificationToDeviceGroup({
+      notification: assignOrderToBikerByAdminMsg[userLang || 'en'],
+      data: assignOrderToBikerByAdminMsg.data,
+      tokens: userFcmTokens,
+    });
+    await this.saveNotification(receiverId, assignOrderToBikerByAdminMsg);
+
+    await this.checkFcmResponse(
+      fcmResponse,
+      receiverId,
+      userFcmTokens,
+      'biker',
+    );
+  }
+
+  async sendPendingOrderToAdminNotification(
+    adminsIds: string[],
+    orderId: string,
+  ) {
+    const orderPendingAdminAssignMsg =
+      NotificationsMessages.orderPendingAdminAssign(orderId);
+
+    adminsIds.forEach(async (adminId) => {
+      await this.saveNotification(adminId, orderPendingAdminAssignMsg);
+    });
   }
 
   async saveNotification(receiverId: string, message: Notification) {
-    // TODO:
     await this.notificationsModel.create({
-      receiver: receiverId,
-      clickableItem: message.data.clickableItem,
+      receiver: new mongoose.Types.ObjectId(receiverId),
+      receiverModel: message.data.receiverModel,
+      clickableItem: new mongoose.Types.ObjectId(message.data.clickableItem),
       clickableItemModel: message.data.clickItemModel,
       'message.arTitle': message.ar.title,
       'message.arBody': message.ar.body,
       'message.enTitle': message.en.title,
       'message.enBody': message.en.body,
+      type: 'TOKEN_BASED',
+    });
+  }
+
+  async saveTopicBasedNotification(message: Notification) {
+    await this.notificationsModel.create({
+      'message.arTitle': message.ar.title,
+      'message.arBody': message.ar.body,
+      'message.enTitle': message.en.title,
+      'message.enBody': message.en.body,
+      type: 'TOPIC_BASED',
     });
   }
   async setNotificationIsRead(notificationId: string) {
@@ -72,6 +228,7 @@ export class NotificationsService {
 
   async getAllNotificationsForReceiver(
     receiverId: string,
+    role: string,
     notifcationsPaginationsDTO: NotifcationsPaginationsDTO,
   ) {
     const { skip, limit } = this.paginationService.getSkipAndLimit(
@@ -79,9 +236,21 @@ export class NotificationsService {
       Number(notifcationsPaginationsDTO.perPage),
     );
 
+    let userCreatedDate: Date;
+    if (role === 'user')
+      userCreatedDate = (await this.userService.getUserById(receiverId))
+        .createdAt;
     const notifications = await this.notificationsModel
       .find({
-        receiver: receiverId,
+        ...(role === 'user'
+          ? {
+              $and: [
+                { createdAt: { $gte: userCreatedDate } },
+                { type: 'TOPIC_BASED' },
+              ],
+              receiver: receiverId,
+            }
+          : { receiver: receiverId }),
       })
       .skip(skip)
       .limit(limit)
@@ -101,9 +270,14 @@ export class NotificationsService {
       Number(notifcationsPaginationsDTO.perPage),
     );
   }
-  async checkFcmResponse(response: any, receiverId: string, tokens: string[]) {
+  async checkFcmResponse(
+    response: any,
+    receiverId: string,
+    tokens: string[],
+    role: string,
+  ) {
     // if response includes token error
-    if (response.failureCount > 0) {
+    if (response?.failureCount > 0) {
       console.log(response);
       console.log(tokens);
 
@@ -119,7 +293,16 @@ export class NotificationsService {
           ) {
             console.log(response.responses[i]);
             console.log(tokens[i] + ' is invalid then remove it');
-            await this.userService.removeInvalidFcmToken(receiverId, tokens[i]);
+            if (role === 'user')
+              await this.userService.removeInvalidFcmToken(
+                receiverId,
+                tokens[i],
+              );
+            else
+              await this.bikerService.removeInvalidFcmToken(
+                receiverId,
+                tokens[i],
+              );
           }
         }
       }

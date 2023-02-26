@@ -71,7 +71,7 @@ export class OrderGateway
       await this.bikersService.getAllOnlineBikersForOrderLocation(
         publishedOrder.location.city,
       );
-    console.log(onlineBikers);
+    console.log('online Bikers -', onlineBikers);
 
     // Send Order to All of them
     for (const biker of onlineBikers) {

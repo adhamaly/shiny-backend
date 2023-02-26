@@ -24,6 +24,7 @@ export class NotificationsController {
     const paginatedNotificationsResult =
       await this.notificationsService.getAllNotificationsForReceiver(
         account.id,
+        account.role,
         notifcationsPaginationsDTO,
       );
     return {

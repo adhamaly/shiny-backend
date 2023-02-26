@@ -12,6 +12,7 @@ import {
   promoCodeModelName,
   PromoCodeSchema,
 } from './schemas/promo-code.schema';
+import { NotificationsModule } from 'src/notifications/notifications.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import {
       { name: promoCodeModelName, schema: PromoCodeSchema },
       { name: appliedPromoCodeModelName, schema: AppliedPromoCodeSchema },
     ]),
+    NotificationsModule,
   ],
   controllers: [PromoCodesController],
   providers: [

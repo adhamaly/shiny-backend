@@ -5,6 +5,7 @@ import { AuthService } from './auth.service';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { AdminModule } from '../admin/admin.module';
 import { BikersModule } from '../bikers/bikers.module';
+import { FirebaseModule } from '../common/services/firebase/firebase.module';
 
 @Global()
 @Module({
@@ -13,6 +14,7 @@ import { BikersModule } from '../bikers/bikers.module';
     AdminModule,
     forwardRef(() => BikersModule),
     JwtModule.register({}),
+    FirebaseModule,
   ],
   controllers: [AuthController],
   providers: [AuthService, JwtService],
