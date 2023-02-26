@@ -51,7 +51,7 @@ export class LocationsRepository {
       .exec();
   }
 
-  async findById(id: string) {
+  async findById(id: any) {
     // TODO
 
     return await this.locationsModel.findById(id).exec();

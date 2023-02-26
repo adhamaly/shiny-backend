@@ -126,7 +126,7 @@ export class BikersRepository {
   async findByUserNameOr404(userName: string) {
     const biker = await this.bikerModel
       .findOne({ userName: userName, isDeleted: false })
-      .select('+password')
+      .select('+password +fcmTokens')
       .exec();
 
     if (!biker)
@@ -136,6 +136,10 @@ export class BikersRepository {
       });
 
     return biker;
+  }
+
+  async findBiker(id: string) {
+    return await this.bikerModel.findById(id).select('+fcmTokens').exec();
   }
 
   async delete(id: string) {
@@ -272,15 +276,19 @@ export class BikersRepository {
       subAdministrativeArea: string;
     },
   ) {
-    await this.bikerModel
-      .findByIdAndUpdate(bikerId, {
-        $set: {
-          latitude: location.latitude,
-          longitude: location.longitude,
-          streetName: location.streetName,
-          subAdministrativeArea: location.subAdministrativeArea,
+    return await this.bikerModel
+      .findByIdAndUpdate(
+        bikerId,
+        {
+          $set: {
+            latitude: location.latitude,
+            longitude: location.longitude,
+            streetName: location.streetName,
+            subAdministrativeArea: location.subAdministrativeArea,
+          },
         },
-      })
+        { new: true },
+      )
       .exec();
   }
 }

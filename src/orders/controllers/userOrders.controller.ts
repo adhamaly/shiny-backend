@@ -41,6 +41,12 @@ export class UserOrdersController {
     @Body('order') order: string,
   ) {
     await this.usersOrdersService.payOrder(account.id, order);
+    // Start the timer for change status
+    setTimeout(async () => {
+      console.log('Check Order Status Timer Run');
+
+      await this.usersOrdersService.checkOrderAfterMins(order, account.id);
+    }, 5 * 60 * 1000);
     return {
       success: true,
     };

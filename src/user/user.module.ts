@@ -20,6 +20,6 @@ import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
   ],
   controllers: [UserController],
   providers: [UserService, UserRepository, UserQueriesHelper],
-  exports: [UserService, UserRepository],
+  exports: [UserService, UserRepository, MongooseModule],
 })
 export class UserModule {}

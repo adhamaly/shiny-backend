@@ -1,6 +1,6 @@
 import 'dotenv/config';
-import admin from 'firebase-admin';
-import { Bucket, File } from '@google-cloud/storage';
+import { FirebaseApp, FirebaseBucket } from './firebase.config';
+import { File } from '@google-cloud/storage';
 import { v4 as uuidv4 } from 'uuid';
 import { unlink } from 'fs';
 import { Injectable } from '@nestjs/common';
@@ -8,19 +8,8 @@ import { MethodNotAllowedResponse } from '../../errors/MethodNotAllowedResponse'
 
 @Injectable()
 export class FirebaseService {
-  private storage: Bucket;
-
   constructor() {
-    admin.initializeApp({
-      credential: admin.credential.cert({
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
-      }),
-      storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-    });
-
-    this.storage = admin.storage().bucket();
+    /* TODO document why this constructor is empty */
   }
 
   async uploadImage(image: Express.Multer.File, prefix = 'uploadedImage') {
@@ -35,7 +24,7 @@ export class FirebaseService {
 
     let data: any;
     try {
-      data = await this.storage.upload(`uploads/${image.filename}`, {
+      data = await FirebaseBucket.upload(`uploads/${image.filename}`, {
         // Support for HTTP requests made with `Accept-Encoding: gzip`
         gzip: true,
         metadata: metadata,
@@ -62,7 +51,7 @@ export class FirebaseService {
 
   async deleteFileFromStorage(filePath: string) {
     try {
-      await this.storage.file(filePath).delete();
+      await FirebaseBucket.file(filePath).delete();
     } catch (error) {
       console.error(error);
     }
@@ -71,7 +60,7 @@ export class FirebaseService {
   getDownloadLink(file: File, downloadToken: string) {
     return (
       'https://firebasestorage.googleapis.com/v0/b/' +
-      this.storage.name +
+      FirebaseBucket.name +
       '/o/' +
       encodeURIComponent(file.name) +
       '?alt=media&token=' +
@@ -80,7 +69,7 @@ export class FirebaseService {
   }
 
   async deleteUser(uid: string) {
-    await admin.auth().deleteUser(uid);
+    await FirebaseApp.auth().deleteUser(uid);
   }
 
   async uploadIcon(fileName: string, prefix = 'uploadedIcon') {
@@ -95,7 +84,7 @@ export class FirebaseService {
 
     let data: any;
     try {
-      data = await this.storage.upload(`icons/${fileName}`, {
+      data = await FirebaseBucket.upload(`icons/${fileName}`, {
         // Support for HTTP requests made with `Accept-Encoding: gzip`
         gzip: true,
         metadata: metadata,

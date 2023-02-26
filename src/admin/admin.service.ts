@@ -150,6 +150,20 @@ export class AdminService {
     }
   }
 
+  async getAllAdminInCity(city: City) {
+    const query = {
+      status: AdminStatus.ACTIVE,
+      $or: [{ city: city }, { isSuperAdmin: true }],
+    };
+    const admins = await this.adminRepository.findAllWithQuery(query);
+
+    const adminsIds = admins.map((admin) => {
+      return admin._id.toString();
+    });
+
+    return adminsIds;
+  }
+
   async injectSuperAdmin() {
     // hash password using bycrpt
     const hashedPassword = await bcrypt.hash(

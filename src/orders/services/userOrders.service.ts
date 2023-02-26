@@ -22,6 +22,8 @@ import { PromoCode } from '../../promo-code/schemas/promo-code.schema';
 import { GetOrdersDTO } from '../dtos/getOrders.dto';
 import { PaginationService } from '../../common/services/pagination/pagination.service';
 import { OrderGateway } from '../gateway/order.gateway';
+import { NotificationsService } from 'src/notifications/services/notifications.service';
+import { AdminService } from 'src/admin/admin.service';
 
 @Injectable()
 export class UsersOrdersService {
@@ -37,6 +39,8 @@ export class UsersOrdersService {
     private paginationService: PaginationService,
     @Inject(forwardRef(() => OrderGateway))
     private orderGateway: OrderGateway,
+    private notificationService: NotificationsService,
+    private adminService: AdminService,
   ) {}
 
   //FIXME: Check order creation for order with subscription plan only
@@ -308,18 +312,43 @@ export class UsersOrdersService {
     switch (pendingOrder.paymentType) {
       case PaymentTypes.CREDIT:
         await this.payCredit(orderId);
-        return;
+        break;
 
       case PaymentTypes.WALLET:
         await this.payWallet(userId, orderId);
-        return;
+        break;
 
       case PaymentTypes.SUBSCRIBED:
         await this.paySubscribedOrder(orderId);
-        return;
+        break;
 
       default:
-        return;
+        break;
+    }
+  }
+
+  async checkOrderAfterMins(orderId: string, userId: string) {
+    const order = await this.ordersRepository.findOrderByIdPopulatedOr404(
+      orderId,
+    );
+    if (order.status != OrderStatus.ACCEPTED_BY_BIKER) {
+      const user = await this.userService.getUserById(userId);
+
+      const adminsIds = await this.adminService.getAllAdminInCity(
+        order.location.city,
+      );
+
+      await this.notificationService.sendPendingOrderToAdminNotification(
+        adminsIds,
+        orderId,
+      );
+
+      await this.notificationService.sendOrderUnderReviewNotification(
+        userId,
+        user.language || 'en',
+        user.fcmTokens,
+        orderId,
+      );
     }
   }
 
@@ -349,6 +378,8 @@ export class UsersOrdersService {
     await this.ordersRepository.update(orderId, {
       status: OrderStatus.ACTIVE,
     });
+
+    await this.orderGateway.orderPublishedEventHandler(orderId);
   }
   //TODO: Use Transactions to update user+subscription+order
   async payWallet(userId: string, orderId: string) {

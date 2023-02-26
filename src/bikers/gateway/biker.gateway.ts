@@ -39,10 +39,8 @@ export class BikerGateway
   }
   async handleConnection(socket: Socket, ...args: any[]) {
     const userPayload = this.authService.authenticateSocketUser(socket);
-    if (!userPayload) {
-      this.disconnect(socket);
-      return;
-    }
+    if (!userPayload?.id) return;
+
     const user = await this.authService.getUserByIdAndRole(
       userPayload.id,
       userPayload.role,
@@ -80,7 +78,7 @@ export class BikerGateway
     //  Handle order not Existing
     if (order) {
       // Update biker location on DB
-      await this.bikersService.updateBikerLocation(
+      const biker = await this.bikersService.updateBikerLocation(
         socket.data.user._id.toString(),
         {
           latitude: Number(body.latitude),

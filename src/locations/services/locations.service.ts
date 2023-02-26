@@ -54,7 +54,7 @@ export class LocationsService {
     return await this.locationsRepository.findAll(user, false);
   }
 
-  async getLocationById(id: string) {
+  async getLocationById(id: any) {
     return await this.locationsRepository.findById(id);
   }
 

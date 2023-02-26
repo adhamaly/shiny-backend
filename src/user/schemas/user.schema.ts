@@ -34,7 +34,7 @@ export class User {
   @Prop()
   updatedAt: Date;
 
-  @Prop({ type: [{ type: String }] })
+  @Prop({ type: [{ type: String }], select: false })
   fcmTokens: string[];
 
   @Prop({ default: false })
@@ -60,6 +60,9 @@ export class User {
 
   @Prop({ default: 'en', trim: true, lowercase: true })
   language: string;
+
+  @Prop({ default: true })
+  isAllowNotification: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -5,12 +5,14 @@ import { AppliedPromoCodesRepository } from '../repositories/applied-promo-codes
 import { User } from '../../user/schemas/user.schema';
 import { PromoCode, PromoCodeStatus } from '../schemas/promo-code.schema';
 import { Cron, CronExpression } from '@nestjs/schedule';
+import { NotificationsService } from '../../notifications/services/notifications.service';
 
 @Injectable()
 export class PromoCodesService {
   constructor(
     private promoCodesRepository: PromoCodesRepository,
     private appliedPromoCodesRepository: AppliedPromoCodesRepository,
+    private notificationService: NotificationsService,
   ) {}
 
   async createPromoCode(createPromoCodeDTO: CreatePromoCodeDTO) {
@@ -19,6 +21,12 @@ export class PromoCodesService {
       createPromoCodeDTO.code,
       createPromoCodeDTO.discountPercentage,
       expiryDate,
+    );
+    console.log('Heeeree ...');
+
+    await this.notificationService.sendNewPromoCodeCreatedNotification(
+      createPromoCodeDTO.code,
+      createPromoCodeDTO.discountPercentage,
     );
   }
 

@@ -10,6 +10,7 @@ import { BikerProfileOwnerGuard } from '../bikers/guard/bikerProfileOwner.guard'
 import { IsPhoneNumber } from 'class-validator';
 import { PhoneNumberDTO } from './dtos/PhoneValidator.dto';
 import { ResetPasswordDTO } from './dtos/resetPassword.dto';
+import { Account } from 'src/common/decorators/user.decorator';
 
 @Controller('auth')
 export class AuthController {
@@ -34,8 +35,11 @@ export class AuthController {
 
   @Post('users/logout')
   @UseGuards(UserAuthGuard, UserAuthorizedGuard)
-  async userLogoutController(@Body() userLogoutDTO: UserLogoutDTO) {
-    await this.authService.userLogout(userLogoutDTO);
+  async userLogoutController(
+    @Account() account: any,
+    @Body() userLogoutDTO: UserLogoutDTO,
+  ) {
+    await this.authService.userLogout(account.id, userLogoutDTO);
     return {
       success: true,
     };
@@ -86,8 +90,11 @@ export class AuthController {
 
   @Post('bikers/logout')
   @UseGuards(UserAuthGuard)
-  async bikerLogoutController(@Body() bikerLogoutDTO: BikerLogoutDTO) {
-    await this.authService.bikerLogout(bikerLogoutDTO);
+  async bikerLogoutController(
+    @Account() account: any,
+    @Body() bikerLogoutDTO: BikerLogoutDTO,
+  ) {
+    await this.authService.bikerLogout(account.id, bikerLogoutDTO);
     return {
       success: true,
     };

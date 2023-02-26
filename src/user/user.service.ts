@@ -10,6 +10,8 @@ import { City } from '../city/schemas/city.schema';
 import { Types } from 'mongoose';
 import { NearestCityCalculator } from '../city/nearestCityCalculator.service';
 import { SubscriptionsService } from '../subscriptions/services/subscriptions.service';
+import { FCMService } from 'src/common/services/firebase/fcm.service';
+import { FcmTopics } from 'src/common/enums/topics.enum';
 
 @Injectable()
 export class UserService {
@@ -19,6 +21,7 @@ export class UserService {
     private nearestCityCalculator: NearestCityCalculator,
     @Inject(forwardRef(() => SubscriptionsService))
     private subscriptionsService: SubscriptionsService,
+    private fcmService: FCMService,
   ) {}
 
   async create(userRegsiterDTO: UserRegisterDTO) {
@@ -111,7 +114,6 @@ export class UserService {
 
   async getUserByPhoneOr404(phone: string) {
     const userDocument = await this.userRepository.findUserByPhoneOr404(phone);
-
     return userDocument;
   }
   async getUserByIdOr404(id: string) {
@@ -149,6 +151,34 @@ export class UserService {
   async pointsEarningUpdate(userId: string, points: number) {
     const user = await this.userRepository.findUserById(userId);
     user.points = user.points + points;
+    await user.save();
+  }
+  async removeInvalidFcmToken(userId: string, fcmToken: string) {
+    const user = await this.userRepository.findUser(userId);
+    const updatedUserFcmTokens = user.fcmTokens.filter((fcmTokenItem) => {
+      return fcmTokenItem !== fcmToken;
+    });
+    console.log('valid fcmTokens :' + updatedUserFcmTokens);
+
+    user.fcmTokens = updatedUserFcmTokens;
+    await user.save();
+  }
+
+  async updateUserNotificationPermission(userId: string, allow: string) {
+    const user = await this.userRepository.findUser(userId);
+
+    user.isAllowNotification = allow === 'on' ? true : false;
+
+    if (allow !== 'on') {
+      if (user.fcmTokens.length) {
+        await this.fcmService.unSubscribeToTopic(
+          user.fcmTokens,
+          FcmTopics.PROMO_CODE_CREATED,
+        );
+
+        user.fcmTokens = [];
+      }
+    }
     await user.save();
   }
 }

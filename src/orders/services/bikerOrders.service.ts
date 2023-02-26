@@ -8,6 +8,8 @@ import { PaginationService } from '../../common/services/pagination/pagination.s
 import { BikersService } from '../../bikers/services/bikers.service';
 import { LocationsService } from '../../locations/services/locations.service';
 import { AcceptOrderDTO } from '../dtos/acceptOrder.dto';
+import { UserService } from '../../user/user.service';
+import { NotificationsService } from '../../notifications/services/notifications.service';
 
 @Injectable()
 export class BikerOrdersService {
@@ -18,6 +20,8 @@ export class BikerOrdersService {
     private paginationService: PaginationService,
     private bikersService: BikersService,
     private locationsService: LocationsService,
+    private userService: UserService,
+    private notificationsService: NotificationsService,
   ) {}
 
   async acceptOrderByBiker(bikerId: string, acceptOrderDTO: AcceptOrderDTO) {
@@ -25,12 +29,14 @@ export class BikerOrdersService {
       acceptOrderDTO.order,
     );
 
+    const userOfOrder = await this.userService.getUser(order.user);
+
     this.orderStatusValidator.isStatusValidForOrder(
       order,
       OrderStatus.ACCEPTED_BY_BIKER,
     );
 
-    await this.bikersService.updateBikerLocation(bikerId, {
+    const biker = await this.bikersService.updateBikerLocation(bikerId, {
       latitude: Number(acceptOrderDTO.latitude),
       longitude: Number(acceptOrderDTO.longitude),
       subAdministrativeArea: acceptOrderDTO.subAdministrativeArea,
@@ -46,21 +52,38 @@ export class BikerOrdersService {
       acceptOrderDTO.order,
       order.user,
     );
-    // TODO: Send Notification to all bikers using fcmTokens
+
+    await this.notificationsService.sendOrderAcceptedByBikerNotificaiton(
+      userOfOrder._id.toString(),
+      userOfOrder.language || 'en',
+      userOfOrder.fcmTokens,
+      biker.userName,
+      acceptOrderDTO.order,
+    );
   }
+
   async orderOnTheWay(bikerId: string, orderId: string) {
     const order = await this.ordersRepository.findOrderByIdOr404(orderId);
     this.orderStatusValidator.isStatusValidForOrder(
       order,
       OrderStatus.BIKER_ON_THE_WAY,
     );
+    const userOfOrder = await this.userService.getUser(order.user);
+
     await this.ordersRepository.update(orderId, {
       status: OrderStatus.BIKER_ON_THE_WAY,
       OnTheWayAt: new Date(),
     });
-    // TODO: Emit order to user using socket streaming
+    //  Emit order to user using socket streaming
     await this.orderGateway.orderOnTheWayEventHandler(orderId, order.user);
-    // TODO: Send Notification to the user of order
+
+    //  Send Notification to the user of order
+    await this.notificationsService.sendBikerOnTheWayNotificaiton(
+      userOfOrder._id.toString(),
+      userOfOrder.language || 'en',
+      userOfOrder.fcmTokens,
+      order._id.toString(),
+    );
   }
 
   async bikerArrived(bikerId: string, orderId: string) {
@@ -69,12 +92,21 @@ export class BikerOrdersService {
       order,
       OrderStatus.BIKER_ARRIVED,
     );
+    const userOfOrder = await this.userService.getUser(order.user);
+
     await this.ordersRepository.update(orderId, {
       status: OrderStatus.BIKER_ARRIVED,
     });
-    // TODO: Emit order to user using socket streaming
+    //  Emit order to user using socket streaming
     await this.orderGateway.bikerArrivedEventHandler(orderId, order.user);
-    // TODO: Send Notification to the user of order
+
+    //  Send Notification to the user of order
+    await this.notificationsService.sendBikerArrivedNotification(
+      userOfOrder._id.toString(),
+      userOfOrder.language || 'en',
+      userOfOrder.fcmTokens,
+      order._id.toString(),
+    );
   }
   async orderOnWashing(bikerId: string, orderId: string) {
     const order = await this.ordersRepository.findOrderByIdOr404(orderId);
@@ -86,9 +118,8 @@ export class BikerOrdersService {
       status: OrderStatus.ON_WASHING,
       onWashingAt: new Date(),
     });
-    // TODO: Emit order to user using socket streaming
+    // Emit order to user using socket streaming
     await this.orderGateway.orderOnWashingEventHandler(orderId, order.user);
-    // TODO: Send Notification to the user of order
   }
 
   async orderCompleted(bikerId: string, orderId: string) {
@@ -97,13 +128,23 @@ export class BikerOrdersService {
       order,
       OrderStatus.COMPLETED,
     );
+
+    const userOfOrder = await this.userService.getUser(order.user);
+
     await this.ordersRepository.update(orderId, {
       status: OrderStatus.COMPLETED,
       endTime: new Date().toISOString(),
     });
-    // TODO: Emit order to user using socket streaming
+    //  Emit order to user using socket streaming
     await this.orderGateway.orderCompletedEventHandler(orderId, order.user);
-    // TODO: Send Notification to the user of order
+
+    //  Send Notification to the user of order
+    await this.notificationsService.sendOrderCompletedNotification(
+      userOfOrder._id.toString(),
+      userOfOrder.language || 'en',
+      userOfOrder.fcmTokens,
+      order._id.toString(),
+    );
   }
 
   //FIXME: Check locations valid for query

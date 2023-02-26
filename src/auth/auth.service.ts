@@ -15,15 +15,16 @@ import { BikerLogoutDTO } from '../bikers/dto/bikerLogout.dto';
 import { ResetPasswordDTO } from './dtos/resetPassword.dto';
 import { Socket } from 'socket.io';
 import { ForbiddenResponse } from '../common/errors/ForbiddenResponse';
-
+import { FCMService } from 'src/common/services/firebase/fcm.service';
+import { FcmTopics } from 'src/common/enums/topics.enum';
 @Injectable()
 export class AuthService {
-  private saltOfRounds = Number(process.env.SALT_OF_ROUND);
   constructor(
     private jwtService: JwtService,
     private userService: UserService,
     private adminService: AdminService,
     private bikersService: BikersService,
+    private fcmService: FCMService,
   ) {}
 
   async userRegisteration(userRegisterDTO: UserRegisterDTO) {
@@ -33,6 +34,11 @@ export class AuthService {
     // Generate Tokens
     const accessToken = this.generateAccessToken(userDocument._id, 'user');
     const refreshToken = this.generateRefreshToken(userDocument._id, 'user');
+
+    await this.fcmService.subscribeToTopic(
+      userRegisterDTO.fcmToken,
+      FcmTopics.PROMO_CODE_CREATED,
+    );
 
     return {
       ...userDocument.toObject(),
@@ -46,6 +52,17 @@ export class AuthService {
       userLoginDTO.phone,
     );
 
+    if (userDocument.isAllowNotification) {
+      if (!userDocument.fcmTokens?.includes(userLoginDTO.fcmToken)) {
+        userDocument.fcmTokens.push(userLoginDTO.fcmToken);
+        await userDocument.save();
+
+        await this.fcmService.subscribeToTopic(
+          userLoginDTO.fcmToken,
+          FcmTopics.PROMO_CODE_CREATED,
+        );
+      }
+    }
     // Generate Tokens
     const accessToken = this.generateAccessToken(userDocument._id, 'user');
     const refreshToken = this.generateRefreshToken(userDocument._id, 'user');
@@ -63,6 +80,7 @@ export class AuthService {
     const biker = await this.bikersService.getBikerByUserNameOr404(
       bikerLoginDTO.userName,
     );
+
     // Decrypt biker password and Compare
     const isMatch = await bcrypt.compare(
       bikerLoginDTO.password,
@@ -73,6 +91,12 @@ export class AuthService {
         ar: 'بيانات المستخدم غير صالحة',
         en: 'Invalid user credentials ',
       });
+
+    if (!biker.fcmTokens?.includes(bikerLoginDTO.fcmToken)) {
+      biker.fcmTokens.push(bikerLoginDTO.fcmToken);
+      await biker.save();
+    }
+
     // Generate Tokens
     const accessToken = this.generateAccessToken(biker._id, 'biker');
     const refreshToken = this.generateRefreshToken(biker._id, 'biker');
@@ -86,12 +110,18 @@ export class AuthService {
     };
   }
 
-  async userLogout(userLogoutDTO: UserLogoutDTO) {
-    //TODO:REMOVE FCM FROM USERMOEL
+  async userLogout(userId: string, userLogoutDTO: UserLogoutDTO) {
+    await this.userService.removeInvalidFcmToken(
+      userId,
+      userLogoutDTO.fcmToken,
+    );
   }
 
-  async bikerLogout(bikerLogoutDTO: BikerLogoutDTO) {
-    //TODO:REMOVE FCM FROM USERMOEL
+  async bikerLogout(bikerId: string, bikerLogoutDTO: BikerLogoutDTO) {
+    await this.bikersService.removeInvalidFcmTokenForBiker(
+      bikerId,
+      bikerLogoutDTO.fcmToken,
+    );
   }
 
   async checkUserPhoneExistence(phone: string) {
@@ -268,8 +298,8 @@ export class AuthService {
         secret: process.env.ACCESS_TOKEN_SECRET,
       });
       return { id: payload.id, role: payload.role };
-    } catch (error) {
-      console.log('Not Authenticated User');
+    } catch {
+      socket.disconnect();
     }
   }
   async updateUserSocketId(userId: string, role: string, socketId: string) {

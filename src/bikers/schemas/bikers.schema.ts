@@ -64,6 +64,9 @@ export class Biker {
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: adminModelName })
   updatedBy: Admin;
 
+  @Prop({ default: 'ar' })
+  language: string;
+
   @Prop()
   createdAt: Date;
 

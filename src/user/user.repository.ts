@@ -36,6 +36,7 @@ export class UserRepository {
       userName: userRegsiterDTO.userName,
       email: userRegsiterDTO.email,
       phone: userRegsiterDTO.phone,
+      fcmTokens: [userRegsiterDTO.fcmToken],
     });
 
     return createdUser;
@@ -115,6 +116,7 @@ export class UserRepository {
   async findUser(userId: any) {
     return await this.userModel
       .findOne({ _id: userId, isDeleted: false })
+      .select('+fcmTokens')
       .exec();
   }
 
@@ -169,6 +171,7 @@ export class UserRepository {
         phone: phone,
         isDeleted: false,
       })
+      .select('+fcmTokens')
       .exec();
 
     if (!userDocument)

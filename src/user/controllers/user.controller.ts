@@ -128,4 +128,19 @@ export class UserController {
       data: await this.userService.updateUserLanguage(account.id, language),
     };
   }
+
+  @Patch('notification-permission')
+  @UseGuards(UserAuthGuard, ProfileOwnerGuard)
+  async updateNotificationPermissions(
+    @Account() account: any,
+    @Body('allow') allow: string,
+  ) {
+    return {
+      success: true,
+      data: await this.userService.updateUserNotificationPermission(
+        account.id,
+        allow,
+      ),
+    };
+  }
 }

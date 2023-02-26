@@ -159,6 +159,24 @@ export class BikersService {
       subAdministrativeArea: string;
     },
   ) {
-    await this.bikersRepository.updateLocation(bikerId, location);
+    return await this.bikersRepository.updateLocation(bikerId, location);
+  }
+
+  async removeInvalidFcmTokenForBiker(bikerId: string, fcmToken: string) {
+    const biker = await this.bikersRepository.findBiker(bikerId);
+    const validFcmTokens = biker.fcmTokens.filter((fcmTokenItem) => {
+      return fcmTokenItem !== fcmToken;
+    });
+    console.log('valid fcmTokens :' + validFcmTokens);
+
+    biker.fcmTokens = validFcmTokens;
+    await biker.save();
+  }
+
+  async updateBikerLanguage(id: string, language: string) {
+    const biker = await this.bikersRepository.findByIdOr404(id);
+
+    biker.language = language;
+    await biker.save();
   }
 }
