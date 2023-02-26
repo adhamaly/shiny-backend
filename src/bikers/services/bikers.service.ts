@@ -163,14 +163,21 @@ export class BikersService {
     return await this.bikersRepository.updateLocation(bikerId, location);
   }
 
-  async removeInvalidFcmToken(bikerId: string, fcmToken: string) {
-    const biker = await this.bikersRepository.findById(bikerId);
+  async removeInvalidFcmTokenForBiker(bikerId: string, fcmToken: string) {
+    const biker = await this.bikersRepository.findBiker(bikerId);
     const validFcmTokens = biker.fcmTokens.filter((fcmTokenItem) => {
       return fcmTokenItem !== fcmToken;
     });
     console.log('valid fcmTokens :' + validFcmTokens);
 
     biker.fcmTokens = validFcmTokens;
+    await biker.save();
+  }
+
+  async updateBikerLanguage(id: string, language: string) {
+    const biker = await this.bikersRepository.findByIdOr404(id);
+
+    biker.language = language;
     await biker.save();
   }
 }

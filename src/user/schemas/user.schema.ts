@@ -60,6 +60,9 @@ export class User {
 
   @Prop({ default: 'en', trim: true, lowercase: true })
   language: string;
+
+  @Prop({ default: true })
+  isAllowNotification: boolean;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

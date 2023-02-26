@@ -52,14 +52,16 @@ export class AuthService {
       userLoginDTO.phone,
     );
 
-    if (!userDocument.fcmTokens?.includes(userLoginDTO.fcmToken)) {
-      userDocument.fcmTokens.push(userLoginDTO.fcmToken);
-      await userDocument.save();
+    if (userDocument.isAllowNotification) {
+      if (!userDocument.fcmTokens?.includes(userLoginDTO.fcmToken)) {
+        userDocument.fcmTokens.push(userLoginDTO.fcmToken);
+        await userDocument.save();
 
-      await this.fcmService.subscribeToTopic(
-        userLoginDTO.fcmToken,
-        FcmTopics.PROMO_CODE_CREATED,
-      );
+        await this.fcmService.subscribeToTopic(
+          userLoginDTO.fcmToken,
+          FcmTopics.PROMO_CODE_CREATED,
+        );
+      }
     }
     // Generate Tokens
     const accessToken = this.generateAccessToken(userDocument._id, 'user');
@@ -116,7 +118,7 @@ export class AuthService {
   }
 
   async bikerLogout(bikerId: string, bikerLogoutDTO: BikerLogoutDTO) {
-    await this.bikersService.removeInvalidFcmToken(
+    await this.bikersService.removeInvalidFcmTokenForBiker(
       bikerId,
       bikerLogoutDTO.fcmToken,
     );

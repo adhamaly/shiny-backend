@@ -243,7 +243,7 @@ export class NotificationsService {
         ...(role === 'user'
           ? {
               $or: [
-                {
+                { 
                   $and: [
                     { createdAt: { $gte: userCreatedDate.toISOString() } },
                     { type: 'TOPIC_BASED' },

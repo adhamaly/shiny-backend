@@ -97,6 +97,18 @@ export class BikersController {
     };
   }
 
+  @Patch('update-language')
+  @UseGuards(UserAuthGuard)
+  async updateBikerLanguageController(
+    @Account() account: any,
+    @Body('language') language: string,
+  ) {
+    await this.bikersService.updateBikerLanguage(account.id, language);
+    return {
+      success: true,
+    };
+  }
+
   @Get('/admin/all')
   @UseGuards(UserAuthGuard, IsAdminGuard)
   async getAllBikersController(@Account() account: any) {
