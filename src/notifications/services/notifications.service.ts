@@ -13,6 +13,7 @@ import mongoose, { Model } from 'mongoose';
 import { UserService } from '../../user/user.service';
 import { NotifcationsPaginationsDTO } from '../dtos/notificationsPaginations.dto';
 import { PaginationService } from '../../common/services/pagination/pagination.service';
+import { NotificationsType } from 'src/common/enums/topics.enum';
 
 @Injectable()
 export class NotificationsService {
@@ -41,7 +42,10 @@ export class NotificationsService {
     //   topic: FcmTopics.PROMO_CODE_CREATED,
     // });
 
-    await this.saveTopicBasedNotification('PROMO_CODE_BASED', newPromoCodeMsg);
+    await this.saveTopicBasedNotification(
+      NotificationsType.PROMO_CODE_BASED,
+      newPromoCodeMsg,
+    );
   }
   async sendOrderAcceptedByBikerNotificaiton(
     userId: string,
@@ -202,7 +206,7 @@ export class NotificationsService {
       'message.arBody': message.ar.body,
       'message.enTitle': message.en.title,
       'message.enBody': message.en.body,
-      type: 'TOKEN_BASED',
+      type: NotificationsType.TOKEN_BASED,
     });
   }
 
@@ -246,7 +250,7 @@ export class NotificationsService {
                 {
                   $and: [
                     { createdAt: { $gte: userCreatedDate.toISOString() } },
-                    { type: 'TOPIC_BASED' },
+                    { type: NotificationsType.PROMO_CODE_BASED },
                   ],
                 },
                 {
@@ -269,7 +273,7 @@ export class NotificationsService {
                 {
                   $and: [
                     { createdAt: { $gte: userCreatedDate.toISOString() } },
-                    { type: 'TOPIC_BASED' },
+                    { type: NotificationsType.PROMO_CODE_BASED },
                   ],
                 },
                 {
