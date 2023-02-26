@@ -22,6 +22,7 @@ export class PromoCodesService {
       createPromoCodeDTO.discountPercentage,
       expiryDate,
     );
+    console.log('Heeeree ...');
 
     await this.notificationService.sendNewPromoCodeCreatedNotification(
       createPromoCodeDTO.code,

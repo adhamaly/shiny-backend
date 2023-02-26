@@ -13,8 +13,6 @@ import mongoose, { Model } from 'mongoose';
 import { UserService } from '../../user/user.service';
 import { NotifcationsPaginationsDTO } from '../dtos/notificationsPaginations.dto';
 import { PaginationService } from '../../common/services/pagination/pagination.service';
-import { BikersService } from 'src/bikers/services/bikers.service';
-import { FcmTopics } from 'src/common/enums/topics.enum';
 
 @Injectable()
 export class NotificationsService {
@@ -23,7 +21,6 @@ export class NotificationsService {
     private readonly notificationsModel: Model<NotificationsModel>,
     private fcmService: FCMService,
     private userService: UserService,
-    private bikerService: BikersService,
     private paginationService: PaginationService,
   ) {}
 
@@ -240,15 +237,22 @@ export class NotificationsService {
     if (role === 'user')
       userCreatedDate = (await this.userService.getUserById(receiverId))
         .createdAt;
+
     const notifications = await this.notificationsModel
       .find({
         ...(role === 'user'
           ? {
-              $and: [
-                { createdAt: { $gte: userCreatedDate } },
-                { type: 'TOPIC_BASED' },
+              $or: [
+                {
+                  $and: [
+                    { createdAt: { $gte: userCreatedDate.toISOString() } },
+                    { type: 'TOPIC_BASED' },
+                  ],
+                },
+                {
+                  receiver: receiverId,
+                },
               ],
-              receiver: receiverId,
             }
           : { receiver: receiverId }),
       })
@@ -258,8 +262,22 @@ export class NotificationsService {
       .exec();
 
     const count = await this.notificationsModel
-      .count({
-        receiver: receiverId,
+      .countDocuments({
+        ...(role === 'user'
+          ? {
+              $or: [
+                {
+                  $and: [
+                    { createdAt: { $gte: userCreatedDate.toISOString() } },
+                    { type: 'TOPIC_BASED' },
+                  ],
+                },
+                {
+                  receiver: receiverId,
+                },
+              ],
+            }
+          : { receiver: receiverId }),
       })
       .exec();
 
@@ -270,6 +288,7 @@ export class NotificationsService {
       Number(notifcationsPaginationsDTO.perPage),
     );
   }
+  //TODO: Remove invalid fcmTokens for bikers
   async checkFcmResponse(
     response: any,
     receiverId: string,
@@ -293,16 +312,7 @@ export class NotificationsService {
           ) {
             console.log(response.responses[i]);
             console.log(tokens[i] + ' is invalid then remove it');
-            if (role === 'user')
-              await this.userService.removeInvalidFcmToken(
-                receiverId,
-                tokens[i],
-              );
-            else
-              await this.bikerService.removeInvalidFcmToken(
-                receiverId,
-                tokens[i],
-              );
+            await this.userService.removeInvalidFcmToken(receiverId, tokens[i]);
           }
         }
       }
