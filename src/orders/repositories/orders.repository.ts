@@ -24,6 +24,7 @@ import { NotFoundResponse } from '../../common/errors/NotFoundResponse';
 import { servicesIconModelName } from '../../services-icons/schemas/services-icons.schema';
 import { bikerModelName } from '../../bikers/schemas/bikers.schema';
 import { City } from '../../city/schemas/city.schema';
+import { Roles } from 'src/admin/schemas/admin.schema';
 
 @Injectable()
 export class OrdersRepository {
@@ -240,6 +241,54 @@ export class OrdersRepository {
       .exec();
 
     return { orders, count };
+  }
+
+  async findAllByAdmin(
+    skip: number,
+    limit: number,
+    role: string,
+    status?: OrderStatus[],
+    cities?: City[],
+  ) {
+    const orders = await this.ordersModel
+      .find({
+        ...(status?.length ? { status: { $in: status } } : {}),
+        ...(role === Roles.SuperAdmin
+          ? {}
+          : { 'location.city': { $in: cities } }),
+      })
+      .skip(skip)
+      .limit(limit)
+      .sort({ updatedAt: -1 })
+      .populate(this.populatedPaths)
+      .exec();
+
+    const count = await this.ordersModel
+      .countDocuments({
+        ...(status?.length ? { status: { $in: status } } : {}),
+        ...(role === Roles.SuperAdmin
+          ? {}
+          : { 'location.city': { $in: cities } }),
+      })
+      .exec();
+
+    return orders;
+  }
+
+  async findAllAssignedByAdmin(skip: number, limit: number, adminId: string) {
+    const orders = await this.ordersModel
+      .find({ assignedBy: adminId })
+      .skip(skip)
+      .limit(limit)
+      .sort({ updatedAt: -1 })
+      .populate(this.populatedPaths)
+      .exec();
+
+    const count = await this.ordersModel
+      .countDocuments({ assignedBy: adminId })
+      .exec();
+
+    return orders;
   }
 
   async findOrderByIdOr404(id: string) {

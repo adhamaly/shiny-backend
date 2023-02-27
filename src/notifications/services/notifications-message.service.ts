@@ -42,6 +42,29 @@ export class NotificationsMessages {
     };
   }
 
+  static orderAssignedByAdminMessage(
+    bikerName: string,
+    orderId: string,
+    receiverId: string,
+  ): Notification {
+    return {
+      ar: {
+        title: `هناك طلب ${bikerName}`,
+        body: `راجع الطلب`,
+      },
+      en: {
+        title: 'Your request has been confirmed',
+        body: `${bikerName} accepts your request`,
+      },
+      data: {
+        clickableItem: orderId.toString(),
+        clickItemModel: ordersModelName,
+        receiverId: receiverId.toString(),
+        receiverModel: 'user',
+        role: 'user',
+      },
+    };
+  }
   static orderAcceptedByBikerMessage(
     bikerName: string,
     orderId: string,
@@ -160,7 +183,6 @@ export class NotificationsMessages {
   static assignOrderToBikerByAdminMessage(
     orderId: string,
     receiverId: string,
-    adminUserName: string,
   ): Notification {
     return {
       ar: {
@@ -169,7 +191,7 @@ export class NotificationsMessages {
       },
       en: {
         title: 'Assigned order',
-        body: `The Admin ${adminUserName} Assigned you to order, click here to know more details`,
+        body: `The Admin Assigned you to order, click here to know more details`,
       },
       data: {
         clickableItem: orderId.toString(),

@@ -23,6 +23,7 @@ import {
   WashingService,
   WashingServicesModelName,
 } from '../../washing-services/schemas/washing-services.schema';
+import { Admin, adminModelName } from 'src/admin/schemas/admin.schema';
 
 export type OrdersModel = Order & Document;
 export const ordersModelName = 'order';
@@ -84,6 +85,12 @@ export class Order {
 
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: promoCodeModelName })
   promoCode: PromoCode;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: adminModelName })
+  assignedBy: Admin;
+
+  @Prop({ default: false })
+  isAssigned: boolean;
 
   @Prop()
   startTime: string;

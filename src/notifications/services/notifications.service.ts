@@ -160,13 +160,11 @@ export class NotificationsService {
     userLang: string,
     userFcmTokens: string[],
     orderId: string,
-    adminUserName: string,
   ) {
     const assignOrderToBikerByAdminMsg =
       NotificationsMessages.assignOrderToBikerByAdminMessage(
         orderId,
         receiverId,
-        adminUserName,
       );
 
     const fcmResponse = await this.fcmService.pushNotificationToDeviceGroup({

@@ -332,6 +332,10 @@ export class UsersOrdersService {
       orderId,
     );
     if (order.status != OrderStatus.ACCEPTED_BY_BIKER) {
+      await this.ordersRepository.update(orderId, {
+        status: OrderStatus.WAITING_FOR_BIKER_BY_ADMIN,
+      });
+
       const user = await this.userService.getUserById(userId);
 
       const adminsIds = await this.adminService.getAllAdminInCity(

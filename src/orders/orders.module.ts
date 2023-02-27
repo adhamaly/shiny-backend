@@ -19,6 +19,8 @@ import { BikerOrdersService } from './services/bikerOrders.service';
 import { BikerOrdersController } from './controllers/bikerOrders.controller';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { AdminModule } from 'src/admin/admin.module';
+import { AdminsOrdersController } from './controllers/adminOrders.controller';
+import { AdminsOrdersService } from './services/adminOrders.service';
 
 @Module({
   imports: [
@@ -43,8 +45,13 @@ import { AdminModule } from 'src/admin/admin.module';
     OrderStatusValidator,
     OrderGateway,
     BikerOrdersService,
+    AdminsOrdersService,
   ],
-  controllers: [UserOrdersController, BikerOrdersController],
+  controllers: [
+    UserOrdersController,
+    BikerOrdersController,
+    AdminsOrdersController,
+  ],
   exports: [UsersOrdersService],
 })
 export class OrdersModule {}
