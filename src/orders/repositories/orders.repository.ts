@@ -272,7 +272,7 @@ export class OrdersRepository {
       })
       .exec();
 
-    return orders;
+    return { orders, count };
   }
 
   async findAllAssignedByAdmin(skip: number, limit: number, adminId: string) {
@@ -288,7 +288,7 @@ export class OrdersRepository {
       .countDocuments({ assignedBy: adminId })
       .exec();
 
-    return orders;
+    return { orders, count };
   }
 
   async findOrderByIdOr404(id: string) {

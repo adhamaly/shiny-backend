@@ -43,7 +43,7 @@ export class AdminsOrdersService {
     if (role === Roles.SubAdmin)
       admin = await this.adminService.getById(adminId);
 
-    const orders = await this.ordersRepository.findAllByAdmin(
+    const { orders, count } = await this.ordersRepository.findAllByAdmin(
       skip,
       limit,
       role,
@@ -51,7 +51,12 @@ export class AdminsOrdersService {
       role === Roles.SubAdmin ? admin.city : [],
     );
 
-    return orders;
+    return this.paginationService.paginate(
+      orders,
+      count,
+      Number(page),
+      Number(perPage),
+    );
   }
 
   /**
@@ -116,12 +121,14 @@ export class AdminsOrdersService {
       Number(perPage),
     );
 
-    const orders = await this.ordersRepository.findAllAssignedByAdmin(
-      skip,
-      limit,
-      adminId,
-    );
+    const { orders, count } =
+      await this.ordersRepository.findAllAssignedByAdmin(skip, limit, adminId);
 
-    return orders;
+    return this.paginationService.paginate(
+      orders,
+      count,
+      Number(page),
+      Number(perPage),
+    );
   }
 }

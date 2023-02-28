@@ -7,7 +7,7 @@ import {
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { UserAuthGuard } from 'src/auth/guards';
+import { IsAdminGaurd, UserAuthGuard } from 'src/auth/guards';
 import { Account } from 'src/common/decorators/user.decorator';
 import { GetOrdersByAdminDTO } from '../dtos';
 import { AdminsOrdersService } from '../services/adminOrders.service';
@@ -18,39 +18,44 @@ export class AdminsOrdersController {
 
   //TODO: Add status[] in query if for listing with more than one status
   @Get('all')
-  @UseGuards(UserAuthGuard)
+  @UseGuards(UserAuthGuard, IsAdminGaurd)
   async getAllOrdersByAdminController(
     @Account() account: any,
     @Query() getOrdersByAdminQuery: GetOrdersByAdminDTO,
   ) {
+    const ordersPagination = await this.adminsOrdersService.getOrdersByAdmin(
+      account.id,
+      account.role,
+      getOrdersByAdminQuery,
+    );
     return {
       success: true,
-      data: await this.adminsOrdersService.getOrdersByAdmin(
-        account.id,
-        account.role,
-        getOrdersByAdminQuery,
-      ),
+      pagination: ordersPagination.paginationData,
+      data: ordersPagination.dataList,
     };
   }
 
   //TODO: Add bikerId in query if admin list assigned order to biker
   @Get('assigned')
-  @UseGuards(UserAuthGuard)
+  @UseGuards(UserAuthGuard, IsAdminGaurd)
   async ge(
     @Account() account: any,
     @Query() getOrdersByAdminQuery: GetOrdersByAdminDTO,
   ) {
-    return {
-      success: true,
-      data: await this.adminsOrdersService.getAssignedOrdersByAdmin(
+    const assignedOrdersPagination =
+      await this.adminsOrdersService.getAssignedOrdersByAdmin(
         account.id,
         getOrdersByAdminQuery,
-      ),
+      );
+    return {
+      success: true,
+      pagination: assignedOrdersPagination.paginationData,
+      data: assignedOrdersPagination.dataList,
     };
   }
 
   @Patch('/:orderId/assign-biker')
-  @UseGuards(UserAuthGuard)
+  @UseGuards(UserAuthGuard, IsAdminGaurd)
   async assignOrderByAdminController(
     @Account() account: any,
     @Param('orderId') orderId: string,
