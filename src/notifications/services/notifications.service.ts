@@ -260,7 +260,7 @@ export class NotificationsService {
       })
       .skip(skip)
       .limit(limit)
-      .sort({ updatedAt: -1 })
+      .sort({ createdAt: -1 })
       .exec();
 
     const count = await this.notificationsModel

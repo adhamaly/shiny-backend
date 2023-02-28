@@ -131,4 +131,10 @@ export class AdminsOrdersService {
       Number(perPage),
     );
   }
+
+  async getOrderById(orderId: string) {
+    return await this.ordersRepository.findOrderWithCityByIdPopulatedOr404(
+      orderId,
+    );
+  }
 }

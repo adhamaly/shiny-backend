@@ -54,6 +54,15 @@ export class AdminsOrdersController {
     };
   }
 
+  @Get('/order-details/:orderId')
+  @UseGuards(UserAuthGuard, IsAdminGaurd)
+  async getOrderById(@Param('orderId') orderId: string) {
+    return {
+      success: true,
+      data: await this.adminsOrdersService.getOrderById(orderId),
+    };
+  }
+
   @Patch('/:orderId/assign-biker')
   @UseGuards(UserAuthGuard, IsAdminGaurd)
   async assignOrderByAdminController(

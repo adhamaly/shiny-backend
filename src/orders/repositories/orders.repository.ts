@@ -23,7 +23,7 @@ import { promoCodeModelName } from '../../promo-code/schemas/promo-code.schema';
 import { NotFoundResponse } from '../../common/errors/NotFoundResponse';
 import { servicesIconModelName } from '../../services-icons/schemas/services-icons.schema';
 import { bikerModelName } from '../../bikers/schemas/bikers.schema';
-import { City } from '../../city/schemas/city.schema';
+import { City, cityModelName } from '../../city/schemas/city.schema';
 import { Roles } from 'src/admin/schemas/admin.schema';
 
 @Injectable()
@@ -59,6 +59,60 @@ export class OrdersRepository {
       model: locationModelName,
       select:
         'latitude longitude streetName subAdministrativeArea isSaved savedName city',
+    },
+    {
+      path: 'promoCode',
+      model: promoCodeModelName,
+      select: 'code',
+    },
+    {
+      path: 'user',
+      model: userModelName,
+      select: 'userName phone imageLink',
+    },
+    {
+      path: 'biker',
+      model: bikerModelName,
+      select: 'userName phone imageLink imagePath latitude longitude',
+    },
+  ];
+
+  populatedPathsForAdminView = [
+    {
+      path: 'washingServices',
+      populate: {
+        path: 'icon',
+        select: 'iconPath iconLink',
+        model: servicesIconModelName,
+      },
+      model: WashingServicesModelName,
+      select: 'name price description duration pointsToPay',
+    },
+    {
+      path: 'addOns',
+      populate: {
+        path: 'icon',
+        select: 'iconPath iconLink',
+        model: servicesIconModelName,
+      },
+      model: addOnsModelName,
+      select: 'name price',
+    },
+    {
+      path: 'vehicle',
+      model: vehicleModelName,
+      select: 'type brand model plateNumber color imageLink imagePath',
+    },
+    {
+      path: 'location',
+      populate: {
+        path: 'city',
+        select: 'name',
+        model: cityModelName,
+      },
+      model: locationModelName,
+      select:
+        'latitude longitude streetName subAdministrativeArea isSaved savedName',
     },
     {
       path: 'promoCode',
@@ -260,7 +314,7 @@ export class OrdersRepository {
       .skip(skip)
       .limit(limit)
       .sort({ updatedAt: -1 })
-      .populate(this.populatedPaths)
+      .populate(this.populatedPathsForAdminView)
       .exec();
 
     const count = await this.ordersModel
@@ -281,7 +335,7 @@ export class OrdersRepository {
       .skip(skip)
       .limit(limit)
       .sort({ updatedAt: -1 })
-      .populate(this.populatedPaths)
+      .populate(this.populatedPathsForAdminView)
       .exec();
 
     const count = await this.ordersModel
@@ -305,6 +359,19 @@ export class OrdersRepository {
     const order = await this.ordersModel
       .findById(id)
       .populate(this.populatedPaths)
+      .exec();
+    if (!order)
+      throw new NotFoundResponse({
+        ar: 'لا يوجد هذا الطلب',
+        en: 'Order Not Found',
+      });
+
+    return order;
+  }
+  async findOrderWithCityByIdPopulatedOr404(id: string) {
+    const order = await this.ordersModel
+      .findById(id)
+      .populate(this.populatedPathsForAdminView)
       .exec();
     if (!order)
       throw new NotFoundResponse({
