@@ -304,29 +304,79 @@ export class OrdersRepository {
     status?: OrderStatus[],
     cities?: City[],
   ) {
-    const orders = await this.ordersModel
-      .find({
-        ...(status?.length ? { status: { $in: status } } : {}),
-        ...(role === Roles.SuperAdmin
-          ? {}
-          : { 'location.city': { $in: cities } }),
-      })
-      .skip(skip)
-      .limit(limit)
-      .sort({ updatedAt: -1 })
-      .populate(this.populatedPathsForAdminView)
-      .exec();
+    const orders = await this.ordersModel.aggregate([
+      {
+        $match: { ...(status?.length ? { status: { $in: status } } : {}) },
+      },
+      {
+        $lookup: {
+          from: locationModelName,
+          let: { locationId: '$location' },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ['$_id', '$$locationId'] },
+                    {
+                      ...(role === Roles.SubAdmin
+                        ? { $in: ['$city', cities] }
+                        : {}),
+                    },
+                  ],
+                },
+              },
+            },
+          ],
+          as: 'order_location',
+        },
+      },
+      {
+        $facet: {
+          metadata: [{ $count: 'count' }],
+          data: [{ $skip: skip }, { $limit: limit }],
+        },
+      },
+    ]);
 
-    const count = await this.ordersModel
-      .countDocuments({
-        ...(status?.length ? { status: { $in: status } } : {}),
-        ...(role === Roles.SuperAdmin
-          ? {}
-          : { 'location.city': { $in: cities } }),
-      })
-      .exec();
+    await this.ordersModel.populate(
+      orders[0]['data'],
+      this.populatedPathsForAdminView,
+    );
 
-    return { orders, count };
+    orders[0]['data']?.forEach((order: any) => {
+      order['order_location'] = undefined;
+    });
+    return {
+      orders: orders[0]['data'],
+      count: orders[0]['metadata']?.length
+        ? orders[0]['metadata'][0]['count']
+        : 0,
+    };
+
+    // const orders = await this.ordersModel
+    //   .find({
+    //     ...(status?.length ? { status: { $in: status } } : {}),
+    //     ...(role === Roles.SuperAdmin
+    //       ? {}
+    //       : { 'location.city': { $in: cities } }),
+    //   })
+    //   .skip(skip)
+    //   .limit(limit)
+    //   .sort({ updatedAt: -1 })
+    //   .populate(this.populatedPathsForAdminView)
+    //   .exec();
+
+    // const count = await this.ordersModel
+    //   .countDocuments({
+    //     ...(status?.length ? { status: { $in: status } } : {}),
+    //     ...(role === Roles.SuperAdmin
+    //       ? {}
+    //       : { 'location.city': { $in: cities } }),
+    //   })
+    //   .exec();
+
+    // return { orders, count };
   }
 
   async findAllAssignedByAdmin(skip: number, limit: number, adminId: string) {
