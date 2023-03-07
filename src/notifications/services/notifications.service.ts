@@ -13,7 +13,7 @@ import mongoose, { Model } from 'mongoose';
 import { UserService } from '../../user/user.service';
 import { NotifcationsPaginationsDTO } from '../dtos/notificationsPaginations.dto';
 import { PaginationService } from '../../common/services/pagination/pagination.service';
-import { NotificationsType } from 'src/common/enums/topics.enum';
+import { FcmTopics, NotificationsType } from 'src/common/enums/topics.enum';
 
 @Injectable()
 export class NotificationsService {
@@ -35,15 +35,14 @@ export class NotificationsService {
       promoCode,
       discountPercentage,
     );
-    console.log('Here ...');
 
-    // await this.fcmService.pushNotificationToTopics({
-    //   notification: newPromoCodeMsg['en'],
-    //   topic: FcmTopics.PROMO_CODE_CREATED,
-    // });
+    await this.fcmService.pushNotificationToTopics({
+      notification: newPromoCodeMsg['en'],
+      topic: FcmTopics.PROMO_CODE_CREATED,
+    });
 
     await this.saveTopicBasedNotification(
-      NotificationsType.PROMO_CODE_BASED,
+      NotificationsType.NEW_PROMO_CODE,
       newPromoCodeMsg,
     );
   }
@@ -66,7 +65,11 @@ export class NotificationsService {
       data: orderAcceptedByBikerMessage.data,
       tokens: userFcmTokens,
     });
-    await this.saveNotification(userId, orderAcceptedByBikerMessage);
+    await this.saveNotification(
+      userId,
+      orderAcceptedByBikerMessage,
+      NotificationsType.ORDER_TRACKING,
+    );
 
     await this.checkFcmResponse(fcmResponse, userId, userFcmTokens, 'user');
   }
@@ -87,7 +90,11 @@ export class NotificationsService {
       data: bikerOnTheWayMessage.data,
       tokens: userFcmTokens,
     });
-    await this.saveNotification(userId, bikerOnTheWayMessage);
+    await this.saveNotification(
+      userId,
+      bikerOnTheWayMessage,
+      NotificationsType.ORDER_TRACKING,
+    );
 
     await this.checkFcmResponse(fcmResponse, userId, userFcmTokens, 'user');
   }
@@ -108,7 +115,11 @@ export class NotificationsService {
       data: bikerArrivedMessage.data,
       tokens: userFcmTokens,
     });
-    await this.saveNotification(receiverId, bikerArrivedMessage);
+    await this.saveNotification(
+      receiverId,
+      bikerArrivedMessage,
+      NotificationsType.ORDER_TRACKING,
+    );
 
     await this.checkFcmResponse(fcmResponse, receiverId, userFcmTokens, 'user');
   }
@@ -129,7 +140,11 @@ export class NotificationsService {
       data: orderCompletedMsg.data,
       tokens: userFcmTokens,
     });
-    await this.saveNotification(receiverId, orderCompletedMsg);
+    await this.saveNotification(
+      receiverId,
+      orderCompletedMsg,
+      NotificationsType.ORDER_COMPLETED,
+    );
 
     await this.checkFcmResponse(fcmResponse, receiverId, userFcmTokens, 'user');
   }
@@ -150,7 +165,11 @@ export class NotificationsService {
       data: orderUnderReviewMsg.data,
       tokens: userFcmTokens,
     });
-    await this.saveNotification(receiverId, orderUnderReviewMsg);
+    await this.saveNotification(
+      receiverId,
+      orderUnderReviewMsg,
+      NotificationsType.ORDER_WAITING_FOR_ADMIN,
+    );
 
     await this.checkFcmResponse(fcmResponse, receiverId, userFcmTokens, 'user');
   }
@@ -194,7 +213,11 @@ export class NotificationsService {
     });
   }
 
-  async saveNotification(receiverId: string, message: Notification) {
+  async saveNotification(
+    receiverId: string,
+    message: Notification,
+    type?: NotificationsType,
+  ) {
     await this.notificationsModel.create({
       receiver: new mongoose.Types.ObjectId(receiverId),
       receiverModel: message.data.receiverModel,
@@ -204,7 +227,7 @@ export class NotificationsService {
       'message.arBody': message.ar.body,
       'message.enTitle': message.en.title,
       'message.enBody': message.en.body,
-      type: NotificationsType.TOKEN_BASED,
+      type: type,
     });
   }
 
@@ -248,7 +271,7 @@ export class NotificationsService {
                 {
                   $and: [
                     { createdAt: { $gte: userCreatedDate.toISOString() } },
-                    { type: NotificationsType.PROMO_CODE_BASED },
+                    { type: NotificationsType.NEW_PROMO_CODE },
                   ],
                 },
                 {
@@ -271,7 +294,7 @@ export class NotificationsService {
                 {
                   $and: [
                     { createdAt: { $gte: userCreatedDate.toISOString() } },
-                    { type: NotificationsType.PROMO_CODE_BASED },
+                    { type: NotificationsType.NEW_PROMO_CODE },
                   ],
                 },
                 {
