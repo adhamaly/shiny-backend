@@ -248,7 +248,6 @@ export class OrdersRepository {
         status: {
           $in: [
             OrderStatus.ACCEPTED_BY_BIKER,
-            OrderStatus.WAITING_FOR_BIKER_BY_ADMIN,
             OrderStatus.BIKER_ON_THE_WAY,
             OrderStatus.BIKER_ARRIVED,
             OrderStatus.ON_WASHING,
