@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { FirebaseService } from '../common/services/firebase/firebase.service';
-import { InjectModel } from '@nestjs/mongoose';
+import { InjectConnection, InjectModel } from '@nestjs/mongoose';
 import { User, UserModel, userModelName } from './schemas/user.schema';
-import { Model } from 'mongoose';
+import mongoose, { Model } from 'mongoose';
 import { UserRegisterDTO, UserUpdateProfileDTO } from './dto';
 import { UpdateUserLocation } from './dto/user.updateLocation.dto';
 import { City } from '../city/schemas/city.schema';
@@ -14,6 +14,7 @@ export class UserRepository {
   constructor(
     @InjectModel(userModelName) private readonly userModel: Model<UserModel>,
     private firebaseService: FirebaseService,
+    @InjectConnection() private readonly connection: mongoose.Connection,
   ) {}
 
   async create(userRegsiterDTO: UserRegisterDTO) {
@@ -82,12 +83,24 @@ export class UserRepository {
   }
 
   async delete(userId: string) {
-    const userProfile = await this.findUserById(userId);
-    userProfile.isDeleted = true;
-    userProfile.phone = '-d' + userProfile.phone;
-    userProfile.email = '-d' + userProfile.email;
-    userProfile.fcmTokens = [];
-    await userProfile.save();
+    const session = await this.connection.startSession();
+
+    session.startTransaction();
+
+    try {
+      await session.commitTransaction();
+      const userProfile = await this.findUserById(userId);
+      userProfile.isDeleted = true;
+      userProfile.phone = '-d' + userProfile.phone;
+      userProfile.email = '-d' + userProfile.email;
+      userProfile.fcmTokens = [];
+      await userProfile.save({ session });
+    } catch (error) {
+      await session.abortTransaction();
+      throw new MethodNotAllowedResponse({ ar: '', en: '' });
+    } finally {
+      session.endSession();
+    }
   }
 
   async findAll(): Promise<User[]> {

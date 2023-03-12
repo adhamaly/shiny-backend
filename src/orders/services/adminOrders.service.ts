@@ -103,6 +103,7 @@ export class AdminsOrdersService {
       userOfOrder.fcmTokens,
       biker.userName,
       orderId,
+      userOfOrder.isAllowNotification,
     );
   }
 

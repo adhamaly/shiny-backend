@@ -59,6 +59,7 @@ export class BikerOrdersService {
       userOfOrder.fcmTokens,
       biker.userName,
       acceptOrderDTO.order,
+      userOfOrder.isAllowNotification,
     );
   }
 
@@ -83,6 +84,7 @@ export class BikerOrdersService {
       userOfOrder.language || 'en',
       userOfOrder.fcmTokens,
       order._id.toString(),
+      userOfOrder.isAllowNotification,
     );
   }
 
@@ -106,6 +108,7 @@ export class BikerOrdersService {
       userOfOrder.language || 'en',
       userOfOrder.fcmTokens,
       order._id.toString(),
+      userOfOrder.isAllowNotification,
     );
   }
   async orderOnWashing(bikerId: string, orderId: string) {
@@ -144,6 +147,7 @@ export class BikerOrdersService {
       userOfOrder.language || 'en',
       userOfOrder.fcmTokens,
       order._id.toString(),
+      userOfOrder.isAllowNotification,
     );
   }
 

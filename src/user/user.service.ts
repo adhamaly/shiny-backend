@@ -175,8 +175,6 @@ export class UserService {
           user.fcmTokens,
           FcmTopics.PROMO_CODE_CREATED,
         );
-
-        user.fcmTokens = [];
       }
     }
     await user.save();

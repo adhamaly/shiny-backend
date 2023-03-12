@@ -29,8 +29,6 @@ export class NotificationsService {
     promoCode: string,
     discountPercentage: number,
   ) {
-    console.log(promoCode);
-
     const newPromoCodeMsg = NotificationsMessages.newPromoCodePublished(
       promoCode,
       discountPercentage,
@@ -52,6 +50,7 @@ export class NotificationsService {
     userFcmTokens: string[],
     bikerName: string,
     orderId: string,
+    userAllowNotification: boolean,
   ) {
     const orderAcceptedByBikerMessage =
       NotificationsMessages.orderAcceptedByBikerMessage(
@@ -60,11 +59,15 @@ export class NotificationsService {
         userId,
       );
 
-    const fcmResponse = await this.fcmService.pushNotificationToDeviceGroup({
-      notification: orderAcceptedByBikerMessage[userLang || 'en'],
-      data: orderAcceptedByBikerMessage.data,
-      tokens: userFcmTokens,
-    });
+    let fcmResponse: any;
+    if (userAllowNotification) {
+      fcmResponse = await this.fcmService.pushNotificationToDeviceGroup({
+        notification: orderAcceptedByBikerMessage[userLang || 'en'],
+        data: orderAcceptedByBikerMessage.data,
+        tokens: userFcmTokens,
+      });
+    }
+
     await this.saveNotification(
       userId,
       orderAcceptedByBikerMessage,
@@ -79,17 +82,21 @@ export class NotificationsService {
     userLang: string,
     userFcmTokens: string[],
     orderId: string,
+    userAllowNotification: boolean,
   ) {
     const bikerOnTheWayMessage = NotificationsMessages.bikerOntheWayMessage(
       orderId,
       userId,
     );
 
-    const fcmResponse = await this.fcmService.pushNotificationToDeviceGroup({
-      notification: bikerOnTheWayMessage[userLang || 'en'],
-      data: bikerOnTheWayMessage.data,
-      tokens: userFcmTokens,
-    });
+    let fcmResponse: any;
+    if (userAllowNotification) {
+      fcmResponse = await this.fcmService.pushNotificationToDeviceGroup({
+        notification: bikerOnTheWayMessage[userLang || 'en'],
+        data: bikerOnTheWayMessage.data,
+        tokens: userFcmTokens,
+      });
+    }
     await this.saveNotification(
       userId,
       bikerOnTheWayMessage,
@@ -104,17 +111,21 @@ export class NotificationsService {
     userLang: string,
     userFcmTokens: string[],
     orderId: string,
+    userAllowNotification: boolean,
   ) {
     const bikerArrivedMessage = NotificationsMessages.bikerArrivedMessage(
       orderId,
       receiverId,
     );
 
-    const fcmResponse = await this.fcmService.pushNotificationToDeviceGroup({
-      notification: bikerArrivedMessage[userLang || 'en'],
-      data: bikerArrivedMessage.data,
-      tokens: userFcmTokens,
-    });
+    let fcmResponse: any;
+    if (userAllowNotification)
+      fcmResponse = await this.fcmService.pushNotificationToDeviceGroup({
+        notification: bikerArrivedMessage[userLang || 'en'],
+        data: bikerArrivedMessage.data,
+        tokens: userFcmTokens,
+      });
+
     await this.saveNotification(
       receiverId,
       bikerArrivedMessage,
@@ -129,17 +140,21 @@ export class NotificationsService {
     userLang: string,
     userFcmTokens: string[],
     orderId: string,
+    userAllowNotification: boolean,
   ) {
     const orderCompletedMsg = NotificationsMessages.orderCompletedMessage(
       orderId,
       receiverId,
     );
 
-    const fcmResponse = await this.fcmService.pushNotificationToDeviceGroup({
-      notification: orderCompletedMsg[userLang || 'en'],
-      data: orderCompletedMsg.data,
-      tokens: userFcmTokens,
-    });
+    let fcmResponse: any;
+    if (userAllowNotification)
+      fcmResponse = await this.fcmService.pushNotificationToDeviceGroup({
+        notification: orderCompletedMsg[userLang || 'en'],
+        data: orderCompletedMsg.data,
+        tokens: userFcmTokens,
+      });
+
     await this.saveNotification(
       receiverId,
       orderCompletedMsg,
@@ -154,17 +169,21 @@ export class NotificationsService {
     userLang: string,
     userFcmTokens: string[],
     orderId: string,
+    userAllowNotification: boolean,
   ) {
     const orderUnderReviewMsg = NotificationsMessages.orderUnderReviewMessage(
       orderId,
       receiverId,
     );
 
-    const fcmResponse = await this.fcmService.pushNotificationToDeviceGroup({
-      notification: orderUnderReviewMsg[userLang || 'en'],
-      data: orderUnderReviewMsg.data,
-      tokens: userFcmTokens,
-    });
+    let fcmResponse: any;
+    if (userAllowNotification)
+      fcmResponse = await this.fcmService.pushNotificationToDeviceGroup({
+        notification: orderUnderReviewMsg[userLang || 'en'],
+        data: orderUnderReviewMsg.data,
+        tokens: userFcmTokens,
+      });
+
     await this.saveNotification(
       receiverId,
       orderUnderReviewMsg,

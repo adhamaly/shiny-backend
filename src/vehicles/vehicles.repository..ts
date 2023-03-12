@@ -141,4 +141,6 @@ export class VehiclesRepository {
 
     return plateIsExist ? true : false;
   }
+
+  async deleteMany(userId: string) {}
 }

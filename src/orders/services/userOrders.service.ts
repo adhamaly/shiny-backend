@@ -331,7 +331,7 @@ export class UsersOrdersService {
     const order = await this.ordersRepository.findOrderByIdPopulatedOr404(
       orderId,
     );
-    if (order.status != OrderStatus.ACCEPTED_BY_BIKER) {
+    if (order.status === OrderStatus.ACTIVE) {
       await this.ordersRepository.update(orderId, {
         status: OrderStatus.WAITING_FOR_BIKER_BY_ADMIN,
       });
@@ -352,6 +352,7 @@ export class UsersOrdersService {
         user.language || 'en',
         user.fcmTokens,
         orderId,
+        user.isAllowNotification,
       );
     }
   }
