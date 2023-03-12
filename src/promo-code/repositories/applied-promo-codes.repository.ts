@@ -18,6 +18,18 @@ export class AppliedPromoCodesRepository {
 
   async applyPromoCode(user: User, promoCode: PromoCode) {
     await this.isValidPromoCode(promoCode);
+    const isAlreadyApplied = await this.appliedPromoCodeModel
+      .findOne({
+        user,
+        promoCode,
+      })
+      .exec();
+    if (isAlreadyApplied)
+      throw new MethodNotAllowedResponse({
+        ar: 'البرومو كود مستخدم من قبل',
+        en: 'Promo Code is already applied',
+      });
+
     await this.appliedPromoCodeModel.create({
       user: user,
       promoCode: promoCode,
