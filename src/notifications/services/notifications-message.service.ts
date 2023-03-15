@@ -29,8 +29,8 @@ export class NotificationsMessages {
   ): Notification {
     return {
       ar: {
-        title: ``,
-        body: ``,
+        title: `هناك برومو كود`,
+        body: `هناك برومو كود`,
       },
       en: {
         title: 'A small gift awaits you',
@@ -95,8 +95,8 @@ export class NotificationsMessages {
   ): Notification {
     return {
       ar: {
-        title: ``,
-        body: ``,
+        title: `هناك طلب`,
+        body: `هناك طلب`,
       },
       en: {
         title: 'Be ready',
@@ -117,8 +117,8 @@ export class NotificationsMessages {
   ): Notification {
     return {
       ar: {
-        title: ``,
-        body: ``,
+        title: `هناك طلب`,
+        body: `هناك طلب`,
       },
       en: {
         title: 'The biker arrived',
@@ -140,8 +140,8 @@ export class NotificationsMessages {
   ): Notification {
     return {
       ar: {
-        title: ``,
-        body: ``,
+        title: `هناك طلب`,
+        body: `هناك طلب`,
       },
       en: {
         title: 'The washing has been completed',
@@ -163,8 +163,8 @@ export class NotificationsMessages {
   ): Notification {
     return {
       ar: {
-        title: ``,
-        body: ``,
+        title: `هناك طلب`,
+        body: `هناك طلب`,
       },
       en: {
         title: 'Searching for the biker',
@@ -186,8 +186,8 @@ export class NotificationsMessages {
   ): Notification {
     return {
       ar: {
-        title: ``,
-        body: ``,
+        title: `هناك طلب`,
+        body: `هناك طلب`,
       },
       en: {
         title: 'Assigned order',
@@ -206,8 +206,8 @@ export class NotificationsMessages {
   static orderPendingAdminAssign(orderId: string): Notification {
     return {
       ar: {
-        title: ``,
-        body: ``,
+        title: `هناك طلب`,
+        body: `هناك طلب`,
       },
       en: {
         title: 'Pending request',
