@@ -91,6 +91,7 @@ export class BikersRepository {
   async findByIdOr404(id: string) {
     const biker = await this.bikerModel
       .findOne({ _id: id, isDeleted: false })
+      .select('+fcmTokens')
       .populate(this.populatedPaths)
       .exec();
 

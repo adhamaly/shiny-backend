@@ -336,7 +336,7 @@ export class UsersOrdersService {
         status: OrderStatus.WAITING_FOR_BIKER_BY_ADMIN,
       });
 
-      const user = await this.userService.getUserById(userId);
+      const user = await this.userService.getUser(userId);
 
       const adminsIds = await this.adminService.getAllAdminInCity(
         order.location.city,
