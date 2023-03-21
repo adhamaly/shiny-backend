@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Patch, Query, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  ParseIntPipe,
+  Patch,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
 import { BikerOrdersService } from '../services/bikerOrders.service';
 import { UserAuthGuard } from '../../auth/guards/userAuthentication.guard';
 import { Account } from 'src/common/decorators/user.decorator';
@@ -88,6 +96,20 @@ export class BikerOrdersController {
   ) {
     /* TODO document why this async method 'bikerCompleteOrderController' is empty */
     await this.bikerOrdersService.orderCompleted(account.id, order);
+
+    return {
+      success: true,
+    };
+  }
+
+  @Patch('rate-order')
+  @UseGuards(UserAuthGuard)
+  async rateOrderByUser(
+    @Account() account: any,
+    @Body('order') order: string,
+    @Body('starsNum', ParseIntPipe) starsNum: number,
+  ) {
+    await this.bikerOrdersService.rateUser(account.id, order, starsNum);
 
     return {
       success: true,

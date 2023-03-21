@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { OrdersRepository } from '../repositories/orders.repository';
 import { OrderGateway } from '../gateway/order.gateway';
-import { OrderStatus } from '../schemas/orders.schema';
+import { Order, OrderStatus } from '../schemas/orders.schema';
 import { OrderStatusValidator } from '../validators/orderStatusValidator';
 import { GetOrdersDTO } from '../dtos/getOrders.dto';
 import { PaginationService } from '../../common/services/pagination/pagination.service';
@@ -10,6 +10,8 @@ import { LocationsService } from '../../locations/services/locations.service';
 import { AcceptOrderDTO } from '../dtos/acceptOrder.dto';
 import { UserService } from '../../user/user.service';
 import { NotificationsService } from '../../notifications/services/notifications.service';
+import { MethodNotAllowedResponse } from 'src/common/errors';
+import { User } from 'src/user/schemas/user.schema';
 
 @Injectable()
 export class BikerOrdersService {
@@ -177,5 +179,55 @@ export class BikerOrdersService {
       Number(getOrdersDTO.page),
       Number(getOrdersDTO.perPage),
     );
+  }
+  async rateUser(bikerId: string, orderId: string, starsNum: number) {
+    // Check order status
+    const order = await this.ordersRepository.findOrderByIdOr404(orderId);
+
+    // TODO: Check access authorization for biker
+    // TODO: Check rating applied by biker for same order
+    if (order.ratingOfUser)
+      throw new MethodNotAllowedResponse({
+        ar: 'لا يمكنك اجراء التقييم',
+        en: 'You Can Not Rate Biker',
+      });
+
+    const activeOrderStates = [
+      'ACCEPTED_BY_BIKER',
+      'BIKER_ARRIVED',
+      'BIKER_ON_THE_WAY',
+      'ON_WASHING',
+      'COMPLETED',
+    ];
+    if (!activeOrderStates.includes(order.status))
+      throw new MethodNotAllowedResponse({
+        ar: 'لا يمكنك اجراء التقييم',
+        en: 'You Can Not Rate Biker',
+      });
+
+    // rate user
+    order.ratingOfUser = starsNum;
+    await order.save();
+
+    const { average } = await this.calculateAverageRateForUser(order.user);
+
+    // update user average rating
+    const user = await this.userService.getUser(order.user);
+    user.rating = average;
+    await user.save();
+  }
+
+  private async calculateAverageRateForUser(userId: string | User) {
+    const listOfRate = await this.ordersRepository.getUserRatedOrders(userId);
+    const count: number = listOfRate.length;
+    const sumOfRate = listOfRate.reduce(
+      (prev: number, curr: Order) => prev + curr.ratingOfBiker,
+      0,
+    );
+    const avg = sumOfRate / count;
+
+    const avgTwoDecimal = Number(avg.toFixed(0));
+
+    return { average: avgTwoDecimal };
   }
 }

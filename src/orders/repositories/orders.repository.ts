@@ -22,7 +22,7 @@ import { Order } from '../schemas/orders.schema';
 import { promoCodeModelName } from '../../promo-code/schemas/promo-code.schema';
 import { NotFoundResponse } from '../../common/errors/NotFoundResponse';
 import { servicesIconModelName } from '../../services-icons/schemas/services-icons.schema';
-import { bikerModelName } from '../../bikers/schemas/bikers.schema';
+import { Biker, bikerModelName } from '../../bikers/schemas/bikers.schema';
 import { City, cityModelName } from '../../city/schemas/city.schema';
 import { Roles } from 'src/admin/schemas/admin.schema';
 
@@ -73,7 +73,7 @@ export class OrdersRepository {
     {
       path: 'biker',
       model: bikerModelName,
-      select: 'userName phone imageLink imagePath latitude longitude',
+      select: 'userName phone imageLink imagePath latitude longitude rating',
     },
   ];
 
@@ -127,7 +127,7 @@ export class OrdersRepository {
     {
       path: 'biker',
       model: bikerModelName,
-      select: 'userName phone imageLink imagePath latitude longitude',
+      select: 'userName phone imageLink imagePath latitude longitude rating',
     },
   ];
 
@@ -294,6 +294,20 @@ export class OrdersRepository {
       .exec();
 
     return { orders, count };
+  }
+
+  async getBikerRatedOrders(bikerId: string | Biker) {
+    return await this.ordersModel.find({
+      biker: bikerId,
+      ratingOfBiker: { $gte: 0 },
+    });
+  }
+
+  async getUserRatedOrders(userId: string | User) {
+    return await this.ordersModel.find({
+      user: userId,
+      ratingOfUser: { $gte: 0 },
+    });
   }
 
   async findAllByAdmin(

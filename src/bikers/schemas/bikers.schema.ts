@@ -72,6 +72,9 @@ export class Biker {
 
   @Prop()
   updatedAt: Date;
+
+  @Prop({ default: 0 })
+  rating: number;
 }
 
 export const BikersSchema = SchemaFactory.createForClass(Biker);

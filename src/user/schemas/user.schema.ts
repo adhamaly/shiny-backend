@@ -63,6 +63,9 @@ export class User {
 
   @Prop({ default: true })
   isAllowNotification: boolean;
+
+  @Prop({ default: 0 })
+  rating: number;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

@@ -68,7 +68,7 @@ export class OrderGateway
       _id: order._id,
       status: order.status,
       ...(event === 'order:accepted'
-        ? { biker: { ...order.toObject().biker, rating: 3.6 } }
+        ? { biker: { ...order.toObject().biker } }
         : {}),
       ...(event === 'order:arrived'
         ? { duration: order.totalDuration }

@@ -265,7 +265,7 @@ export class BikersRepository {
     return updatedBiker;
   }
 
-  async findById(id: string) {
+  async findById(id: string | Biker) {
     return await this.bikerModel.findOne({ _id: id, isDeleted: false }).exec();
   }
   async updateLocation(

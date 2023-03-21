@@ -3,6 +3,7 @@ import {
   Controller,
   Get,
   Param,
+  ParseIntPipe,
   Patch,
   Post,
   Query,
@@ -75,6 +76,20 @@ export class UserOrdersController {
         order,
         code,
       ),
+    };
+  }
+
+  @Patch('rate-order')
+  @UseGuards(UserAuthGuard)
+  async rateOrderByUser(
+    @Account() account: any,
+    @Body('order') order: string,
+    @Body('starsNum', ParseIntPipe) starsNum: number,
+  ) {
+    await this.usersOrdersService.rateBiker(account.id, order, starsNum);
+
+    return {
+      success: true,
     };
   }
 

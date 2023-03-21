@@ -133,6 +133,12 @@ export class Order {
 
   @Prop()
   onWashingAt: Date;
+
+  @Prop()
+  ratingOfBiker: number;
+
+  @Prop()
+  ratingOfUser: number;
 }
 
 export const OrdersSchema = SchemaFactory.createForClass(Order);

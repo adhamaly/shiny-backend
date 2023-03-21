@@ -24,6 +24,8 @@ import { PaginationService } from '../../common/services/pagination/pagination.s
 import { OrderGateway } from '../gateway/order.gateway';
 import { NotificationsService } from 'src/notifications/services/notifications.service';
 import { AdminService } from 'src/admin/admin.service';
+import { BikersService } from 'src/bikers/services/bikers.service';
+import { Biker } from 'src/bikers/schemas/bikers.schema';
 
 @Injectable()
 export class UsersOrdersService {
@@ -41,6 +43,7 @@ export class UsersOrdersService {
     private orderGateway: OrderGateway,
     private notificationService: NotificationsService,
     private adminService: AdminService,
+    private bikersService: BikersService,
   ) {}
 
   //FIXME: Check order creation for order with subscription plan only
@@ -459,5 +462,55 @@ export class UsersOrdersService {
   }
   async getOrdersByQuery(query: any) {
     return await this.ordersRepository.findManyQuery(query);
+  }
+
+  async rateBiker(userId: string, orderId: string, starsNum: number) {
+    // Check order status
+    const order = await this.ordersRepository.findOrderByIdOr404(orderId);
+
+    // TODO: Check order authorization
+    // TODO: Check rating applied by user for same order
+    if (order.ratingOfBiker)
+      throw new MethodNotAllowedResponse({
+        ar: 'لا يمكنك اجراء التقييم',
+        en: 'You Can Not Rate Biker',
+      });
+
+    const activeOrderStates = [
+      'ACCEPTED_BY_BIKER',
+      'BIKER_ARRIVED',
+      'BIKER_ON_THE_WAY',
+      'ON_WASHING',
+      'COMPLETED',
+    ];
+    if (!activeOrderStates.includes(order.status))
+      throw new MethodNotAllowedResponse({
+        ar: 'لا يمكنك اجراء التقييم',
+        en: 'You Can Not Rate Biker',
+      });
+
+    // rate biker
+    order.ratingOfBiker = starsNum;
+    await order.save();
+
+    const { average } = await this.calculateAverageRateForBiker(order.biker);
+    // update biker average rating
+    const biker = await this.bikersService.getById(order.biker);
+    biker.rating = average;
+    await biker.save();
+  }
+
+  private async calculateAverageRateForBiker(bikerId: string | Biker) {
+    const listOfRate = await this.ordersRepository.getBikerRatedOrders(bikerId);
+    const count: number = listOfRate.length;
+    const sumOfRate = listOfRate.reduce(
+      (prev: number, curr: Order) => prev + curr.ratingOfBiker,
+      0,
+    );
+    const avg = sumOfRate / count;
+
+    const avgTwoDecimal = Number(avg.toFixed(0));
+
+    return { average: avgTwoDecimal };
   }
 }
