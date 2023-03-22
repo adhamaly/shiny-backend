@@ -93,7 +93,7 @@ export class OrderGateway
     }
   }
 
-  async orderAcceptedByBikerEventHandler(order: string, userId: any) {
+  async orderAcceptedByBikerEventHandler(order: string, userId: string) {
     const listenerUser = await this.userService.getUser(userId);
     const acceptedOrder = await this.usersOrdersService.getOrderByIdPopulated(
       order,
@@ -104,7 +104,7 @@ export class OrderGateway
     );
     this.server.to(listenerUser.socketId).emit('order:accepted', formatedOrder);
   }
-  async orderOnTheWayEventHandler(order: string, userId: any) {
+  async orderOnTheWayEventHandler(order: string, userId: string) {
     const listenerUser = await this.userService.getUser(userId);
     const onTheWayOrder = await this.usersOrdersService.getOrderByIdPopulated(
       order,
@@ -118,7 +118,7 @@ export class OrderGateway
       .to(listenerUser.socketId)
       .emit('order:on-the-way', formatedOrder);
   }
-  async bikerArrivedEventHandler(order: string, userId: any) {
+  async bikerArrivedEventHandler(order: string, userId: string) {
     const listenerUser = await this.userService.getUser(userId);
     const arrivedOrder = await this.usersOrdersService.getOrderByIdPopulated(
       order,
@@ -130,7 +130,7 @@ export class OrderGateway
 
     this.server.to(listenerUser.socketId).emit('order:arrived', formatedOrder);
   }
-  async orderOnWashingEventHandler(order: string, userId: any) {
+  async orderOnWashingEventHandler(order: string, userId: string) {
     const listenerUser = await this.userService.getUser(userId);
     const onWashingOrder = await this.usersOrdersService.getOrderByIdPopulated(
       order,
@@ -143,7 +143,7 @@ export class OrderGateway
       .to(listenerUser.socketId)
       .emit('order:on-washing', formatedOrder);
   }
-  async orderCompletedEventHandler(order: string, userId: any) {
+  async orderCompletedEventHandler(order: string, userId: string) {
     const listenerUser = await this.userService.getUser(userId);
     const completedOrder = await this.usersOrdersService.getOrderByIdPopulated(
       order,

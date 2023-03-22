@@ -32,7 +32,7 @@ export class BikerOrdersService {
       acceptOrderDTO.order,
     );
 
-    const userOfOrder = await this.userService.getUser(order.user);
+    const userOfOrder = await this.userService.getUser(order.user.toString());
 
     this.orderStatusValidator.isStatusValidForOrder(
       order,
@@ -53,7 +53,7 @@ export class BikerOrdersService {
 
     await this.orderGateway.orderAcceptedByBikerEventHandler(
       acceptOrderDTO.order,
-      order.user,
+      order.user.toString(),
     );
 
     await this.notificationsService.sendOrderAcceptedByBikerNotificaiton(
@@ -72,14 +72,17 @@ export class BikerOrdersService {
       order,
       OrderStatus.BIKER_ON_THE_WAY,
     );
-    const userOfOrder = await this.userService.getUser(order.user);
+    const userOfOrder = await this.userService.getUser(order.user.toString());
 
     await this.ordersRepository.update(orderId, {
       status: OrderStatus.BIKER_ON_THE_WAY,
       OnTheWayAt: new Date(),
     });
     //  Emit order to user using socket streaming
-    await this.orderGateway.orderOnTheWayEventHandler(orderId, order.user);
+    await this.orderGateway.orderOnTheWayEventHandler(
+      orderId,
+      order.user.toString(),
+    );
 
     //  Send Notification to the user of order
     await this.notificationsService.sendBikerOnTheWayNotificaiton(
@@ -97,13 +100,16 @@ export class BikerOrdersService {
       order,
       OrderStatus.BIKER_ARRIVED,
     );
-    const userOfOrder = await this.userService.getUser(order.user);
+    const userOfOrder = await this.userService.getUser(order.user.toString());
 
     await this.ordersRepository.update(orderId, {
       status: OrderStatus.BIKER_ARRIVED,
     });
     //  Emit order to user using socket streaming
-    await this.orderGateway.bikerArrivedEventHandler(orderId, order.user);
+    await this.orderGateway.bikerArrivedEventHandler(
+      orderId,
+      order.user.toString(),
+    );
 
     //  Send Notification to the user of order
     await this.notificationsService.sendBikerArrivedNotification(
@@ -125,7 +131,10 @@ export class BikerOrdersService {
       onWashingAt: new Date(),
     });
     // Emit order to user using socket streaming
-    await this.orderGateway.orderOnWashingEventHandler(orderId, order.user);
+    await this.orderGateway.orderOnWashingEventHandler(
+      orderId,
+      order.user.toString(),
+    );
   }
 
   async orderCompleted(bikerId: string, orderId: string) {
@@ -135,14 +144,17 @@ export class BikerOrdersService {
       OrderStatus.COMPLETED,
     );
 
-    const userOfOrder = await this.userService.getUser(order.user);
+    const userOfOrder = await this.userService.getUser(order.user.toString());
 
     await this.ordersRepository.update(orderId, {
       status: OrderStatus.COMPLETED,
       endTime: new Date().toISOString(),
     });
     //  Emit order to user using socket streaming
-    await this.orderGateway.orderCompletedEventHandler(orderId, order.user);
+    await this.orderGateway.orderCompletedEventHandler(
+      orderId,
+      order.user.toString(),
+    );
 
     //  Send Notification to the user of order
     await this.notificationsService.sendOrderCompletedNotification(
@@ -212,7 +224,7 @@ export class BikerOrdersService {
     const { average } = await this.calculateAverageRateForUser(order.user);
 
     // update user average rating
-    const user = await this.userService.getUser(order.user);
+    const user = await this.userService.getUser(order.user.toString());
     user.rating = average;
     await user.save();
   }

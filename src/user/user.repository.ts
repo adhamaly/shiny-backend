@@ -111,7 +111,7 @@ export class UserRepository {
     return userDocument;
   }
 
-  async findUser(userId: any) {
+  async findUser(userId: string) {
     return await this.userModel
       .findOne({ _id: userId, isDeleted: false })
       .select('+fcmTokens')

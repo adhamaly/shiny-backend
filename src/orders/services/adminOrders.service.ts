@@ -87,7 +87,7 @@ export class AdminsOrdersService {
 
     const biker = await this.bikerService.getByIdOr404(bikerId);
 
-    const userOfOrder = await this.userService.getUser(order.user);
+    const userOfOrder = await this.userService.getUser(order.user.toString());
 
     // TODO: Send Notification to biker and user
     await this.notificationService.sendAdminAssignedOrderToBikerNotification(

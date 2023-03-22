@@ -130,7 +130,7 @@ export class UserService {
   async getUserById(id: string) {
     return await this.userRepository.findUserById(id);
   }
-  async getUser(userId: any) {
+  async getUser(userId: string) {
     return await this.userRepository.findUser(userId);
   }
   async updateUserSocketId(id: string, socketId: string) {
