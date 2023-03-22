@@ -12,6 +12,7 @@ import { UserService } from '../../user/user.service';
 import { NotificationsService } from '../../notifications/services/notifications.service';
 import { MethodNotAllowedResponse } from 'src/common/errors';
 import { User } from 'src/user/schemas/user.schema';
+import { ForbiddenResponse } from 'src/common/errors/ForbiddenResponse';
 
 @Injectable()
 export class BikerOrdersService {
@@ -184,22 +185,21 @@ export class BikerOrdersService {
     // Check order status
     const order = await this.ordersRepository.findOrderByIdOr404(orderId);
 
-    // TODO: Check access authorization for biker
-    // TODO: Check rating applied by biker for same order
+    //  Check access authorization for biker
+    if (order.biker.toString() != bikerId)
+      throw new ForbiddenResponse({
+        ar: 'لا يمكنك اجراء التقييم',
+        en: 'You Can Not Rate Biker',
+      });
+
+    //  Check rating applied by biker for same order
     if (order.ratingOfUser)
       throw new MethodNotAllowedResponse({
         ar: 'لا يمكنك اجراء التقييم',
         en: 'You Can Not Rate Biker',
       });
 
-    const activeOrderStates = [
-      'ACCEPTED_BY_BIKER',
-      'BIKER_ARRIVED',
-      'BIKER_ON_THE_WAY',
-      'ON_WASHING',
-      'COMPLETED',
-    ];
-    if (!activeOrderStates.includes(order.status))
+    if (order.status !== OrderStatus.COMPLETED)
       throw new MethodNotAllowedResponse({
         ar: 'لا يمكنك اجراء التقييم',
         en: 'You Can Not Rate Biker',
