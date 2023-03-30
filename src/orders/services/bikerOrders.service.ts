@@ -225,7 +225,8 @@ export class BikerOrdersService {
 
     // update user average rating
     const user = await this.userService.getUser(order.user.toString());
-    user.rating = average;
+
+    user.rating = Number(average);
     await user.save();
   }
 
@@ -233,7 +234,7 @@ export class BikerOrdersService {
     const listOfRate = await this.ordersRepository.getUserRatedOrders(userId);
     const count: number = listOfRate.length;
     const sumOfRate = listOfRate.reduce(
-      (prev: number, curr: Order) => prev + curr.ratingOfBiker,
+      (prev: number, curr: Order) => prev + curr.ratingOfUser,
       0,
     );
     const avg = sumOfRate / count;
