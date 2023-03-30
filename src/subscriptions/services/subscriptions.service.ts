@@ -109,7 +109,7 @@ export class SubscriptionsService {
     const isPlanExistInCity =
       await this.plansService.checkPlanExistenceWithCity(
         subscription.plan,
-        city['city'],
+        city['city']._id,
       );
 
     return {

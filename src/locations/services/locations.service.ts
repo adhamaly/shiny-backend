@@ -40,7 +40,7 @@ export class LocationsService {
 
     return await this.locationsRepository.create(
       user,
-      city['city'],
+      city['city']._id,
       location,
       false,
     );
@@ -110,7 +110,7 @@ export class LocationsService {
 
     const newLocation = await this.locationsRepository.create(
       user,
-      city['city'],
+      city['city']._id,
       location,
       true,
     );

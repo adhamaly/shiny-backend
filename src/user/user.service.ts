@@ -87,7 +87,7 @@ export class UserService {
     await this.userQueriesHelper.updateUserLocation(
       id,
       updateUserLocation,
-      nearestCity['city'],
+      nearestCity['city']._id,
     );
 
     return user.language === 'en' ? 'done' : 'تم التعديل بنجاح';
