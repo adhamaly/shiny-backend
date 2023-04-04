@@ -325,12 +325,36 @@ export class NotificationsService {
       })
       .exec();
 
-    return this.paginationService.paginate(
+    const totalUnRead = await this.notificationsModel.countDocuments({
+      ...(role === 'user'
+        ? {
+            $or: [
+              {
+                $and: [
+                  { createdAt: { $gte: userCreatedDate.toISOString() } },
+                  { type: NotificationsType.NEW_PROMO_CODE },
+                ],
+              },
+              {
+                receiver: receiverId,
+              },
+            ],
+          }
+        : { receiver: receiverId }),
+      isRead: false,
+    });
+
+    const paginationResult = this.paginationService.paginate(
       notifications,
       count,
       Number(notifcationsPaginationsDTO.page),
       Number(notifcationsPaginationsDTO.perPage),
     );
+
+    return {
+      paginationResult,
+      totalUnRead,
+    };
   }
   //TODO: Remove invalid fcmTokens for bikers
   async checkFcmResponse(

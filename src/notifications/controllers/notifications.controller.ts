@@ -29,9 +29,12 @@ export class NotificationsController {
       );
     return {
       success: true,
-      totalPages: paginatedNotificationsResult.paginationData.totalPages,
-      totalItems: paginatedNotificationsResult.paginationData.totalItems,
-      data: paginatedNotificationsResult.dataList,
+      totalPages:
+        paginatedNotificationsResult.paginationResult.paginationData.totalPages,
+      totalItems:
+        paginatedNotificationsResult.paginationResult.paginationData.totalItems,
+      totalUnRead: paginatedNotificationsResult.totalUnRead,
+      data: paginatedNotificationsResult.paginationResult.dataList,
     };
   }
 
