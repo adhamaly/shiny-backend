@@ -47,6 +47,7 @@ export class AuthService {
     };
   }
 
+  //TODO: Add IdToken for login for verification the user
   async userLogin(userLoginDTO: UserLoginDTO) {
     const userDocument = await this.userService.getUserByPhoneOr404(
       userLoginDTO.phone,
