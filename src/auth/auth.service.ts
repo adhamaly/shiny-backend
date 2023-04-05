@@ -29,11 +29,11 @@ export class AuthService {
 
   async userRegisteration(userRegisterDTO: UserRegisterDTO) {
     // Create User
-    const userDocument = await this.userService.create(userRegisterDTO);
+    const user = await this.userService.create(userRegisterDTO);
 
     // Generate Tokens
-    const accessToken = this.generateAccessToken(userDocument._id, 'user');
-    const refreshToken = this.generateRefreshToken(userDocument._id, 'user');
+    const accessToken = this.generateAccessToken(user._id, 'user');
+    const refreshToken = this.generateRefreshToken(user._id, 'user');
 
     await this.fcmService.subscribeToTopic(
       userRegisterDTO.fcmToken,
@@ -41,7 +41,7 @@ export class AuthService {
     );
 
     return {
-      ...userDocument.toObject(),
+      ...user.toObject(),
       access_token: accessToken,
       refresh_token: refreshToken,
     };
@@ -49,14 +49,12 @@ export class AuthService {
 
   //TODO: Add IdToken for login for verification the user
   async userLogin(userLoginDTO: UserLoginDTO) {
-    const userDocument = await this.userService.getUserByPhoneOr404(
-      userLoginDTO.phone,
-    );
+    const user = await this.userService.getUserByPhoneOr404(userLoginDTO.phone);
 
-    if (userDocument.isAllowNotification) {
-      if (!userDocument.fcmTokens?.includes(userLoginDTO.fcmToken)) {
-        userDocument.fcmTokens.push(userLoginDTO.fcmToken);
-        await userDocument.save();
+    if (user.isAllowNotification) {
+      if (!user.fcmTokens?.includes(userLoginDTO.fcmToken)) {
+        user.fcmTokens.push(userLoginDTO.fcmToken);
+        await user.save();
 
         await this.fcmService.subscribeToTopic(
           userLoginDTO.fcmToken,
@@ -65,11 +63,11 @@ export class AuthService {
       }
     }
     // Generate Tokens
-    const accessToken = this.generateAccessToken(userDocument._id, 'user');
-    const refreshToken = this.generateRefreshToken(userDocument._id, 'user');
+    const accessToken = this.generateAccessToken(user._id, 'user');
+    const refreshToken = this.generateRefreshToken(user._id, 'user');
 
     return {
-      ...userDocument.toObject(),
+      ...user.toObject(),
       access_token: accessToken,
       refresh_token: refreshToken,
       fcmTokens: undefined,
