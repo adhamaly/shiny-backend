@@ -59,10 +59,7 @@ export class UserService {
   }
 
   async updateUserLocation(id: string, updateUserLocation: UpdateUserLocation) {
-    // TODO: Get the nearest city:- Calculate Nearest city for this lat and long
-    // TODO: Add TO USER Language prop for handling responses Messages
-
-    const user = await this.userRepository.findUserById(id);
+    const user = await this.userRepository.findUserByIdOr404(id);
 
     if (
       !this.nearestCityCalculator.isCountryBoundariesValid(
