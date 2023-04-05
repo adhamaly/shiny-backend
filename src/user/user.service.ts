@@ -50,12 +50,12 @@ export class UserService {
     id: string,
     updatePhoneNumberDTO: UpdatePhoneNumberDTO,
   ) {
-    const userDocument = await this.userRepository.findUserByIdOr404(id);
+    const user = await this.userRepository.findUserByIdOr404(id);
 
-    userDocument.phone = updatePhoneNumberDTO.phone;
-    await userDocument.save();
+    user.phone = updatePhoneNumberDTO.phone;
+    await user.save();
 
-    return userDocument;
+    return user;
   }
 
   async updateUserLocation(id: string, updateUserLocation: UpdateUserLocation) {
@@ -94,10 +94,10 @@ export class UserService {
   }
 
   async updateUserLanguage(id: string, language: string) {
-    const userDocument = await this.userRepository.findUserByIdOr404(id);
+    const user = await this.userRepository.findUserByIdOr404(id);
 
-    userDocument.language = language;
-    await userDocument.save();
+    user.language = language;
+    await user.save();
   }
 
   async delete(userId: string) {
@@ -113,8 +113,8 @@ export class UserService {
   }
 
   async getUserByPhoneOr404(phone: string) {
-    const userDocument = await this.userRepository.findUserByPhoneOr404(phone);
-    return userDocument;
+    const user = await this.userRepository.findUserByPhoneOr404(phone);
+    return user;
   }
   async getUserByIdOr404(id: string) {
     const subscription = await this.subscriptionsService.getUserSubscription(
@@ -143,9 +143,9 @@ export class UserService {
     return user.walletBalance >= orderTotalPrice ? true : false;
   }
   async payWithWallet(userId: string, amount: number) {
-    const userDocument = await this.userRepository.findUserByIdOr404(userId);
-    userDocument.walletBalance = userDocument.walletBalance - amount;
-    await userDocument.save();
+    const user = await this.userRepository.findUserByIdOr404(userId);
+    user.walletBalance = user.walletBalance - amount;
+    await user.save();
   }
 
   async pointsEarningUpdate(userId: string, points: number) {
