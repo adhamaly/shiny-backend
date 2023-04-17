@@ -27,6 +27,7 @@ import { AdminService } from 'src/admin/admin.service';
 import { BikersService } from 'src/bikers/services/bikers.service';
 import { Biker } from 'src/bikers/schemas/bikers.schema';
 import { ForbiddenResponse } from 'src/common/errors/ForbiddenResponse';
+import { PointService } from 'src/points/services/point.service';
 
 @Injectable()
 export class UsersOrdersService {
@@ -45,6 +46,7 @@ export class UsersOrdersService {
     private notificationService: NotificationsService,
     private adminService: AdminService,
     private bikersService: BikersService,
+    private pointService: PointService,
   ) {}
 
   //FIXME: Check order creation for order with subscription plan only
@@ -294,6 +296,12 @@ export class UsersOrdersService {
     };
   }
 
+  // getTotalPayAfterPointsApplied(points: number, order: Order) {
+  //   const totalPay = order.totalPay;
+  //   const points
+  //   const discountAmount = totalPay - discountPercentage;
+  // }
+
   getTotalPayAfterPromoCode(promoCode: PromoCode, order: Order) {
     const totalPay = order.totalPay;
     const discountPercentage = promoCode.discountPercentage / 100;
@@ -374,8 +382,6 @@ export class UsersOrdersService {
         en: 'You could not pay',
       });
 
-    // TODO: Add Payment Service
-
     if (
       pendingOrder.type === OrderTypes.SUBSCRIPTION_BOOKING ||
       pendingOrder.subscription
@@ -385,12 +391,24 @@ export class UsersOrdersService {
       );
     }
 
-    // pay order
+    // TODO: Setting order paid is after webhooks successed
     await this.ordersRepository.update(orderId, {
       status: OrderStatus.ACTIVE,
     });
 
+    // TODO: Setting Points reward is after webhooks successed
+    const pointsToBeRewards = await this.pointService.calculateEarningPoints(
+      pendingOrder.totalPay,
+    );
+
+    await this.userService.userPointsUpgrade(
+      String(pendingOrder.user),
+      pointsToBeRewards,
+    );
+
     await this.orderGateway.orderPublishedEventHandler(orderId);
+
+    // TODO: Add Payment Service
   }
   //TODO: Use Transactions to update user+subscription+order
   async payWallet(userId: string, orderId: string) {

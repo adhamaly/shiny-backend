@@ -21,6 +21,7 @@ import { NotificationsModule } from '../notifications/notifications.module';
 import { AdminModule } from 'src/admin/admin.module';
 import { AdminsOrdersController } from './controllers/adminOrders.controller';
 import { AdminsOrdersService } from './services/adminOrders.service';
+import { PointsModule } from 'src/points/points.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { AdminsOrdersService } from './services/adminOrders.service';
     forwardRef(() => BikersModule),
     NotificationsModule,
     AdminModule,
+    PointsModule,
   ],
   providers: [
     OrdersRepository,
