@@ -256,6 +256,48 @@ export class UsersOrdersService {
     await order.save();
   }
 
+  async applyUserPoints(userId: string, orderId: string) {
+    const user = await this.userService.getUserById(userId);
+
+    await this.isCurrentPointsValidForRedeem(user.points);
+
+    const order = await this.ordersRepository.findOrderByIdOr404(orderId);
+
+    const newTotalPay = await this.getTotalPayAfterPointsApplied(
+      user.points,
+      order.totalPay,
+    );
+
+    const updatedOrder = await this.ordersRepository.update(orderId, {
+      totalPay: newTotalPay,
+    });
+
+    await updatedOrder.populate(this.ordersRepository.populatedPaths);
+
+    updatedOrder.user = undefined;
+
+    return {
+      _id: updatedOrder._id,
+      totalPay: updatedOrder.totalPay,
+      totalPrice: updatedOrder.totalPrice,
+    };
+  }
+  async getTotalPayAfterPointsApplied(points: number, totalPay: number) {
+    const pointsExchange = await this.pointService.calculatePointsExchange(
+      points,
+    );
+    return totalPay - pointsExchange;
+  }
+
+  async isCurrentPointsValidForRedeem(points: number) {
+    const redeemLimit = (await this.pointService.getPointsSystem()).redeemLimit;
+    if (points < redeemLimit)
+      throw new MethodNotAllowedResponse({
+        ar: `الحد الادني من عدد النقاط للاستخدام ${redeemLimit}`,
+        en: 'You must exceeds the redeem limit',
+      });
+  }
+
   async applyPromoCodeForOrder(userId: string, orderId: string, code: string) {
     const order = await this.ordersRepository.findOrderByIdOr404(orderId);
     const user = await this.userService.getUserById(userId);
@@ -295,12 +337,6 @@ export class UsersOrdersService {
       totalPrice: updatedOrder.totalPrice,
     };
   }
-
-  // getTotalPayAfterPointsApplied(points: number, order: Order) {
-  //   const totalPay = order.totalPay;
-  //   const points
-  //   const discountAmount = totalPay - discountPercentage;
-  // }
 
   getTotalPayAfterPromoCode(promoCode: PromoCode, order: Order) {
     const totalPay = order.totalPay;

@@ -62,6 +62,18 @@ export class UserOrdersController {
     };
   }
 
+  @Patch('apply-points')
+  @UseGuards(UserAuthGuard)
+  async applyPointsController(
+    @Account() account: any,
+    @Body('order') order: string,
+  ) {
+    return {
+      success: true,
+      data: await this.usersOrdersService.applyUserPoints(account.id, order),
+    };
+  }
+
   @Patch('apply-promo-code')
   @UseGuards(UserAuthGuard)
   async applyPromoCodeController(
