@@ -37,9 +37,6 @@ export class CreatePlanDTO {
   usageCount: number;
 
   @IsNotEmpty()
-  pointsToPay: number;
-
-  @IsNotEmpty()
   @IsBoolean()
   selectAll: boolean;
 

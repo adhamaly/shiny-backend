@@ -37,7 +37,7 @@ export class OrdersRepository {
         model: servicesIconModelName,
       },
       model: WashingServicesModelName,
-      select: 'name price description duration pointsToPay',
+      select: 'name price description duration',
     },
     {
       path: 'addOns',
@@ -86,7 +86,7 @@ export class OrdersRepository {
         model: servicesIconModelName,
       },
       model: WashingServicesModelName,
-      select: 'name price description duration pointsToPay',
+      select: 'name price description duration',
     },
     {
       path: 'addOns',

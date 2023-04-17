@@ -9,6 +9,7 @@ import { UserRepository } from './user.repository';
 import { UserQueriesHelper } from './userQueriesHelper.service';
 import { CityModule } from '../city/city.module';
 import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
+import { PointsModule } from 'src/points/points.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
     forwardRef(() => SubscriptionsModule),
     FirebaseModule,
     CityModule,
+    PointsModule,
   ],
   controllers: [UserController],
   providers: [UserService, UserRepository, UserQueriesHelper],

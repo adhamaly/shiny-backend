@@ -16,6 +16,7 @@ import { ScheduleModule } from '@nestjs/schedule';
 import { OrdersModule } from './orders/orders.module';
 import { PromoCodeModule } from './promo-code/promo-code.module';
 import { PaginationModule } from './common/services/pagination/pagination.module';
+import { PointsModule } from './points/points.module';
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { PaginationModule } from './common/services/pagination/pagination.module
     OrdersModule,
     PromoCodeModule,
     PaginationModule,
+    PointsModule,
   ],
   controllers: [],
   providers: [],

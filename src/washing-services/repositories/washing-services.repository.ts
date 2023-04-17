@@ -36,7 +36,6 @@ export class WashingServicesRepository {
       duration: createWashingServiceDTO.duration,
       durationUnit: createWashingServiceDTO.durationUnit,
       price: createWashingServiceDTO.price,
-      pointsToPay: createWashingServiceDTO.pointsToPay,
       icon: createWashingServiceDTO.icon,
     });
 
@@ -193,7 +192,6 @@ export class WashingServicesRepository {
     washingService.duration = updateWashingServiceDTO.duration;
     washingService.durationUnit = updateWashingServiceDTO.durationUnit;
     washingService.price = updateWashingServiceDTO.price;
-    washingService.pointsToPay = updateWashingServiceDTO.pointsToPay;
     washingService.icon = updateWashingServiceDTO.icon;
 
     await washingService.save();

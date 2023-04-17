@@ -41,6 +41,15 @@ export class UserController {
       data: await this.vehiclesService.getAll(account.id),
     };
   }
+
+  @Get('points-system')
+  @UseGuards(UserAuthGuard)
+  async getUserPointSystem(@Account() account: any) {
+    return {
+      success: true,
+      data: await this.userService.getUserPointSystem(account.id),
+    };
+  }
   @Put('')
   @UseGuards(UserAuthGuard, ProfileOwnerGuard)
   @UseInterceptors(FileInterceptor('image', { dest: 'uploads/' }))

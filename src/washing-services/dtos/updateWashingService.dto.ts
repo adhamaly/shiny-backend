@@ -20,9 +20,6 @@ export class UpdateWashingServiceDTO {
   price: number;
 
   @IsNotEmpty()
-  pointsToPay: number;
-
-  @IsNotEmpty()
   @IsMongoId()
   icon: ServiceIcon;
 }

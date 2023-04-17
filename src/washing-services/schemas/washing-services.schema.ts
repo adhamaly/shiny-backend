@@ -25,9 +25,6 @@ export class WashingService {
   @Prop({ default: 0 })
   price: number;
 
-  @Prop({ default: 0 })
-  pointsToPay: number;
-
   @Prop({ type: mongoose.Schema.Types.ObjectId, ref: servicesIconModelName })
   icon: ServiceIcon;
 

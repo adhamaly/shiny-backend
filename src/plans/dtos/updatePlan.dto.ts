@@ -27,9 +27,6 @@ export class UpdatePlanDTO {
   durationUnit: string;
 
   @IsNotEmpty()
-  pointsToPay: number;
-
-  @IsNotEmpty()
   @IsArray()
   @IsMongoId({ each: true })
   washingServices: WashingService[];

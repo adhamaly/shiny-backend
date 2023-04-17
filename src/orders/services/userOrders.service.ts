@@ -293,6 +293,7 @@ export class UsersOrdersService {
       totalPrice: updatedOrder.totalPrice,
     };
   }
+
   getTotalPayAfterPromoCode(promoCode: PromoCode, order: Order) {
     const totalPay = order.totalPay;
     const discountPercentage = promoCode.discountPercentage / 100;
@@ -301,6 +302,7 @@ export class UsersOrdersService {
 
     return { totalPayAfterDiscount, discountAmount };
   }
+
   async payOrder(userId: string, orderId: string) {
     const pendingOrder = await this.ordersRepository.findOrderByIdOr404(
       orderId,

@@ -12,6 +12,7 @@ import { NearestCityCalculator } from '../city/nearestCityCalculator.service';
 import { SubscriptionsService } from '../subscriptions/services/subscriptions.service';
 import { FCMService } from 'src/common/services/firebase/fcm.service';
 import { FcmTopics } from 'src/common/enums/topics.enum';
+import { PointService } from 'src/points/services/point.service';
 
 @Injectable()
 export class UserService {
@@ -22,6 +23,7 @@ export class UserService {
     @Inject(forwardRef(() => SubscriptionsService))
     private subscriptionsService: SubscriptionsService,
     private fcmService: FCMService,
+    private pointService: PointService,
   ) {}
 
   async create(userRegsiterDTO: UserRegisterDTO) {
@@ -145,7 +147,7 @@ export class UserService {
     await user.save();
   }
 
-  async pointsEarningUpdate(userId: string, points: number) {
+  async userPointsUpgrade(userId: string, points: number) {
     const user = await this.userRepository.findUserById(userId);
     user.points = user.points + points;
     await user.save();
@@ -175,5 +177,20 @@ export class UserService {
       }
     }
     await user.save();
+  }
+
+  async getUserPointSystem(userId: string) {
+    const user = await this.getUserById(userId);
+
+    const currentPoints = user.points;
+    const pointsExchange = await this.pointService.calculatePointsExchange(
+      currentPoints,
+    );
+
+    return {
+      points: currentPoints,
+      pointsExchange,
+      redeemLimit: (await this.pointService.getPointsSystem()).redeemLimit,
+    };
   }
 }
