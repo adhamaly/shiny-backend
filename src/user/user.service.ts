@@ -152,6 +152,12 @@ export class UserService {
     user.points = user.points + points;
     await user.save();
   }
+
+  async updateUserPointsAfterApplied(userId: string, points: number) {
+    const user = await this.userRepository.findUserById(userId);
+    user.points = points;
+    await user.save();
+  }
   async removeInvalidFcmToken(userId: string, fcmToken: string) {
     const user = await this.userRepository.findUser(userId);
     const updatedUserFcmTokens = user.fcmTokens.filter((fcmTokenItem) => {

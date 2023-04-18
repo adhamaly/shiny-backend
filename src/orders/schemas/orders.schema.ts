@@ -139,6 +139,9 @@ export class Order {
 
   @Prop()
   ratingOfUser: number;
+
+  @Prop({ default: false })
+  isPointsApplied: boolean;
 }
 
 export const OrdersSchema = SchemaFactory.createForClass(Order);

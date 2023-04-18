@@ -12,6 +12,7 @@ import {
 } from '../schemas/subscriptions.schema';
 import { GetSubscriptionByLocationDTO } from '../dtos/subscriptionByLocation.dto';
 import { NearestCityCalculator } from '../../city/nearestCityCalculator.service';
+import { PointService } from 'src/points/services/point.service';
 
 @Injectable()
 export class SubscriptionsService {
@@ -22,6 +23,7 @@ export class SubscriptionsService {
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
     private nearestCityCalculator: NearestCityCalculator,
+    private pointService: PointService,
   ) {}
 
   async createUserSubscription(userId: string, planId: string) {
@@ -38,6 +40,14 @@ export class SubscriptionsService {
     const expiryDate = this.calculateExpiryDate(plan.duration);
 
     await this.subscriptionsRepository.create(user, plan, expiryDate);
+
+    // Calculate points for subscription
+    const numberOfPoints = await this.pointService.calculateEarningPoints(
+      plan.price,
+    );
+
+    // user points reward
+    await this.userService.userPointsUpgrade(userId, numberOfPoints);
   }
 
   calculateExpiryDate(duration: number) {

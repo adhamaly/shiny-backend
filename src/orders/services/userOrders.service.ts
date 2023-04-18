@@ -263,18 +263,28 @@ export class UsersOrdersService {
 
     const order = await this.ordersRepository.findOrderByIdOr404(orderId);
 
-    const newTotalPay = await this.getTotalPayAfterPointsApplied(
-      user.points,
-      order.totalPay,
-    );
+    if (order.isPointsApplied)
+      throw new MethodNotAllowedResponse({
+        ar: 'لقد قمت باستخدام النقاط',
+        en: 'Points is already applied',
+      });
+
+    const { newTotalPay, numberOfRemainsPoints } =
+      await this.getTotalPayAfterPointsApplied(user.points, order.totalPay);
 
     const updatedOrder = await this.ordersRepository.update(orderId, {
-      totalPay: newTotalPay,
+      totalPay: newTotalPay ? newTotalPay : 0,
+      isPointsApplied: true,
     });
 
     await updatedOrder.populate(this.ordersRepository.populatedPaths);
 
     updatedOrder.user = undefined;
+
+    await this.userService.updateUserPointsAfterApplied(
+      userId,
+      numberOfRemainsPoints,
+    );
 
     return {
       _id: updatedOrder._id,
@@ -286,7 +296,14 @@ export class UsersOrdersService {
     const pointsExchange = await this.pointService.calculatePointsExchange(
       points,
     );
-    return totalPay - pointsExchange;
+    const newTotalPay = totalPay - pointsExchange;
+
+    let numberOfRemainsPoints = 0;
+    if (pointsExchange > totalPay) {
+      numberOfRemainsPoints = (points * totalPay) / pointsExchange;
+    }
+
+    return { newTotalPay, numberOfRemainsPoints };
   }
 
   async isCurrentPointsValidForRedeem(points: number) {
@@ -432,15 +449,18 @@ export class UsersOrdersService {
       status: OrderStatus.ACTIVE,
     });
 
-    // TODO: Setting Points reward is after webhooks successed
-    const pointsToBeRewards = await this.pointService.calculateEarningPoints(
-      pendingOrder.totalPay,
-    );
+    // Points Earning only if order not applied points
+    if (!pendingOrder.isPointsApplied) {
+      // TODO: Setting Points reward is after webhooks successed
+      const pointsToBeRewards = await this.pointService.calculateEarningPoints(
+        pendingOrder.totalPay,
+      );
 
-    await this.userService.userPointsUpgrade(
-      String(pendingOrder.user),
-      pointsToBeRewards,
-    );
+      await this.userService.userPointsUpgrade(
+        String(pendingOrder.user),
+        pointsToBeRewards,
+      );
+    }
 
     await this.orderGateway.orderPublishedEventHandler(orderId);
 

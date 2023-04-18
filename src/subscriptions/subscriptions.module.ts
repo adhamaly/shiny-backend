@@ -10,6 +10,7 @@ import {
   subscriptionsModelName,
   SubscriptionsSchema,
 } from './schemas/subscriptions.schema';
+import { PointsModule } from 'src/points/points.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import {
     forwardRef(() => UserModule),
     forwardRef(() => PlansModule),
     CityModule,
+    PointsModule,
   ],
   providers: [SubscriptionsRepository, SubscriptionsService],
   controllers: [SubscriptionsController],
