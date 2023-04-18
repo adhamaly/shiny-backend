@@ -16,7 +16,11 @@ export class PointService {
     redeemLimit: number,
   ) {
     const pointSystem = await this.pointsModel.findOne();
-    if (pointSystem) throw new MethodNotAllowedResponse({ en: '', ar: '' });
+    if (pointSystem)
+      throw new MethodNotAllowedResponse({
+        en: 'Poinst System Is Already Implemented',
+        ar: 'نظام النقط تم تفعيله',
+      });
 
     return await this.pointsModel.create({
       totalPayPercentage,
@@ -28,12 +32,18 @@ export class PointService {
   async updatePointsPercentage(
     totalPayPercentage: number,
     exchangePercentage: number,
+    redeemLimit: number,
   ) {
     const pointSystem = await this.pointsModel.findOne();
-    if (!pointSystem) throw new NotFoundResponse({ en: '', ar: '' });
+    if (!pointSystem)
+      throw new NotFoundResponse({
+        en: 'Points System Not Exist, Please Implement Points System',
+        ar: 'نظام النقاط غير مغعل حاليا',
+      });
 
     pointSystem.exchangePercentage = exchangePercentage;
     pointSystem.totalPayPercentage = totalPayPercentage;
+    pointSystem.redeemLimit = redeemLimit;
 
     await pointSystem.save();
   }

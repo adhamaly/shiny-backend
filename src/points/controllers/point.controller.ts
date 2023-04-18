@@ -4,6 +4,7 @@ import {
   Get,
   ParseIntPipe,
   Post,
+  Put,
   UseGuards,
 } from '@nestjs/common';
 import { PointService } from '../services/point.service';
@@ -23,6 +24,23 @@ export class PointController {
     return {
       success: true,
       data: await this.pointService.createPointsPercentages(
+        totalPayPercentage,
+        exchangePercentage,
+        redeemLimit,
+      ),
+    };
+  }
+
+  @Put('')
+  @UseGuards(UserAuthGuard, IsAdminGaurd)
+  async updatePointsSystem(
+    @Body('totalPayPercentage', ParseIntPipe) totalPayPercentage: number,
+    @Body('exchangePercentage', ParseIntPipe) exchangePercentage: number,
+    @Body('redeemLimit', ParseIntPipe) redeemLimit: number,
+  ) {
+    return {
+      success: true,
+      data: await this.pointService.updatePointsPercentage(
         totalPayPercentage,
         exchangePercentage,
         redeemLimit,
