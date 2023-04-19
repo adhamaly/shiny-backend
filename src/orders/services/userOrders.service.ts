@@ -273,7 +273,7 @@ export class UsersOrdersService {
       await this.getTotalPayAfterPointsApplied(user.points, order.totalPay);
 
     const updatedOrder = await this.ordersRepository.update(orderId, {
-      totalPay: newTotalPay ? newTotalPay : 0,
+      totalPay: newTotalPay <= 0 ? 0 : newTotalPay,
       isPointsApplied: true,
     });
 
