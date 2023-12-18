@@ -116,6 +116,18 @@ export class AdminService {
     });
   }
 
+  async updateAdminCredentials(adminId: string, password: string) {
+    // hash password using bycrpt
+    const hashedPassword = await bcrypt.hash(
+      password,
+      Number(process.env.SALT_OF_ROUND),
+    );
+
+    await this.adminRepository.update(adminId, {
+      password: hashedPassword,
+    });
+  }
+
   async CityPermissionForCreation(adminId: string, city: City) {
     const admin = await this.adminRepository.findByIdOr404(adminId);
 

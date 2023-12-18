@@ -124,4 +124,19 @@ export class AdminController {
       success: true,
     };
   }
+
+  @Patch(':adminId/update-credentials')
+  @UseGuards(UserAuthGuard, SuperAdminGuard)
+  async updateAdminCredentials(
+    @Param('adminId') adminId: string,
+    @Body() updatePassword: UpdatePassword,
+  ) {
+    await this.adminService.updateAdminCredentials(
+      adminId,
+      updatePassword.password,
+    );
+    return {
+      success: true,
+    };
+  }
 }
