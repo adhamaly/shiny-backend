@@ -8,6 +8,7 @@ import { Model } from 'mongoose';
 import { Roles } from 'src/admin/schemas/admin.schema';
 import { NotFoundResponse } from '../../common/errors/NotFoundResponse';
 import mongoose from 'mongoose';
+import { MethodNotAllowedResponse } from 'src/common/errors';
 
 @Injectable()
 export class AddOnsRepository {
@@ -21,6 +22,11 @@ export class AddOnsRepository {
   ) {}
 
   async create(createAddOnsDTO: CreateAddOnsDTO) {
+    if (await this.addOnsModel.exists({ name: createAddOnsDTO.name }))
+      throw new MethodNotAllowedResponse({
+        ar: 'الاسم مسجل من قبل',
+        en: 'name already exist',
+      });
     const createdAddOns = await this.addOnsModel.create({
       name: createAddOnsDTO.name,
       price: createAddOnsDTO.price,
