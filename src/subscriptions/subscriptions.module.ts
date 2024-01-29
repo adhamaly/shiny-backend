@@ -11,6 +11,7 @@ import {
   SubscriptionsSchema,
 } from './schemas/subscriptions.schema';
 import { PointsModule } from 'src/points/points.module';
+import { AppConfig } from 'src/common/services/app-config';
 
 @Module({
   imports: [
@@ -22,7 +23,7 @@ import { PointsModule } from 'src/points/points.module';
     CityModule,
     PointsModule,
   ],
-  providers: [SubscriptionsRepository, SubscriptionsService],
+  providers: [SubscriptionsRepository, SubscriptionsService, AppConfig],
   controllers: [SubscriptionsController],
   exports: [SubscriptionsService],
 })

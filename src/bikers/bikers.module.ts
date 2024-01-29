@@ -11,6 +11,7 @@ import { AdminModule } from '../admin/admin.module';
 import { BikerGateway } from './gateway/biker.gateway';
 import { OrdersModule } from '../orders/orders.module';
 import { AuthModule } from '../auth/auth.module';
+import { AppConfig } from 'src/common/services/app-config';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { AuthModule } from '../auth/auth.module';
     BikerCrudValidator,
     BikersRepository,
     BikerGateway,
+    AppConfig,
   ],
   controllers: [BikersController],
   exports: [BikersService],

@@ -13,6 +13,7 @@ import {
   plansCitiesModelName,
   PlansCitiesSchema,
 } from './schemas/plans-cities.schema';
+import { AppConfig } from 'src/common/services/app-config';
 
 @Module({
   imports: [
@@ -25,7 +26,7 @@ import {
     forwardRef(() => SubscriptionsModule),
     AdminModule,
   ],
-  providers: [PlansService, PlansRepository, PlansCitiesRepository],
+  providers: [PlansService, PlansRepository, PlansCitiesRepository, AppConfig],
   controllers: [PlansController],
   exports: [PlansService, PlansRepository],
 })

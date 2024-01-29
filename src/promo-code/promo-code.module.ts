@@ -13,6 +13,7 @@ import {
   PromoCodeSchema,
 } from './schemas/promo-code.schema';
 import { NotificationsModule } from 'src/notifications/notifications.module';
+import { AppConfig } from 'src/common/services/app-config';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { NotificationsModule } from 'src/notifications/notifications.module';
     PromoCodesService,
     PromoCodesRepository,
     AppliedPromoCodesRepository,
+    AppConfig,
   ],
   exports: [PromoCodesService],
 })

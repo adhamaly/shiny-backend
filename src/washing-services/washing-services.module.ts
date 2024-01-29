@@ -16,6 +16,7 @@ import {
 } from './schemas/washing-services.schema';
 import { ServicesCitiesRepository } from './repositories/services-cities.repository';
 import { AdminModule } from '../admin/admin.module';
+import { AppConfig } from 'src/common/services/app-config';
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { AdminModule } from '../admin/admin.module';
     WashingServicesService,
     WashingServicesRepository,
     ServicesCitiesRepository,
+    AppConfig,
   ],
   controllers: [WashingServicesController],
   exports: [WashingServicesService, WashingServicesRepository],

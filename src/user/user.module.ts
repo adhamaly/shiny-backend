@@ -10,6 +10,7 @@ import { UserQueriesHelper } from './userQueriesHelper.service';
 import { CityModule } from '../city/city.module';
 import { SubscriptionsModule } from '../subscriptions/subscriptions.module';
 import { PointsModule } from 'src/points/points.module';
+import { AppConfig } from 'src/common/services/app-config';
 
 @Module({
   imports: [
@@ -21,7 +22,7 @@ import { PointsModule } from 'src/points/points.module';
     PointsModule,
   ],
   controllers: [UserController],
-  providers: [UserService, UserRepository, UserQueriesHelper],
+  providers: [UserService, UserRepository, UserQueriesHelper, AppConfig],
   exports: [UserService, UserRepository, MongooseModule],
 })
 export class UserModule {}

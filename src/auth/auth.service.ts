@@ -17,6 +17,7 @@ import { Socket } from 'socket.io';
 import { ForbiddenResponse } from '../common/errors/ForbiddenResponse';
 import { FCMService } from 'src/common/services/firebase/fcm.service';
 import { FcmTopics } from 'src/common/enums/topics.enum';
+import { AppConfig } from 'src/common/services/app-config';
 @Injectable()
 export class AuthService {
   constructor(
@@ -25,6 +26,7 @@ export class AuthService {
     private adminService: AdminService,
     private bikersService: BikersService,
     private fcmService: FCMService,
+    private appConfig: AppConfig,
   ) {}
 
   async userRegisteration(userRegisterDTO: UserRegisterDTO) {
@@ -192,8 +194,8 @@ export class AuthService {
         role: role,
       },
       {
-        secret: process.env.ACCESS_TOKEN_SECRET,
-        expiresIn: expiresIn ? expiresIn : '2h',
+        secret: this.appConfig.USER_JWT_SECRET,
+        expiresIn: expiresIn ? expiresIn : this.appConfig.USER_JWT_EXPIRY,
       },
     );
   }
@@ -204,8 +206,8 @@ export class AuthService {
         role: role,
       },
       {
-        secret: process.env.REFRESH_TOKEN_SECRET,
-        expiresIn: '7d',
+        secret: this.appConfig.USER_JWT_REFRESH_SECRET,
+        expiresIn: this.appConfig.USER_JWT_REFRESH_EXPIRY,
       },
     );
   }
@@ -241,7 +243,7 @@ export class AuthService {
   decodeAccessToken(token: string) {
     try {
       return this.jwtService.verify(token, {
-        secret: process.env.ACCESS_TOKEN_SECRET,
+        secret: this.appConfig.USER_JWT_SECRET,
       });
     } catch {
       throw new ForbiddenException({
@@ -256,7 +258,7 @@ export class AuthService {
   decodeRefreshToken(refreshToken: string) {
     try {
       return this.jwtService.verify(refreshToken, {
-        secret: process.env.REFRESH_TOKEN_SECRET,
+        secret: this.appConfig.USER_JWT_REFRESH_SECRET,
       });
     } catch {
       throw new ForbiddenException({
@@ -294,7 +296,7 @@ export class AuthService {
     try {
       const token = socket.handshake.headers['authorization'].split(' ')[1];
       const payload = this.jwtService.verify(token, {
-        secret: process.env.ACCESS_TOKEN_SECRET,
+        secret: this.appConfig.USER_JWT_SECRET,
       });
       return { id: payload.id, role: payload.role };
     } catch {

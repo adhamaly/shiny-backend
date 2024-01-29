@@ -9,6 +9,7 @@ import {
   notificationsModelName,
   NotificationsSchema,
 } from './schemas/notifications.schema';
+import { AppConfig } from 'src/common/services/app-config';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import {
     PaginationModule,
   ],
   controllers: [NotificationsController],
-  providers: [NotificationsService],
+  providers: [NotificationsService, AppConfig],
   exports: [NotificationsService],
 })
 export class NotificationsModule {}

@@ -13,6 +13,7 @@ import {
   addOnsCitiesModelName,
   AddOnsCitiesSchema,
 } from './schemas/add-ons-cities.schema';
+import { AppConfig } from 'src/common/services/app-config';
 
 @Module({
   imports: [
@@ -25,7 +26,12 @@ import {
     ServicesIconsModule,
     UserModule,
   ],
-  providers: [AddOnsService, AddOnsRepository, AddOnsCitiesRepository],
+  providers: [
+    AddOnsService,
+    AddOnsRepository,
+    AddOnsCitiesRepository,
+    AppConfig,
+  ],
   controllers: [AddOnsController],
 })
 export class AddOnsModule {}

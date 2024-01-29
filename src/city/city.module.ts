@@ -5,6 +5,7 @@ import { CitiesController } from './city.controller';
 import { CitiesService } from './city.service';
 import { NearestCityCalculator } from './nearestCityCalculator.service';
 import { AdminModule } from '../admin/admin.module';
+import { AppConfig } from 'src/common/services/app-config';
 
 @Module({
   imports: [
@@ -12,7 +13,7 @@ import { AdminModule } from '../admin/admin.module';
     AdminModule,
   ],
   controllers: [CitiesController],
-  providers: [CitiesService, NearestCityCalculator],
+  providers: [CitiesService, NearestCityCalculator, AppConfig],
   exports: [CitiesService, NearestCityCalculator],
 })
 export class CityModule {}

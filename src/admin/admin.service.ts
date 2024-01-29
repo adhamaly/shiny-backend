@@ -7,19 +7,21 @@ import { PaginationService } from '../common/services/pagination/pagination.serv
 import { AdminStatus } from './schemas/admin.schema';
 import { UpdateAdminDTO } from './dto/admin.updateAdmin.dto';
 import * as bcrypt from 'bcrypt';
+import { AppConfig } from 'src/common/services/app-config';
 
 @Injectable()
 export class AdminService {
   constructor(
     private adminRepository: AdminRepository,
     private paginationService: PaginationService,
+    private appConfig: AppConfig,
   ) {}
 
   async createSubAdmin(createSubAdminDTO: CreateSubAdminDTO) {
     // hash password using bycrpt
     const hashedPassword = await bcrypt.hash(
       createSubAdminDTO.password,
-      Number(process.env.SALT_OF_ROUND),
+      Number(this.appConfig.SALT_OF_ROUND),
     );
 
     await this.adminRepository.createSubAdmin(
@@ -108,7 +110,7 @@ export class AdminService {
     // hash password using bycrpt
     const hashedPassword = await bcrypt.hash(
       password,
-      Number(process.env.SALT_OF_ROUND),
+      Number(this.appConfig.SALT_OF_ROUND),
     );
 
     await this.adminRepository.update(adminId, {
@@ -120,7 +122,7 @@ export class AdminService {
     // hash password using bycrpt
     const hashedPassword = await bcrypt.hash(
       password,
-      Number(process.env.SALT_OF_ROUND),
+      Number(this.appConfig.SALT_OF_ROUND),
     );
 
     await this.adminRepository.update(adminId, {
@@ -179,8 +181,8 @@ export class AdminService {
   async injectSuperAdmin() {
     // hash password using bycrpt
     const hashedPassword = await bcrypt.hash(
-      '12345678',
-      Number(process.env.SALT_OF_ROUND),
+      this.appConfig.SUPER_ADMIN_PASS,
+      Number(this.appConfig.SALT_OF_ROUND),
     );
 
     await this.adminRepository.injectSuperAdmin(hashedPassword);

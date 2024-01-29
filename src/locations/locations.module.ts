@@ -6,6 +6,7 @@ import { UserModule } from '../user/user.module';
 import { LocationsRepository } from './repositories/locations.repository';
 import { LocationsService } from './services/locations.service';
 import { LocationsController } from './controllers/locations.controller';
+import { AppConfig } from 'src/common/services/app-config';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { LocationsController } from './controllers/locations.controller';
     CityModule,
     UserModule,
   ],
-  providers: [LocationsRepository, LocationsService],
+  providers: [LocationsRepository, LocationsService, AppConfig],
   controllers: [LocationsController],
   exports: [LocationsService],
 })

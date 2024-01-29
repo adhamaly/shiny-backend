@@ -1,4 +1,4 @@
-import { Module } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
 import { UserModule } from './user/user.module';
 import { AuthModule } from './auth/auth.module';
@@ -17,11 +17,26 @@ import { OrdersModule } from './orders/orders.module';
 import { PromoCodeModule } from './promo-code/promo-code.module';
 import { PaginationModule } from './common/services/pagination/pagination.module';
 import { PointsModule } from './points/points.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { ConfigModule, ConfigService } from '@nestjs/config';
+import { JwtModule } from '@nestjs/jwt';
+import { configSchema } from './common/services/validation';
+import { AppConfig } from './common/services/app-config';
 
+@Global()
 @Module({
   imports: [
-    MongooseModule.forRoot(process.env.DB),
+    EventEmitterModule.forRoot(),
+    ConfigModule.forRoot({ isGlobal: true, validationSchema: configSchema() }),
     ScheduleModule.forRoot(),
+    JwtModule.register({ global: true }),
+    MongooseModule.forRootAsync({
+      imports: [ConfigModule],
+      useFactory: async (configService: ConfigService) => ({
+        uri: configService.get<string>('MONGODB_URL'),
+      }),
+      inject: [ConfigService],
+    }),
     UserModule,
     AuthModule,
     AdminModule,
@@ -40,6 +55,6 @@ import { PointsModule } from './points/points.module';
     PointsModule,
   ],
   controllers: [],
-  providers: [],
+  providers: [AppConfig],
 })
 export class AppModule {}

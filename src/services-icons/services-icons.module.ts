@@ -7,6 +7,7 @@ import {
 } from './schemas/services-icons.schema';
 import { ServicesIconsController } from './services-icons.controller';
 import { ServicesIconsService } from './services-icons.service';
+import { AppConfig } from 'src/common/services/app-config';
 
 @Module({
   imports: [
@@ -15,7 +16,7 @@ import { ServicesIconsService } from './services-icons.service';
     ]),
     FirebaseModule,
   ],
-  providers: [ServicesIconsService],
+  providers: [ServicesIconsService, AppConfig],
   controllers: [ServicesIconsController],
   exports: [ServicesIconsService],
 })

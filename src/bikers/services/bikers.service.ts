@@ -6,13 +6,15 @@ import { AdminService } from '../../admin/admin.service';
 import { UpdatePasswordDTO } from '../dto/updatePassword.dto';
 import * as bcrypt from 'bcrypt';
 import { MethodNotAllowedResponse } from '../../common/errors/MethodNotAllowedResponse';
-import { BikerStatus, BikerModel, Biker } from '../schemas/bikers.schema';
+import { BikerStatus, Biker } from '../schemas/bikers.schema';
 import { City } from '../../city/schemas/city.schema';
+import { AppConfig } from 'src/common/services/app-config';
 @Injectable()
 export class BikersService {
   constructor(
     private bikersRepository: BikersRepository,
     private adminService: AdminService,
+    private appConfig: AppConfig,
   ) {}
 
   async createBiker(
@@ -27,7 +29,7 @@ export class BikersService {
     // hash password using bycrpt
     const hashedPassword = await bcrypt.hash(
       createBikerDTO.password,
-      Number(process.env.SALT_OF_ROUND),
+      Number(this.appConfig.SALT_OF_ROUND),
     );
 
     await this.bikersRepository.create(
@@ -67,7 +69,7 @@ export class BikersService {
     // hash password using bycrpt
     const hashedPassword = await bcrypt.hash(
       password,
-      Number(process.env.SALT_OF_ROUND),
+      Number(this.appConfig.SALT_OF_ROUND),
     );
     await this.bikersRepository.updateBikerPassword(bikerId, hashedPassword);
   }
@@ -93,7 +95,7 @@ export class BikersService {
     // hash password using bycrpt
     const hashedPassword = await bcrypt.hash(
       updatePasswordDTO.newPassword,
-      Number(process.env.SALT_OF_ROUND),
+      Number(this.appConfig.SALT_OF_ROUND),
     );
 
     await this.bikersRepository.updateBikerPassword(bikerId, hashedPassword);

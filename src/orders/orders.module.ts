@@ -22,6 +22,7 @@ import { AdminModule } from 'src/admin/admin.module';
 import { AdminsOrdersController } from './controllers/adminOrders.controller';
 import { AdminsOrdersService } from './services/adminOrders.service';
 import { PointsModule } from 'src/points/points.module';
+import { AppConfig } from 'src/common/services/app-config';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { PointsModule } from 'src/points/points.module';
     OrderGateway,
     BikerOrdersService,
     AdminsOrdersService,
+    AppConfig,
   ],
   controllers: [
     UserOrdersController,

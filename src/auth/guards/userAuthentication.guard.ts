@@ -3,13 +3,18 @@ import {
   CanActivate,
   ExecutionContext,
   ForbiddenException,
+  Inject,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Observable } from 'rxjs';
+import { AppConfig } from 'src/common/services/app-config';
 
 @Injectable()
 export class UserAuthGuard implements CanActivate {
-  constructor(private jwtService: JwtService) {}
+  constructor(
+    private jwtService: JwtService,
+    @Inject(AppConfig) private appConfig: AppConfig,
+  ) {}
 
   canActivate(
     context: ExecutionContext,
@@ -18,7 +23,7 @@ export class UserAuthGuard implements CanActivate {
     try {
       const access_token = request.headers['authorization'].split(' ')[1];
       const payload = this.jwtService.verify(access_token, {
-        secret: process.env.ACCESS_TOKEN_SECRET,
+        secret: this.appConfig.USER_JWT_SECRET,
       });
       request.account = { id: payload.id, role: payload.role };
       if (payload.id) return true;
